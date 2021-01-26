@@ -13,6 +13,8 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Moodiary">
         <activity android:name=".FindPwActivity"></activity>
+        <activity android:name=".ChangePwActivity" />
+        <activity android:name=".NotificationActivity" />
         <activity android:name=".FindIdActivity" />
         <activity android:name=".SignupActivity" />
         <activity android:name=".LoginActivity" />
