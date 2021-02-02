@@ -80,8 +80,17 @@ public class LoginActivity extends AppCompatActivity {
                                 String result = response.getString("code"); // 응답 메시지 가져오기
 
                                 // 응답 메시지에 따른 처리
-                                if(result.equals("200"))
-                                    Toast.makeText(getApplicationContext(),"회원가입이 완료되었습니다", Toast.LENGTH_SHORT).show();
+                                if(result.equals("200")) {
+                                    Toast.makeText(getApplicationContext(), "환영합니다!", Toast.LENGTH_SHORT).show();
+                                    startActivity(new Intent(LoginActivity.this, MainActivity.class)); // 메인 화면으로 이동
+                                }
+                                if(result.equals("204"))
+                                    Toast.makeText(getApplicationContext(), "ID 또는 비밀번호가 맞지 않습니다.", Toast.LENGTH_SHORT).show();
+                                if(result.equals("208"))
+                                    Toast.makeText(getApplicationContext(), "비밀번호가 맞지 않습니다.", Toast.LENGTH_SHORT).show();
+                                if(result.equals("404"))
+                                    Toast.makeText(getApplicationContext(), "에러 발생했습니다.", Toast.LENGTH_SHORT).show();
+
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
