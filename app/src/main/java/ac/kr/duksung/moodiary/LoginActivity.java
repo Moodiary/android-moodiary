@@ -76,10 +76,12 @@ public class LoginActivity extends AppCompatActivity {
 
                         @Override
                         public void onResponse(JSONObject response) {
-                            JSONArray J_JsonArray = new JSONArray();
                             try {
-                                J_JsonArray = response.getJSONArray("results");
-                                JSONObject dataObj = J_JsonArray.getJSONObject(0);
+                                String result = response.getString("code"); // 응답 메시지 가져오기
+
+                                // 응답 메시지에 따른 처리
+                                if(result.equals("200"))
+                                    Toast.makeText(getApplicationContext(),"회원가입이 완료되었습니다", Toast.LENGTH_SHORT).show();
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
