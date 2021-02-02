@@ -139,7 +139,7 @@
         android:layout_marginStart="20dp"
         android:text="비밀번호\n    확인"
         android:textSize="14sp"
-        app:layout_constraintBaseline_toBaselineOf="@+id/et_indentify_password"
+        app:layout_constraintBaseline_toBaselineOf="@+id/et_identify_password"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -147,7 +147,7 @@
 
     <!-- 비밀번호 확인 입력창 -->
     <EditText
-        android:id="@+id/et_indentify_password"
+        android:id="@+id/et_identify_password"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:inputType="textPassword"
