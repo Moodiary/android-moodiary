@@ -57,7 +57,7 @@ public class LoginActivity extends AppCompatActivity {
                 if(user_id.equals("")){
                     Toast.makeText(context, "아이디를 입력하세요", Toast.LENGTH_SHORT).show();
                 }else if(user_pw.equals("")){
-                    Toast.makeText(context, "아이디를 입력하세요", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, "비밀번호를 입력하세요", Toast.LENGTH_SHORT).show();
                 }else{
                     // node 서버에 보낼 값 Json 형태로 만들기
                     JSONObject requestJsonObject = new JSONObject();
