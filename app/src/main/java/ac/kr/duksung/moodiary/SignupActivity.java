@@ -112,6 +112,8 @@ public class SignupActivity extends AppCompatActivity {
                         Toast.makeText(getApplicationContext(),"에러 발생했습니다", Toast.LENGTH_SHORT).show();
                     if(result.equals("204"))
                         Toast.makeText(getApplicationContext(),"아이디가 중복입니다", Toast.LENGTH_SHORT).show();
+                    if(result.equals("203"))
+                        Toast.makeText(getApplicationContext(),"이메일이 중복입니다", Toast.LENGTH_SHORT).show();
                     if(result.equals("200")) {
                         Toast.makeText(getApplicationContext(), "회원가입이 완료되었습니다", Toast.LENGTH_SHORT).show();
                         finish(); // 회원가입 완료 후 다시 로그인 화면으로 돌아감

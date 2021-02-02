@@ -57,7 +57,7 @@ public class LoginActivity extends AppCompatActivity {
                 if(user_id.equals("")){
                     Toast.makeText(context, "아이디를 입력하세요", Toast.LENGTH_SHORT).show();
                 }else if(user_pw.equals("")){
-                    Toast.makeText(context, "아이디를 입력하세요", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, "비밀번호를 입력하세요", Toast.LENGTH_SHORT).show();
                 }else{
                     // node 서버에 보낼 값 Json 형태로 만들기
                     JSONObject requestJsonObject = new JSONObject();
@@ -76,10 +76,12 @@ public class LoginActivity extends AppCompatActivity {
 
                         @Override
                         public void onResponse(JSONObject response) {
-                            JSONArray J_JsonArray = new JSONArray();
                             try {
-                                J_JsonArray = response.getJSONArray("results");
-                                JSONObject dataObj = J_JsonArray.getJSONObject(0);
+                                String result = response.getString("code"); // 응답 메시지 가져오기
+
+                                // 응답 메시지에 따른 처리
+                                if(result.equals("200"))
+                                    Toast.makeText(getApplicationContext(),"회원가입이 완료되었습니다", Toast.LENGTH_SHORT).show();
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
