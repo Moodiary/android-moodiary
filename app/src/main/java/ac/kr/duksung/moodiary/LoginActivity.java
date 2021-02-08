@@ -21,7 +21,6 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -44,7 +43,7 @@ public class LoginActivity extends AppCompatActivity {
 
         et_id = findViewById(R.id.et_id);
         et_password = findViewById(R.id.et_password);
-        btn_login = findViewById(R.id.btn_login);
+        btn_login = findViewById(R.id.btn_findpw);
         tv_find_id = findViewById(R.id.tv_find_id);
         tv_find_password = findViewById(R.id.tv_find_password);
         tv_signup = findViewById(R.id.tv_signup);

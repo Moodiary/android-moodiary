@@ -17,7 +17,6 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -48,7 +47,7 @@ public class SignupActivity extends AppCompatActivity {
         et_email = findViewById(R.id.et_email);
         et_password = findViewById(R.id.et_password);
         et_identify_password = findViewById(R.id.et_identify_password);
-        btn_login = findViewById(R.id.btn_login);
+        btn_login = findViewById(R.id.btn_findpw);
 
         // 확인 버튼 클릭시
         btn_login.setOnClickListener(new View.OnClickListener() {
