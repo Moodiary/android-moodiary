@@ -39,7 +39,7 @@ public class FindIdActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true); //back버튼
 
         et_email = findViewById(R.id.et_email);
-        btn_login = findViewById(R.id.btn_login);
+        btn_login = findViewById(R.id.btn_findid);
 
         // 확인 버튼 클릭시
         btn_login.setOnClickListener(new View.OnClickListener() {
