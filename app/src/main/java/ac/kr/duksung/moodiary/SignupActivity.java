@@ -17,7 +17,6 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -48,7 +47,7 @@ public class SignupActivity extends AppCompatActivity {
         et_email = findViewById(R.id.et_email);
         et_password = findViewById(R.id.et_password);
         et_identify_password = findViewById(R.id.et_identify_password);
-        btn_login = findViewById(R.id.btn_login);
+        btn_login = findViewById(R.id.btn_findpw);
 
         // 확인 버튼 클릭시
         btn_login.setOnClickListener(new View.OnClickListener() {
@@ -109,7 +108,7 @@ public class SignupActivity extends AppCompatActivity {
 
                     // 응답 메시지에 따른 처리
                     if(result.equals("400"))
-                        Toast.makeText(getApplicationContext(),"에러 발생했습니다", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(),"에러가 발생했습니다", Toast.LENGTH_SHORT).show();
                     if(result.equals("204"))
                         Toast.makeText(getApplicationContext(),"아이디가 중복입니다", Toast.LENGTH_SHORT).show();
                     if(result.equals("203"))
