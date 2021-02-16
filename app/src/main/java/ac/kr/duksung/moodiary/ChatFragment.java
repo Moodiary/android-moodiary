@@ -61,5 +61,6 @@ public class ChatFragment extends Fragment {
     private void initData(){
         chatList = new ArrayList<>();
         chatList.add(new ChatItem(0,"오늘 하루는 어떠셨나요?"));
+        chatList.add(new ChatItem(2, "조명", "사운드", "둘 다", "선택 안함"));
     }
 }

@@ -48,10 +48,10 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         } else if(viewHolder instanceof UserViewHolder){
             ((UserViewHolder)viewHolder).tv_user.setText(chatList.get(position).getContent());
         } else if(viewHolder instanceof ButtonViewHolder) {
-            ((ButtonViewHolder) viewHolder).button1.setText(chatList.get(position).getContent());
-            ((ButtonViewHolder) viewHolder).button2.setText(chatList.get(position).getContent());
-            ((ButtonViewHolder) viewHolder).button3.setText(chatList.get(position).getContent());
-            ((ButtonViewHolder) viewHolder).button4.setText(chatList.get(position).getContent());
+            ((ButtonViewHolder) viewHolder).button1.setText(chatList.get(position).getBtn_text1());
+            ((ButtonViewHolder) viewHolder).button2.setText(chatList.get(position).getBtn_text2());
+            ((ButtonViewHolder) viewHolder).button3.setText(chatList.get(position).getBtn_text3());
+            ((ButtonViewHolder) viewHolder).button4.setText(chatList.get(position).getBtn_text4());
         }
 
     }
@@ -91,10 +91,10 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     // 버튼 뷰 홀더
     public class ButtonViewHolder extends RecyclerView.ViewHolder{
-        Button button1;
-        Button button2;
-        Button button3;
-        Button button4;
+        TextView button1;
+        TextView button2;
+        TextView button3;
+        TextView button4;
 
         public ButtonViewHolder(@NonNull View itemView) {
             super(itemView);
