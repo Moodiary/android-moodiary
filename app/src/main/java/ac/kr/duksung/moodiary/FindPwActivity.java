@@ -66,7 +66,7 @@ public class FindPwActivity extends AppCompatActivity {
                     RequestQueue requestQueue = Volley.newRequestQueue(FindPwActivity.this);
 
                     // 3. node 서버 IP와 받을 경로 수정 (http://192.168.99.83:3000/post)  하고,
-                    JsonObjectRequest R_Object = new JsonObjectRequest(Request.Method.POST, "http://192.168.99.83:3000/user/findpw", requestJsonObject, new Response.Listener<JSONObject>() {
+                    JsonObjectRequest R_Object = new JsonObjectRequest(Request.Method.POST, "http://192.168.99.84:3000/user/findpw", requestJsonObject, new Response.Listener<JSONObject>() {
 
                         @Override
                         public void onResponse(JSONObject response) {
@@ -75,8 +75,7 @@ public class FindPwActivity extends AppCompatActivity {
 
                                 // 응답 메시지에 따른 처리
                                 if(result.equals("200")) {
-                                    Toast.makeText(getApplicationContext(), "환영합니다!", Toast.LENGTH_SHORT).show();
-                                    startActivity(new Intent(FindPwActivity.this, LoginActivity.class)); // 로그인 화면으로 이동
+                                    Toast.makeText(getApplicationContext(), "메일이 전송되었습니다", Toast.LENGTH_SHORT).show();
                                 }
                                 if(result.equals("204"))
                                     Toast.makeText(getApplicationContext(), "등록된 아이디가 없습니다.", Toast.LENGTH_SHORT).show();

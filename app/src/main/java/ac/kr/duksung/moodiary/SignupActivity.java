@@ -108,7 +108,7 @@ public class SignupActivity extends AppCompatActivity {
 
                     // 응답 메시지에 따른 처리
                     if(result.equals("400"))
-                        Toast.makeText(getApplicationContext(),"에러 발생했습니다", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(),"에러가 발생했습니다", Toast.LENGTH_SHORT).show();
                     if(result.equals("204"))
                         Toast.makeText(getApplicationContext(),"아이디가 중복입니다", Toast.LENGTH_SHORT).show();
                     if(result.equals("203"))

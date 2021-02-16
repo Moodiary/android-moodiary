@@ -2,8 +2,10 @@ package ac.kr.duksung.moodiary;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkCapabilities;
 import android.net.NetworkInfo;
@@ -41,8 +43,17 @@ public class SplashActivity extends AppCompatActivity {
     // 스플래시 화면에서 3초 후 동작하는 부분
     private class splashhandler implements Runnable{
         public void run(){
-            startActivity(new Intent(SplashActivity.this, LoginActivity.class)); // 스플래시 화면에서 로그인화면으로 이동
-            finish();
+            SharedPreferences auto = getSharedPreferences("autoLogin", Activity.MODE_PRIVATE); // 자동로그인 데이터 저장되어있는 곳
+            String loginId = auto.getString("ID",null); // 저장된 아이디 값, 없으면 null
+            String loginPw = auto.getString("PW",null); // 저장된 비밀번호 값, 없으면 null
+
+            if(loginId == null && loginPw == null) { // 자동로그인 데이터가 없는 경우
+                startActivity(new Intent(SplashActivity.this, LoginActivity.class)); // 스플래시 화면에서 로그인화면으로 이동
+                finish();
+            } else if (loginId != null && loginPw != null) { // 자동로그인 데이터가 있는 경우
+                startActivity(new Intent(SplashActivity.this, MainActivity.class)); // 스플래시 화면에서 메인화면으로 이동
+                finish();
+            }
         }
     }
 }
