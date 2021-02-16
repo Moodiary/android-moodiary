@@ -46,10 +46,15 @@ public class ChatFragment extends Fragment {
                     chatList.add(new ChatItem(1, message)); // 사용자가 입력한 메시지를 챗봇 메세지 리스트에 추가
                     chatList.add(new ChatItem(0, "당신의 감정은 ~~~~ 하군요"));
                     chatList.add(new ChatItem(0, "당신의 감정에 도움이 되는 컬러테라피와 음악을 제공해드릴게요"));
+                    chatList.add(new ChatItem(2, "조명", "사운드", "둘 다", "선택 안함"));
                     adapter.notifyDataSetChanged(); // 챗봇 메세지 리스트 갱신
                     et_input.setText(""); // 메세지 입력창 초기화
                     sequence++; // 다음 단계로 이동할 수 있도록 변수값 변경
                     et_input.setEnabled(false);
+
+                    chatList.add(new ChatItem(0, "타이머를 설정해주세요"));
+                    chatList.add(new ChatItem(2, "15분", "30분", "1시간", "직접 입력"));
+
                 }
             }
         });
@@ -61,6 +66,5 @@ public class ChatFragment extends Fragment {
     private void initData(){
         chatList = new ArrayList<>();
         chatList.add(new ChatItem(0,"오늘 하루는 어떠셨나요?"));
-        chatList.add(new ChatItem(2, "조명", "사운드", "둘 다", "선택 안함"));
     }
 }
