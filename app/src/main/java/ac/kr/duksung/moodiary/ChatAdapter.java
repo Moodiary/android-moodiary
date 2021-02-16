@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -90,7 +91,7 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     }
 
     // 버튼 뷰 홀더
-    public class ButtonViewHolder extends RecyclerView.ViewHolder{
+    public class ButtonViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         TextView button1;
         TextView button2;
         TextView button3;
@@ -102,7 +103,29 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             button2 = itemView.findViewById(R.id.button2);
             button3 = itemView.findViewById(R.id.button3);
             button4 = itemView.findViewById(R.id.button4);
+
+            button1.setOnClickListener(this);
+            button2.setOnClickListener(this);
+            button3.setOnClickListener(this);
+            button4.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View v) {
+            switch (v.getId()) {
+                case R.id.button1:
+                    Toast.makeText(v.getContext(),"1", Toast.LENGTH_SHORT).show();
+                    break;
+                case R.id.button2:
+                    Toast.makeText(v.getContext(), "2", Toast.LENGTH_SHORT).show();
+                    break;
+                case R.id.button3:
+                    Toast.makeText(v.getContext(), "3", Toast.LENGTH_SHORT).show();
+                    break;
+                case R.id.button4:
+                    Toast.makeText(v.getContext(), "4", Toast.LENGTH_SHORT).show();
+                    break;
+            }
         }
     }
-
 }
