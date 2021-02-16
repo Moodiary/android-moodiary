@@ -16,9 +16,11 @@ import java.util.ArrayList;
 public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private ArrayList<ChatItem> chatList = null;
+    ChatFragment fragment;
 
-    public ChatAdapter(ArrayList<ChatItem> chatList){
+    public ChatAdapter(ArrayList<ChatItem> chatList, ChatFragment fragment){
         this.chatList = chatList;
+        this.fragment = fragment;
     }
 
     @NonNull
@@ -108,22 +110,46 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             button2.setOnClickListener(this);
             button3.setOnClickListener(this);
             button4.setOnClickListener(this);
+
         }
 
         @Override
         public void onClick(View v) {
+            int pos = getAdapterPosition(); // 리스트에서 위치
+            int type = chatList.get(pos).getBtn_type(); // 버튼 뷰의 타입 값
+
             switch (v.getId()) {
                 case R.id.button1:
-                    Toast.makeText(v.getContext(),"1", Toast.LENGTH_SHORT).show();
+                    if(type == 1) {
+                        Toast.makeText(v.getContext(), "조명", Toast.LENGTH_SHORT).show();
+                        fragment.setTimer();
+                    }
+                    else if (type == 2)
+                        Toast.makeText(v.getContext(),"15분", Toast.LENGTH_SHORT).show();
                     break;
                 case R.id.button2:
-                    Toast.makeText(v.getContext(), "2", Toast.LENGTH_SHORT).show();
+                    if(type == 1) {
+                        Toast.makeText(v.getContext(), "사운드", Toast.LENGTH_SHORT).show();
+                        fragment.setTimer();
+                    }
+                    else if (type == 2)
+                        Toast.makeText(v.getContext(),"30분", Toast.LENGTH_SHORT).show();
                     break;
                 case R.id.button3:
-                    Toast.makeText(v.getContext(), "3", Toast.LENGTH_SHORT).show();
+                    if(type == 1) {
+                        Toast.makeText(v.getContext(), "둘 다", Toast.LENGTH_SHORT).show();
+                        fragment.setTimer();
+                    }
+                    else if (type == 2)
+                        Toast.makeText(v.getContext(),"1시간", Toast.LENGTH_SHORT).show();
                     break;
                 case R.id.button4:
-                    Toast.makeText(v.getContext(), "4", Toast.LENGTH_SHORT).show();
+                    if(type == 1)
+                        Toast.makeText(v.getContext(),"선택 안함", Toast.LENGTH_SHORT).show();
+                    else if (type == 2) {
+                        Toast.makeText(v.getContext(), "직접 입력", Toast.LENGTH_SHORT).show();
+                        fragment.et_input.setEnabled(true);
+                    }
                     break;
             }
         }
