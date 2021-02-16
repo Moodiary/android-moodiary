@@ -8,7 +8,7 @@
     android:backgroundTint="#FFFFFF"
     android:foregroundTint="#FFFFFF">
 
-    <Button
+    <Textview
         android:id="@+id/button1"
         android:layout_width="180dp"
         android:layout_height="30dp"
@@ -22,7 +22,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:strokeColor="#FFFFFF" />
 
-    <Button
+    <Textview
         android:id="@+id/button2"
         android:layout_width="180dp"
         android:layout_height="30dp"
@@ -35,7 +35,7 @@
         app:layout_constraintStart_toStartOf="@+id/button1"
         app:layout_constraintTop_toBottomOf="@+id/button1" />
 
-    <Button
+    <Textview
         android:id="@+id/button3"
         android:layout_width="180dp"
         android:layout_height="30dp"
@@ -47,7 +47,7 @@
         app:layout_constraintStart_toStartOf="@+id/button2"
         app:layout_constraintTop_toBottomOf="@+id/button2" />
 
-    <Button
+    <Textview
         android:id="@+id/button4"
         android:layout_width="180dp"
         android:layout_height="30dp"
