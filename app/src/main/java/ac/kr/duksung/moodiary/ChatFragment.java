@@ -34,7 +34,6 @@ public class ChatFragment extends Fragment {
         ChatAdapter adapter = new ChatAdapter((chatList)); // 챗봇 어댑터
         rv_chat.setLayoutManager(manager); // 리사이클러뷰와 레이아웃 매니저 연결
         rv_chat.setAdapter(adapter); // 리사이클러뷰와 어댑터 연결
-
         et_input = view.findViewById(R.id.et_input);
         btn_push = view.findViewById(R.id.btn_push);
 
