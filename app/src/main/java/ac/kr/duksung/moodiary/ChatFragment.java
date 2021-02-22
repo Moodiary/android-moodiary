@@ -59,7 +59,7 @@ public class ChatFragment extends Fragment {
                     et_input.setText(""); // 메세지 입력창 초기화
                     sequence++; // 다음 단계로 이동할 수 있도록 변수값 변경
                     et_input.setEnabled(false); // 메세지 입력창 사용 금지
-                } else if (sequence == 3) { // 타이머 설정 단계일 경우
+                } else if (sequence == 2) { // 타이머 설정 단계일 경우
                     String message = et_input.getText().toString(); // 사용자가 입력한 메세지 가져옴
                     chatList.add(new ChatItem(1, message)); // 사용자가 입력한 메시지를 챗봇 메세지 리스트에 추가
                 }
@@ -76,9 +76,9 @@ public class ChatFragment extends Fragment {
 
     // 타이머 설정하는 메소드
     public void setTimer() {
-        sequence++; // 타이머 설정 단계로 이동할 수 있도록 변수값 변경
+        //sequence++; // 타이머 설정 단계로 이동할 수 있도록 변수값 변경
 
-        if(sequence == 3) { // 타이머 설정 단계일 경우
+        if(sequence == 2) { // 타이머 설정 단계일 경우
             chatList.add(new ChatItem(0, "타이머를 설정해주세요"));
             chatList.add(new ChatItem(2, "15분", "30분", "1시간", "직접 입력", 2));
             adapter.notifyDataSetChanged();
