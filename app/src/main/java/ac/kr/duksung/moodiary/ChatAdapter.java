@@ -1,6 +1,7 @@
 package ac.kr.duksung.moodiary;
 
 import android.content.Context;
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -121,33 +122,44 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             switch (v.getId()) {
                 case R.id.button1:
                     if(type == 1) {
-                        Toast.makeText(v.getContext(), "조명", Toast.LENGTH_SHORT).show();
+                        fragment.deleteButton();
+                        fragment.userClick("컬러테라피");
                         fragment.setTimer();
                     }
-                    else if (type == 2)
-                        Toast.makeText(v.getContext(),"15분", Toast.LENGTH_SHORT).show();
+                    else if (type == 2) {
+                        fragment.deleteButton();
+                        fragment.userClick("15분");
+                    }
                     break;
                 case R.id.button2:
                     if(type == 1) {
-                        Toast.makeText(v.getContext(), "사운드", Toast.LENGTH_SHORT).show();
+                        fragment.deleteButton();
+                        fragment.userClick("음악");
                         fragment.setTimer();
                     }
-                    else if (type == 2)
-                        Toast.makeText(v.getContext(),"30분", Toast.LENGTH_SHORT).show();
+                    else if (type == 2) {
+                        fragment.deleteButton();
+                        fragment.userClick("30분");
+                    }
                     break;
                 case R.id.button3:
                     if(type == 1) {
-                        Toast.makeText(v.getContext(), "둘 다", Toast.LENGTH_SHORT).show();
+                        fragment.deleteButton();
+                        fragment.userClick("둘 다");
                         fragment.setTimer();
                     }
-                    else if (type == 2)
-                        Toast.makeText(v.getContext(),"1시간", Toast.LENGTH_SHORT).show();
+                    else if (type == 2) {
+                        fragment.deleteButton();
+                        fragment.userClick("1시간");
+                    }
                     break;
                 case R.id.button4:
-                    if(type == 1)
-                        Toast.makeText(v.getContext(),"선택 안함", Toast.LENGTH_SHORT).show();
+                    if(type == 1) {
+                        fragment.deleteButton();
+                        fragment.userClick("선택 안함");
+                    }
                     else if (type == 2) {
-                        Toast.makeText(v.getContext(), "직접 입력", Toast.LENGTH_SHORT).show();
+                        fragment.deleteButton();
                         fragment.et_input.setEnabled(true);
                     }
                     break;
