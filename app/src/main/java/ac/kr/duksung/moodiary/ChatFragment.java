@@ -7,13 +7,17 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.os.CountDownTimer;
 import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 
@@ -39,6 +43,7 @@ public class ChatFragment extends Fragment {
         rv_chat.setAdapter(adapter); // 리사이클러뷰와 어댑터 연결
         et_input = view.findViewById(R.id.et_input);
         btn_push = view.findViewById(R.id.btn_push);
+        TextView tv_timer = view.findViewById(R.id.tv_timer);
 
         // 전송 버튼 클릭시
         btn_push.setOnClickListener(new View.OnClickListener() {
@@ -95,5 +100,10 @@ public class ChatFragment extends Fragment {
                 adapter.notifyDataSetChanged(); // 챗봇 메세지 리스트 갱신
             } }, 600); // 0.6초 딜레이 후 함수 실행
         }
+    }
+
+    // 타이머 실행 메소드
+    public void startTimer() {
+        chatList.add(new ChatItem(3));
     }
 }
