@@ -1,5 +1,7 @@
 package ac.kr.duksung.moodiary;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 
 import androidx.constraintlayout.solver.ArrayLinkedVariables;
@@ -9,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.CountDownTimer;
 import android.os.Handler;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -64,12 +67,6 @@ public class ChatFragment extends Fragment {
                     et_input.setText(""); // 메세지 입력창 초기화
                     sequence++; // 다음 단계로 이동할 수 있도록 변수값 변경
                     et_input.setEnabled(false); // 메세지 입력창 사용 금지
-                } else if (sequence == 2) { // 타이머 설정 단계일 경우
-                    String message = et_input.getText().toString(); // 사용자가 입력한 메세지 가져옴
-                    chatList.add(new ChatItem(1, message)); // 사용자가 입력한 메시지를 챗봇 메세지 리스트에 추가
-                    et_input.setText(""); // 메세지 입력창 빈 상태로 바꿈
-                    et_input.setEnabled(false); // 메세지 입력창 비활성화
-                    startTimer(70*60*1000);
                 }
             }
         });
@@ -106,6 +103,48 @@ public class ChatFragment extends Fragment {
         }
     }
 
+    // 타이머 팝업창 메소드
+    public void showAlert() {
+        AlertDialog.Builder time_dialog = new AlertDialog.Builder(getActivity());
+
+        time_dialog.setTitle("시간 직접 입력");
+        time_dialog.setMessage("시간을 입력해주세요.");
+
+        // 뷰와 다이얼로그 연결
+        LayoutInflater inflater = getLayoutInflater();
+        View timeView = inflater.inflate(R.layout.time_dialog, null);
+        time_dialog.setView(timeView);
+
+        EditText time_hour = timeView.findViewById(R.id.et_hour);
+        EditText time_min = timeView.findViewById(R.id.et_minute);
+
+        // 확인 버튼 설정
+        time_dialog.setPositiveButton("확인", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String value_hour = time_hour.getText().toString();
+                String value_min = time_min.getText().toString();
+                chatList.add(new ChatItem(1, value_hour + "시간 " + value_min + "분"));
+                dialog.dismiss();     //닫기
+
+                Long hour = Long.parseLong(value_hour);
+                Long minute = Long.parseLong(value_min);
+                startTimer((hour*60 + minute)*60*1000);
+            }
+        });
+
+        // 취소 버튼 설정
+        time_dialog.setNegativeButton("취소", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();     //닫기
+            }
+        });
+
+        // 창 띄우기
+        time_dialog.show();
+    }
+
     // 타이머 실행 메소드
     public void startTimer(long time) {
         Handler mHandler = new Handler();
@@ -114,4 +153,5 @@ public class ChatFragment extends Fragment {
             adapter.notifyDataSetChanged(); // 챗봇 메세지 리스트 갱신
         } }, 600); // 0.6초 딜레이 후 함수 실행
     }
+
 }

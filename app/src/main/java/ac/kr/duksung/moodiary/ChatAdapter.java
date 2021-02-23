@@ -187,7 +187,7 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                     }
                     else if (type == 2) {
                         fragment.deleteButton();
-                        fragment.et_input.setEnabled(true); // 메세지 입력창 활성화
+                        fragment.showAlert();
                     }
                     break;
             }
