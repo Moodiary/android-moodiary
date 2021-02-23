@@ -1,5 +1,7 @@
 package ac.kr.duksung.moodiary;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 
 import androidx.constraintlayout.solver.ArrayLinkedVariables;
@@ -9,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.CountDownTimer;
 import android.os.Handler;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -65,8 +68,9 @@ public class ChatFragment extends Fragment {
                     sequence++; // 다음 단계로 이동할 수 있도록 변수값 변경
                     et_input.setEnabled(false); // 메세지 입력창 사용 금지
                 } else if (sequence == 2) { // 타이머 설정 단계일 경우
-                    String message = et_input.getText().toString(); // 사용자가 입력한 메세지 가져옴
-                    chatList.add(new ChatItem(1, message)); // 사용자가 입력한 메시지를 챗봇 메세지 리스트에 추가
+                    showAlert();
+                    //String message = et_input.getText().toString(); // 사용자가 입력한 메세지 가져옴
+                    //chatList.add(new ChatItem(1, message)); // 사용자가 입력한 메시지를 챗봇 메세지 리스트에 추가
                 }
             }
         });
@@ -106,4 +110,43 @@ public class ChatFragment extends Fragment {
     public void startTimer() {
         chatList.add(new ChatItem(3));
     }
+
+
+    //팝업창 메소드
+    private void showAlert() {
+        AlertDialog.Builder time_dialog = new AlertDialog.Builder(getContext());
+
+        time_dialog.setTitle("시간 직접 입력");
+        time_dialog.setMessage("시간을 입력해주세요.");
+        //edittext 삽입
+        EditText time_hour = new EditText(getContext());
+        EditText time_min = new EditText(getContext());
+        time_dialog.setView(time_hour);
+        time_dialog.setView('시');
+        time_dialog.setView(time_min);
+        time_dialog.setView('분');
+
+        // 확인 버튼 설정
+        time_dialog.setPositiveButton("확인", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String value_hour = time_hour.getText().toString();
+                String value_min = time_min.getText().toString();
+                dialog.dismiss();     //닫기
+                chatList.add(new ChatItem(1, value_hour + "시간" + value_min + "분"));
+            }
+        });
+
+        // 취소 버튼 설정
+        time_dialog.setNegativeButton("취소", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();     //닫기
+            }
+        });
+        // 창 띄우기
+
+        time_dialog.show();
+    }
+
 }
