@@ -4,6 +4,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Patterns;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -19,6 +22,8 @@ import com.android.volley.toolbox.Volley;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.regex.Pattern;
 
 // 화면 설명 : 회원가입 화면
 // Author : Soohyun, Last Modified : 2021.01.20
@@ -49,6 +54,8 @@ public class SignupActivity extends AppCompatActivity {
         et_identify_password = findViewById(R.id.et_identify_password);
         btn_login = findViewById(R.id.btn_findpw);
 
+        Pattern emailPattern = Patterns.EMAIL_ADDRESS; // 이메일 검증 패턴
+
         // 확인 버튼 클릭시
         btn_login.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -67,6 +74,8 @@ public class SignupActivity extends AppCompatActivity {
                     et_id.setError("아이디를 입력하세요");
                 if(email.equals(""))
                     et_email.setError("이메일을 입력하세요");
+                if(!emailPattern.matcher(email).matches())
+                    et_email.setError("이메일 형식이 아닙니다");
                 if(password.equals(""))
                     et_password.setError("비밀번호를 입력하세요");
                 if(identify_password.equals(""))

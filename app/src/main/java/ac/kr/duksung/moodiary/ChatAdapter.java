@@ -1,6 +1,7 @@
 package ac.kr.duksung.moodiary;
 
 import android.content.Context;
+import android.os.CountDownTimer;
 import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,6 +19,7 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private ArrayList<ChatItem> chatList = null;
     ChatFragment fragment;
+    CountDownTimer countDownTimer; // 남은 시간 알려주는 타이머
 
     public ChatAdapter(ArrayList<ChatItem> chatList, ChatFragment fragment){
         this.chatList = chatList;
@@ -40,7 +42,10 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         } else if(type == 2) { // 버튼 뷰일 경우
             view = inflater.inflate(R.layout.chat_item_button, parent, false);
             return new ButtonViewHolder(view);
-        }else
+        } else if(type == 3) { // 타이머 뷰일 경우
+            view = inflater.inflate(R.layout.chat_item_timer, parent, false);
+            return new TimerViewHolder(view);
+        } else
             return null;
     }
 
@@ -56,8 +61,27 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             ((ButtonViewHolder) viewHolder).button2.setText(chatList.get(position).getBtn_text2());
             ((ButtonViewHolder) viewHolder).button3.setText(chatList.get(position).getBtn_text3());
             ((ButtonViewHolder) viewHolder).button4.setText(chatList.get(position).getBtn_text4());
-        }
+        } else if (viewHolder instanceof TimerViewHolder) {
+            long time = chatList.get(position).getTime(); // 설정된 타이머 값
 
+            // 타이머 생성
+            countDownTimer = new CountDownTimer(time,1000) {
+                @Override
+                public void onTick(long millisUntilFinished) {
+                    long seconds = millisUntilFinished / 1000;
+                    long minutes = seconds / 60;
+                    long hours = minutes / 60;
+                    String time = hours % 24 + ":" + minutes % 60 + ":" + seconds % 60;
+                    ((TimerViewHolder) viewHolder).tv_timer.setText(time);
+                }
+
+                @Override
+                public void onFinish() {
+                    ((TimerViewHolder) viewHolder).tv_timer.setText("종료");
+                }
+            };
+            countDownTimer.start(); // 타이머 시작
+        }
     }
 
     // 리사이클러뷰 안의 전체 데이터 개수 리턴
@@ -129,6 +153,7 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                     else if (type == 2) {
                         fragment.deleteButton();
                         fragment.userClick("15분");
+                        fragment.startTimer(15*60*1000);
                     }
                     break;
                 case R.id.button2:
@@ -140,6 +165,7 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                     else if (type == 2) {
                         fragment.deleteButton();
                         fragment.userClick("30분");
+                        fragment.startTimer(30*60*1000);
                     }
                     break;
                 case R.id.button3:
@@ -151,6 +177,7 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                     else if (type == 2) {
                         fragment.deleteButton();
                         fragment.userClick("1시간");
+                        fragment.startTimer(60*60*1000);
                     }
                     break;
                 case R.id.button4:
@@ -160,10 +187,36 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                     }
                     else if (type == 2) {
                         fragment.deleteButton();
-                        fragment.et_input.setEnabled(true);
+                        fragment.showAlert();
                     }
                     break;
             }
         }
+    }
+
+    // 타이머 뷰 홀더
+    public class TimerViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+        TextView tv_timer;
+        Button btn_finish;
+
+        public TimerViewHolder(@NonNull View itemView) {
+            super(itemView);
+            tv_timer = itemView.findViewById(R.id.tv_timer);
+            btn_finish = itemView.findViewById(R.id.btn_finish);
+
+            btn_finish.setOnClickListener(this);
+
+        }
+
+        @Override
+        public void onClick(View v) {
+            switch (v.getId()) {
+                case R.id.btn_finish:
+                    countDownTimer.cancel(); // 타이머 종료
+                    tv_timer.setText("종료");
+                    break;
+            }
+        }
+
     }
 }
