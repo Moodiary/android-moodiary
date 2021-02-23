@@ -1,6 +1,8 @@
 package ac.kr.duksung.moodiary;
 
 import android.content.Context;
+import android.os.CountDownTimer;
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +19,7 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private ArrayList<ChatItem> chatList = null;
     ChatFragment fragment;
+    CountDownTimer countDownTimer;
 
     public ChatAdapter(ArrayList<ChatItem> chatList, ChatFragment fragment){
         this.chatList = chatList;
@@ -39,7 +42,10 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         } else if(type == 2) { // 버튼 뷰일 경우
             view = inflater.inflate(R.layout.chat_item_button, parent, false);
             return new ButtonViewHolder(view);
-        }else
+        } else if(type == 3) { // 타이머 뷰일 경우
+            view = inflater.inflate(R.layout.chat_item_timer, parent, false);
+            return new TimerViewHolder(view);
+        } else
             return null;
     }
 
@@ -55,8 +61,24 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             ((ButtonViewHolder) viewHolder).button2.setText(chatList.get(position).getBtn_text2());
             ((ButtonViewHolder) viewHolder).button3.setText(chatList.get(position).getBtn_text3());
             ((ButtonViewHolder) viewHolder).button4.setText(chatList.get(position).getBtn_text4());
-        }
+        } else if (viewHolder instanceof TimerViewHolder) {
+            countDownTimer = new CountDownTimer(50000,1000) {
+                @Override
+                public void onTick(long millisUntilFinished) {
+                    long seconds = millisUntilFinished / 1000;
+                    long minutes = seconds / 60;
+                    long hours = minutes / 60;
+                    String time = hours % 24 + ":" + minutes % 60 + ":" + seconds % 60;
+                    ((TimerViewHolder) viewHolder).tv_timer.setText(time);
+                }
 
+                @Override
+                public void onFinish() {
+                    ((TimerViewHolder) viewHolder).tv_timer.setText("종료");
+                }
+            };
+            countDownTimer.start();
+        }
     }
 
     // 리사이클러뷰 안의 전체 데이터 개수 리턴
@@ -121,37 +143,78 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             switch (v.getId()) {
                 case R.id.button1:
                     if(type == 1) {
-                        Toast.makeText(v.getContext(), "조명", Toast.LENGTH_SHORT).show();
+                        fragment.deleteButton();
+                        fragment.userClick("컬러테라피");
                         fragment.setTimer();
                     }
-                    else if (type == 2)
-                        Toast.makeText(v.getContext(),"15분", Toast.LENGTH_SHORT).show();
+                    else if (type == 2) {
+                        fragment.deleteButton();
+                        fragment.userClick("15분");
+                        fragment.startTimer();
+                    }
                     break;
                 case R.id.button2:
                     if(type == 1) {
-                        Toast.makeText(v.getContext(), "사운드", Toast.LENGTH_SHORT).show();
+                        fragment.deleteButton();
+                        fragment.userClick("음악");
                         fragment.setTimer();
                     }
-                    else if (type == 2)
-                        Toast.makeText(v.getContext(),"30분", Toast.LENGTH_SHORT).show();
+                    else if (type == 2) {
+                        fragment.deleteButton();
+                        fragment.userClick("30분");
+                        fragment.startTimer();
+                    }
                     break;
                 case R.id.button3:
                     if(type == 1) {
-                        Toast.makeText(v.getContext(), "둘 다", Toast.LENGTH_SHORT).show();
+                        fragment.deleteButton();
+                        fragment.userClick("둘 다");
                         fragment.setTimer();
                     }
-                    else if (type == 2)
-                        Toast.makeText(v.getContext(),"1시간", Toast.LENGTH_SHORT).show();
+                    else if (type == 2) {
+                        fragment.deleteButton();
+                        fragment.userClick("1시간");
+                        fragment.startTimer();
+                    }
                     break;
                 case R.id.button4:
-                    if(type == 1)
-                        Toast.makeText(v.getContext(),"선택 안함", Toast.LENGTH_SHORT).show();
+                    if(type == 1) {
+                        fragment.deleteButton();
+                        fragment.userClick("선택 안함");
+                    }
                     else if (type == 2) {
-                        Toast.makeText(v.getContext(), "직접 입력", Toast.LENGTH_SHORT).show();
+                        fragment.deleteButton();
                         fragment.et_input.setEnabled(true);
+                        fragment.startTimer();
                     }
                     break;
             }
         }
+    }
+
+    // 타이머 뷰 홀더
+    public class TimerViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+        TextView tv_timer;
+        Button btn_finish;
+
+        public TimerViewHolder(@NonNull View itemView) {
+            super(itemView);
+            tv_timer = itemView.findViewById(R.id.tv_timer);
+            btn_finish = itemView.findViewById(R.id.btn_finish);
+
+            btn_finish.setOnClickListener(this);
+
+        }
+
+        @Override
+        public void onClick(View v) {
+            switch (v.getId()) {
+                case R.id.btn_finish:
+                    countDownTimer.cancel();
+                    tv_timer.setText("종료");
+                    break;
+            }
+        }
+
     }
 }

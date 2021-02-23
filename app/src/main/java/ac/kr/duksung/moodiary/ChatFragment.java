@@ -7,13 +7,17 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.os.CountDownTimer;
 import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 
@@ -21,7 +25,7 @@ import java.util.ArrayList;
 // Author : Soohyun, Last Modified : 2021.02.15
 public class ChatFragment extends Fragment {
     public int sequence = 1; // 챗봇의 단계 처리를 위한 변수
-    private ArrayList<ChatItem> chatList; // 챗봇 메세지 리스트
+    public ArrayList<ChatItem> chatList; // 챗봇 메세지 리스트
     ChatAdapter adapter;
     EditText et_input; // 메세지 입력창
     Button btn_push; // 전송 버튼
@@ -39,6 +43,7 @@ public class ChatFragment extends Fragment {
         rv_chat.setAdapter(adapter); // 리사이클러뷰와 어댑터 연결
         et_input = view.findViewById(R.id.et_input);
         btn_push = view.findViewById(R.id.btn_push);
+        TextView tv_timer = view.findViewById(R.id.tv_timer);
 
         // 전송 버튼 클릭시
         btn_push.setOnClickListener(new View.OnClickListener() {
@@ -59,7 +64,7 @@ public class ChatFragment extends Fragment {
                     et_input.setText(""); // 메세지 입력창 초기화
                     sequence++; // 다음 단계로 이동할 수 있도록 변수값 변경
                     et_input.setEnabled(false); // 메세지 입력창 사용 금지
-                } else if (sequence == 3) { // 타이머 설정 단계일 경우
+                } else if (sequence == 2) { // 타이머 설정 단계일 경우
                     String message = et_input.getText().toString(); // 사용자가 입력한 메세지 가져옴
                     chatList.add(new ChatItem(1, message)); // 사용자가 입력한 메시지를 챗봇 메세지 리스트에 추가
                 }
@@ -74,14 +79,31 @@ public class ChatFragment extends Fragment {
         chatList.add(new ChatItem(0,"오늘 하루는 어떠셨나요?"));
     }
 
+    // 버튼 뷰 삭제
+    public void deleteButton() {
+        chatList.remove(chatList.size()-1);
+    }
+
+    // 사용자가 버튼 클릭시 -> 선택된 버튼에 따라 텍스트 생성
+    public void userClick(String text) {
+        chatList.add(new ChatItem(1, text));
+        adapter.notifyDataSetChanged();
+    }
+
     // 타이머 설정하는 메소드
     public void setTimer() {
-        sequence++; // 타이머 설정 단계로 이동할 수 있도록 변수값 변경
-
-        if(sequence == 3) { // 타이머 설정 단계일 경우
-            chatList.add(new ChatItem(0, "타이머를 설정해주세요"));
-            chatList.add(new ChatItem(2, "15분", "30분", "1시간", "직접 입력", 2));
-            adapter.notifyDataSetChanged();
+        if(sequence == 2) { // 타이머 설정 단계일 경우
+            Handler mHandler = new Handler();
+            mHandler.postDelayed(new Runnable() { public void run() {
+                chatList.add(new ChatItem(0, "타이머를 설정해주세요"));
+                chatList.add(new ChatItem(2, "15분", "30분", "1시간", "직접 입력", 2));
+                adapter.notifyDataSetChanged(); // 챗봇 메세지 리스트 갱신
+            } }, 600); // 0.6초 딜레이 후 함수 실행
         }
+    }
+
+    // 타이머 실행 메소드
+    public void startTimer() {
+        chatList.add(new ChatItem(3));
     }
 }
