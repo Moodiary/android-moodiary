@@ -19,7 +19,7 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private ArrayList<ChatItem> chatList = null;
     ChatFragment fragment;
-    CountDownTimer countDownTimer;
+    CountDownTimer countDownTimer; // 남은 시간 알려주는 타이머
 
     public ChatAdapter(ArrayList<ChatItem> chatList, ChatFragment fragment){
         this.chatList = chatList;
@@ -62,7 +62,10 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             ((ButtonViewHolder) viewHolder).button3.setText(chatList.get(position).getBtn_text3());
             ((ButtonViewHolder) viewHolder).button4.setText(chatList.get(position).getBtn_text4());
         } else if (viewHolder instanceof TimerViewHolder) {
-            countDownTimer = new CountDownTimer(50000,1000) {
+            long time = chatList.get(position).getTime(); // 설정된 타이머 값
+
+            // 타이머 생성
+            countDownTimer = new CountDownTimer(time,1000) {
                 @Override
                 public void onTick(long millisUntilFinished) {
                     long seconds = millisUntilFinished / 1000;
@@ -77,7 +80,7 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                     ((TimerViewHolder) viewHolder).tv_timer.setText("종료");
                 }
             };
-            countDownTimer.start();
+            countDownTimer.start(); // 타이머 시작
         }
     }
 
@@ -150,7 +153,7 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                     else if (type == 2) {
                         fragment.deleteButton();
                         fragment.userClick("15분");
-                        fragment.startTimer();
+                        fragment.startTimer(15*60*1000);
                     }
                     break;
                 case R.id.button2:
@@ -162,7 +165,7 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                     else if (type == 2) {
                         fragment.deleteButton();
                         fragment.userClick("30분");
-                        fragment.startTimer();
+                        fragment.startTimer(30*60*1000);
                     }
                     break;
                 case R.id.button3:
@@ -174,7 +177,7 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                     else if (type == 2) {
                         fragment.deleteButton();
                         fragment.userClick("1시간");
-                        fragment.startTimer();
+                        fragment.startTimer(60*60*1000);
                     }
                     break;
                 case R.id.button4:
@@ -184,8 +187,7 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                     }
                     else if (type == 2) {
                         fragment.deleteButton();
-                        fragment.et_input.setEnabled(true);
-                        fragment.startTimer();
+                        fragment.et_input.setEnabled(true); // 메세지 입력창 활성화
                     }
                     break;
             }
@@ -210,7 +212,7 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         public void onClick(View v) {
             switch (v.getId()) {
                 case R.id.btn_finish:
-                    countDownTimer.cancel();
+                    countDownTimer.cancel(); // 타이머 종료
                     tv_timer.setText("종료");
                     break;
             }

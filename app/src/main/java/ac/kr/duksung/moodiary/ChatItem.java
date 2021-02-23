@@ -8,6 +8,7 @@ public class ChatItem {
     private String btn_text3; // 버튼 텍스트3
     private String btn_text4; // 버튼 텍스트4
     private int btn_type; // 버튼 뷰 타입 (null - 0, 조명/사운드 - 1, 타이머 - 2)
+    private long time; // 남은 시간
 
     public ChatItem(int type, String text1, String text2, String text3, String text4, int btn_type) {
         this.type = type;
@@ -29,7 +30,7 @@ public class ChatItem {
         this.btn_type = 0;
     }
 
-    public ChatItem(int type) {
+    public ChatItem(int type, long time) {
         this.type = type;
         this.content = null;
         this.btn_text1 = null;
@@ -37,6 +38,7 @@ public class ChatItem {
         this.btn_text3 = null;
         this.btn_text4 = null;
         this.btn_type = 0;
+        this.time = time;
     }
 
     public int getType() {
@@ -65,5 +67,9 @@ public class ChatItem {
 
     public int getBtn_type() {
         return btn_type;
+    }
+
+    public long getTime() {
+        return time;
     }
 }

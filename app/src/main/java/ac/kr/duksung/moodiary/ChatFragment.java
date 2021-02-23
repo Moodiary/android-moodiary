@@ -67,6 +67,9 @@ public class ChatFragment extends Fragment {
                 } else if (sequence == 2) { // 타이머 설정 단계일 경우
                     String message = et_input.getText().toString(); // 사용자가 입력한 메세지 가져옴
                     chatList.add(new ChatItem(1, message)); // 사용자가 입력한 메시지를 챗봇 메세지 리스트에 추가
+                    et_input.setText(""); // 메세지 입력창 빈 상태로 바꿈
+                    et_input.setEnabled(false); // 메세지 입력창 비활성화
+                    startTimer(70*60*1000);
                 }
             }
         });
@@ -82,6 +85,7 @@ public class ChatFragment extends Fragment {
     // 버튼 뷰 삭제
     public void deleteButton() {
         chatList.remove(chatList.size()-1);
+        adapter.notifyDataSetChanged();
     }
 
     // 사용자가 버튼 클릭시 -> 선택된 버튼에 따라 텍스트 생성
@@ -103,7 +107,11 @@ public class ChatFragment extends Fragment {
     }
 
     // 타이머 실행 메소드
-    public void startTimer() {
-        chatList.add(new ChatItem(3));
+    public void startTimer(long time) {
+        Handler mHandler = new Handler();
+        mHandler.postDelayed(new Runnable() { public void run() {
+            chatList.add(new ChatItem(3, time));
+            adapter.notifyDataSetChanged(); // 챗봇 메세지 리스트 갱신
+        } }, 600); // 0.6초 딜레이 후 함수 실행
     }
 }
