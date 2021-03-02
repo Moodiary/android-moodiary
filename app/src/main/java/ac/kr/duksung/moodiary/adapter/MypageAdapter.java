@@ -1,10 +1,15 @@
 package ac.kr.duksung.moodiary.adapter;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
+import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -15,6 +20,7 @@ import ac.kr.duksung.moodiary.domain.MypageItem;
 import ac.kr.duksung.moodiary.R;
 
 public class MypageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
+    Context context;
     private ArrayList<MypageItem> mypageList = null;
     private OnItemClickListener listener = null;
 
@@ -27,7 +33,8 @@ public class MypageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         this.listener = listener;
     }
 
-    public MypageAdapter(ArrayList<MypageItem> mypageList){
+    public MypageAdapter(Context context, ArrayList<MypageItem> mypageList){
+        this.context = context;
         this.mypageList = mypageList;
     }
 
@@ -55,6 +62,36 @@ public class MypageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             ((ListViewHolder)viewHolder).text.setText(mypageList.get(position).getText());
         } else if(viewHolder instanceof AlarmViewHolder){
             ((AlarmViewHolder)viewHolder).text.setText(mypageList.get(position).getText());
+
+            // 알림 설정 여부 값 가져오기
+            SharedPreferences auto = context.getSharedPreferences("autoLogin", Activity.MODE_PRIVATE); // 알림 설정 데이터가 저장되어있는 곳
+            String noti = auto.getString("Noti",null);
+
+            // 알림 설정 값에 따라 초기화
+            if(noti.equals("true")) { // 알림 설정 ON인 경우
+                ((AlarmViewHolder)viewHolder).noti.setChecked(true);
+            } else { // 알림 설정 OFF인 경우
+                ((AlarmViewHolder)viewHolder).noti.setChecked(false);
+            }
+
+            // 알림 설정 스위치 값 변경시
+            ((AlarmViewHolder) viewHolder).noti.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    if(isChecked) { // 알림 설정 ON인 경우
+                        SharedPreferences auto = context.getSharedPreferences("autoLogin", Activity.MODE_PRIVATE); // 알림 설정 데이터가 저장되어있는 곳
+                        SharedPreferences.Editor editor = auto.edit();
+                        editor.putString("Noti", "true").apply(); // 알림 설정 값 변경
+                        Toast.makeText(buttonView.getContext(),"알림 ON", Toast.LENGTH_SHORT).show();
+                    }
+                    else { // 알림 설정 OFF인 경우
+                        SharedPreferences auto = context.getSharedPreferences("autoLogin", Activity.MODE_PRIVATE); // 알림 설정 데이터가 저장되어있는 곳
+                        SharedPreferences.Editor editor = auto.edit();
+                        editor.putString("Noti", "false").apply(); // 알림 설정 값 변경
+                        Toast.makeText(buttonView.getContext(),"알림 OFF", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
         }
     }
 
@@ -96,10 +133,12 @@ public class MypageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     // 알림 설정 뷰 홀더
     public class AlarmViewHolder extends RecyclerView.ViewHolder{
         TextView text;
+        Switch noti;
 
         public AlarmViewHolder(@NonNull View itemView) {
             super(itemView);
             text = itemView.findViewById(R.id.mypage_switch);
+            noti = itemView.findViewById(R.id.mypage_notification);
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override

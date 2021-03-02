@@ -207,7 +207,6 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             btn_finish = itemView.findViewById(R.id.btn_finish);
 
             btn_finish.setOnClickListener(this);
-
         }
 
         @Override

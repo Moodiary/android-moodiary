@@ -88,6 +88,7 @@ public class LoginActivity extends AppCompatActivity {
                                     SharedPreferences.Editor editor = auto.edit();
                                     editor.putString("ID", user_id); // 아이디 값 저장
                                     editor.putString("PW", user_pw); // 비밀번호 값 저장
+                                    editor.putString("Noti", "false"); // 알림 설정 여부 저장
                                     editor.commit(); // 변경사항 저장
 
                                     Toast.makeText(getApplicationContext(), "환영합니다!", Toast.LENGTH_SHORT).show();

@@ -48,8 +48,7 @@ public class MypageFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_mypage, container, false);
 
         // 데이터 초기화
@@ -60,7 +59,7 @@ public class MypageFragment extends Fragment {
 
         rv_mypage = view.findViewById(R.id.rv_mypage);
         LinearLayoutManager manager = new LinearLayoutManager(getContext(), RecyclerView.VERTICAL,false); // 레이아웃 매니저
-        adapter = new MypageAdapter(mypageList);
+        adapter = new MypageAdapter(getContext(), mypageList);
         rv_mypage.setLayoutManager(manager); // 리사이클러뷰와 레이아웃 매니저 연결
         rv_mypage.setAdapter(adapter); // 리사이클러뷰와 어댑터 연결
 
@@ -70,7 +69,6 @@ public class MypageFragment extends Fragment {
             public void onItemClick(View v, int position) {
                 switch (position) {
                     case 0: // 알림 설정
-                        Toast.makeText(getContext(),"알림", Toast.LENGTH_SHORT).show();
                         break;
                     case 1: // 비밀번호 변경
                         Intent Change = new Intent(getActivity(), ChangePwActivity.class);
