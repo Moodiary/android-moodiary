@@ -1,4 +1,4 @@
-package ac.kr.duksung.moodiary;
+package ac.kr.duksung.moodiary.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -12,6 +12,8 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+
+import ac.kr.duksung.moodiary.R;
 
 
 // 화면 설명 : 마이페이지 안에 알림 설정 화면

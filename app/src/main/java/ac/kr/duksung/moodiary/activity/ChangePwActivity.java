@@ -1,7 +1,6 @@
-package ac.kr.duksung.moodiary;
+package ac.kr.duksung.moodiary.activity;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.MenuItem;
@@ -22,6 +21,8 @@ import com.android.volley.toolbox.Volley;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import ac.kr.duksung.moodiary.R;
 
 
 // 화면 설명 : 마이페이지 안에 비밀번호 변경 화면

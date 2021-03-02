@@ -1,28 +1,26 @@
-package ac.kr.duksung.moodiary;
+package ac.kr.duksung.moodiary.fragment;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 
-import androidx.constraintlayout.solver.ArrayLinkedVariables;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.os.CountDownTimer;
 import android.os.Handler;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
+
+import ac.kr.duksung.moodiary.R;
+import ac.kr.duksung.moodiary.adapter.ChatAdapter;
+import ac.kr.duksung.moodiary.domain.ChatItem;
 
 // 화면 설명 : 메인화면의 챗봇 화면
 // Author : Soohyun, Last Modified : 2021.02.15

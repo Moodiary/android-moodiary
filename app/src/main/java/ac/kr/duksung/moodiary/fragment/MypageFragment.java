@@ -1,4 +1,4 @@
-package ac.kr.duksung.moodiary;
+package ac.kr.duksung.moodiary.fragment;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -8,13 +8,12 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -27,13 +26,21 @@ import com.android.volley.toolbox.Volley;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+
+import ac.kr.duksung.moodiary.R;
+import ac.kr.duksung.moodiary.activity.ChangePwActivity;
+import ac.kr.duksung.moodiary.activity.LoginActivity;
+import ac.kr.duksung.moodiary.adapter.MypageAdapter;
+import ac.kr.duksung.moodiary.domain.MypageItem;
+
 // 화면 설명 : 메인화면의 마이페이지 화면
-// Author : Soohyun, Last Modified : 2021.02.08
+// Author : Soohyun, Last Modified : 2021.03.02
 // Author : Seungyeon, Last Modified : 2021.01.26(리스트 클릭시 액티비티 연결)
 public class MypageFragment extends Fragment {
-    String[] mypage_list = {"알림 설정", "비밀번호 변경", "로그아웃", "회원 탈퇴"};
-    ListView lv_mypage;
-    ArrayAdapter<String> adapter;
+    ArrayList<MypageItem> mypageList = new ArrayList<>(); // 마이페이지 메세지 리스트
+    RecyclerView rv_mypage; // 마이페이지 리사이클러뷰
+    MypageAdapter adapter; // 마이페이지 어댑터
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -44,21 +51,30 @@ public class MypageFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_mypage, container, false);
-        lv_mypage = view.findViewById(R.id.lv_mypage);
-        adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, mypage_list);
-        lv_mypage.setAdapter(adapter);
 
-        lv_mypage.setOnItemClickListener(new AdapterView.OnItemClickListener() {    //리스트에 액티비티 연결
+        // 데이터 초기화
+        mypageList.add(new MypageItem(1, "알림 설정"));
+        mypageList.add(new MypageItem(0, "비밀번호 변경"));
+        mypageList.add(new MypageItem(0, "로그아웃"));
+        mypageList.add(new MypageItem(0, "회원 탈퇴"));
+
+        rv_mypage = view.findViewById(R.id.rv_mypage);
+        LinearLayoutManager manager = new LinearLayoutManager(getContext(), RecyclerView.VERTICAL,false); // 레이아웃 매니저
+        adapter = new MypageAdapter(mypageList);
+        rv_mypage.setLayoutManager(manager); // 리사이클러뷰와 레이아웃 매니저 연결
+        rv_mypage.setAdapter(adapter); // 리사이클러뷰와 어댑터 연결
+
+        // 리사이클러뷰 아이템 클릭시
+        adapter.setOnItemClickListener(new MypageAdapter.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                switch (position){
-                    case 0 : // 알림 설정
-                        Intent Noti = new Intent(getActivity(),NotificationActivity.class);
-                        startActivity(Noti); // 알림 설정 화면으로 이동
+            public void onItemClick(View v, int position) {
+                switch (position) {
+                    case 0: // 알림 설정
+                        Toast.makeText(getContext(),"알림", Toast.LENGTH_SHORT).show();
                         break;
-                    case 1 : // 비밀번호 변경
-                        Intent Change = new Intent(getActivity(),ChangePwActivity.class);
-                        startActivity(Change); // 비밀번호 변경 화면으로 이동                        \
+                    case 1: // 비밀번호 변경
+                        Intent Change = new Intent(getActivity(), ChangePwActivity.class);
+                        startActivity(Change); // 비밀번호 변경 화면으로 이동
                         break;
                     case 2: // 로그아웃
                         SharedPreferences auto = getActivity().getSharedPreferences("autoLogin", Activity.MODE_PRIVATE); // 자동로그인 데이터가 저장되어있는 곳
@@ -66,7 +82,7 @@ public class MypageFragment extends Fragment {
                         editor.clear(); // autoLogin에 저장되어 있는 정보 삭제
                         editor.commit();
 
-                        Intent Login = new Intent(getActivity(),LoginActivity.class);
+                        Intent Login = new Intent(getActivity(), LoginActivity.class);
                         startActivity(Login); // 로그인 화면으로 이동
                         getActivity().finish();
                         break;
