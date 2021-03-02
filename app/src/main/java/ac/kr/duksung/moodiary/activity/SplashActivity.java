@@ -1,4 +1,4 @@
-package ac.kr.duksung.moodiary;
+package ac.kr.duksung.moodiary.activity;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -7,11 +7,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
-import android.net.NetworkCapabilities;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.widget.Toast;
+
+import ac.kr.duksung.moodiary.R;
 
 // 화면 설명 : 앱 실행시 첫 화면
 // Author : Soohyun, Last Modified : 2021.01.20

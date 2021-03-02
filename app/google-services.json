@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "211912254780",
+    "project_id": "moodiary-38dda",
+    "storage_bucket": "moodiary-38dda.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:211912254780:android:f9d42d6f6dbb181e842a39",
+        "android_client_info": {
+          "package_name": "ac.kr.duksung.moodiary"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "211912254780-5efu5tgvdjf6drbr1n8tpt2debr9g3na.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "ac.kr.duksung.moodiary",
+            "certificate_hash": "d5c0aa39fa9668ab687566ac38400c18c0fc9cc8"
+          }
+        },
+        {
+          "client_id": "211912254780-e3972pke6nke8ti227dvu03ehfp5g71j.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAUei5riAUop36sURISeUWD3ptRkgoC8Zw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "211912254780-e3972pke6nke8ti227dvu03ehfp5g71j.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

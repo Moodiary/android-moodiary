@@ -1,10 +1,9 @@
-package ac.kr.duksung.moodiary;
+package ac.kr.duksung.moodiary.activity;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
@@ -22,6 +21,8 @@ import com.android.volley.toolbox.Volley;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import ac.kr.duksung.moodiary.R;
 
 // 화면 설명 : 비밀번호 찾기 화면
 // Author : Soohyun, Last Modified : 2021.01.20

@@ -1,4 +1,4 @@
-package ac.kr.duksung.moodiary;
+package ac.kr.duksung.moodiary.activity;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -19,6 +19,8 @@ import com.android.volley.toolbox.Volley;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import ac.kr.duksung.moodiary.R;
 
 // 화면 설명 : 아이디 찾기 화면
 // Author : Soohyun, Last Modified : 2021.01.20

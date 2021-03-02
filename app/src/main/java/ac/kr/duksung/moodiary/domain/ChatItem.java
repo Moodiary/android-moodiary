@@ -1,4 +1,4 @@
-package ac.kr.duksung.moodiary;
+package ac.kr.duksung.moodiary.domain;
 
 public class ChatItem {
     private int type; // 뷰 타입 (챗봇 - 0, 사용자 - 1, 버튼 - 2, 타이머 - 3)

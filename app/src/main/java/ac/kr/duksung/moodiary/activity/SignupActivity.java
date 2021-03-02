@@ -1,11 +1,9 @@
-package ac.kr.duksung.moodiary;
+package ac.kr.duksung.moodiary.activity;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Patterns;
 import android.view.MenuItem;
 import android.view.View;
@@ -24,6 +22,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.regex.Pattern;
+
+import ac.kr.duksung.moodiary.R;
 
 // 화면 설명 : 회원가입 화면
 // Author : Soohyun, Last Modified : 2021.01.20

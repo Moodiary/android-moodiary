@@ -1,19 +1,21 @@
-package ac.kr.duksung.moodiary;
+package ac.kr.duksung.moodiary.adapter;
 
 import android.content.Context;
 import android.os.CountDownTimer;
-import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
+
+import ac.kr.duksung.moodiary.fragment.ChatFragment;
+import ac.kr.duksung.moodiary.domain.ChatItem;
+import ac.kr.duksung.moodiary.R;
 
 public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
@@ -205,7 +207,6 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             btn_finish = itemView.findViewById(R.id.btn_finish);
 
             btn_finish.setOnClickListener(this);
-
         }
 
         @Override

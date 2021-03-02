@@ -1,4 +1,4 @@
-package ac.kr.duksung.moodiary;
+package ac.kr.duksung.moodiary.activity;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -23,6 +23,8 @@ import com.android.volley.toolbox.Volley;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import ac.kr.duksung.moodiary.R;
 
 // 화면 설명 : 로그인 화면
 // Author : Soohyun, Last Modified : 2021.02.08
@@ -86,6 +88,7 @@ public class LoginActivity extends AppCompatActivity {
                                     SharedPreferences.Editor editor = auto.edit();
                                     editor.putString("ID", user_id); // 아이디 값 저장
                                     editor.putString("PW", user_pw); // 비밀번호 값 저장
+                                    editor.putString("Noti", "false"); // 알림 설정 여부 저장
                                     editor.commit(); // 변경사항 저장
 
                                     Toast.makeText(getApplicationContext(), "환영합니다!", Toast.LENGTH_SHORT).show();

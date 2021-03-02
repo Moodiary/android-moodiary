@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MypageFragment">
+    tools:context=".fragment.MypageFragment">
 
     <!-- 상단바 -->
     <androidx.appcompat.widget.Toolbar
@@ -55,10 +55,10 @@
         android:layout_marginTop="180dp"
         android:background="#e9e9e9"/>
 
-    <ListView
-        android:id="@+id/lv_mypage"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_mypage"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="180dp"/>
+        android:layout_marginTop="180dp" />
 
 </FrameLayout>
