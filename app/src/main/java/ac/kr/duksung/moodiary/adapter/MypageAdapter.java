@@ -14,6 +14,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.firebase.messaging.FirebaseMessaging;
+
 import java.util.ArrayList;
 
 import ac.kr.duksung.moodiary.domain.MypageItem;
@@ -82,12 +84,14 @@ public class MypageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                         SharedPreferences auto = context.getSharedPreferences("autoLogin", Activity.MODE_PRIVATE); // 알림 설정 데이터가 저장되어있는 곳
                         SharedPreferences.Editor editor = auto.edit();
                         editor.putString("Noti", "true").apply(); // 알림 설정 값 변경
+                        FirebaseMessaging.getInstance().subscribeToTopic("alarm"); // 토큰 주제(alarm) 구독
                         Toast.makeText(buttonView.getContext(),"알림 ON", Toast.LENGTH_SHORT).show();
                     }
                     else { // 알림 설정 OFF인 경우
                         SharedPreferences auto = context.getSharedPreferences("autoLogin", Activity.MODE_PRIVATE); // 알림 설정 데이터가 저장되어있는 곳
                         SharedPreferences.Editor editor = auto.edit();
                         editor.putString("Noti", "false").apply(); // 알림 설정 값 변경
+                        FirebaseMessaging.getInstance().unsubscribeFromTopic("alarm"); // 토큰 주제(alarm) 구독 취소
                         Toast.makeText(buttonView.getContext(),"알림 OFF", Toast.LENGTH_SHORT).show();
                     }
                 }
