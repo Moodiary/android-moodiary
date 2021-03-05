@@ -7,7 +7,7 @@
     android:layout_marginStart="20dp"
     android:layout_marginEnd="20dp"
     android:layout_gravity="center_vertical"
-    tools:context=".LoginActivity">
+    tools:context=".activity.LoginActivity">
 
     <!-- 로고 들어갈 부분 -->
     <TextView

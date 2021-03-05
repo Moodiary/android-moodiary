@@ -1,10 +1,9 @@
-package ac.kr.duksung.moodiary;
+package ac.kr.duksung.moodiary.activity;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
@@ -22,6 +21,8 @@ import com.android.volley.toolbox.Volley;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import ac.kr.duksung.moodiary.R;
 
 // 화면 설명 : 비밀번호 찾기 화면
 // Author : Soohyun, Last Modified : 2021.01.20
@@ -66,7 +67,7 @@ public class FindPwActivity extends AppCompatActivity {
                     RequestQueue requestQueue = Volley.newRequestQueue(FindPwActivity.this);
 
                     // 3. node 서버 IP와 받을 경로 수정 (http://192.168.99.83:3000/post)  하고,
-                    JsonObjectRequest R_Object = new JsonObjectRequest(Request.Method.POST, "http://192.168.99.84:3000/user/findpw", requestJsonObject, new Response.Listener<JSONObject>() {
+                    JsonObjectRequest R_Object = new JsonObjectRequest(Request.Method.POST, "http://172.20.18.162:3000/user/findpw", requestJsonObject, new Response.Listener<JSONObject>() {
 
                         @Override
                         public void onResponse(JSONObject response) {

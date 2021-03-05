@@ -1,4 +1,4 @@
-package ac.kr.duksung.moodiary;
+package ac.kr.duksung.moodiary.fragment;
 
 import android.os.Bundle;
 
@@ -8,9 +8,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-// 화면 설명 : 메인화면의 모아보기 화면
+import ac.kr.duksung.moodiary.R;
+
+// 화면 설명 : 메인화면의 통계화면
 // Author : Soohyun, Last Modified : 2021.01.20
-public class CollectFragment extends Fragment {
+public class StaticsFragment extends Fragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -20,6 +22,6 @@ public class CollectFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_collect, container, false);
+        return inflater.inflate(R.layout.fragment_statics, container, false);
     }
 }
