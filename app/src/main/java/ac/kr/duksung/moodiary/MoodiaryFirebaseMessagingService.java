@@ -31,6 +31,9 @@ public class MoodiaryFirebaseMessagingService extends FirebaseMessagingService {
     }
 
     private void sendNotification() {
+        //String title = remoteMessage.getData().get("title");
+        //String message = remoteMessage.getData().get("message");
+
         final String CHANNEL_ID = "ChannerID";
         NotificationManager mManager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
