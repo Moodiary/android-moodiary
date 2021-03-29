@@ -41,7 +41,7 @@ import ac.kr.duksung.moodiary.domain.ChatItem;
 import scala.collection.Seq;
 
 // 화면 설명 : 메인화면의 챗봇 화면
-// Author : Soohyun, Last Modified : 2021.02.15
+// Author : Soohyun, Last Modified : 2021.03.26
 public class ChatFragment extends Fragment {
     public int sequence = 1; // 챗봇의 단계 처리를 위한 변수
     public ArrayList<ChatItem> chatList; // 챗봇 메세지 리스트
@@ -63,7 +63,6 @@ public class ChatFragment extends Fragment {
         rv_chat.setAdapter(adapter); // 리사이클러뷰와 어댑터 연결
         et_input = view.findViewById(R.id.et_input);
         btn_push = view.findViewById(R.id.btn_push);
-        TextView tv_timer = view.findViewById(R.id.tv_timer);
 
         // 전송 버튼 클릭시
         btn_push.setOnClickListener(new View.OnClickListener() {
@@ -73,21 +72,27 @@ public class ChatFragment extends Fragment {
                     String message = et_input.getText().toString(); // 사용자가 입력한 메세지 가져옴
                     chatList.add(new ChatItem(1, message)); // 사용자가 입력한 메시지를 챗봇 메세지 리스트에 추가
 
-                    Test(message);
+                    //changeText(message); // 입력한 메세지 형태소 분석 메소드 실행
                     //getEmotionModel(); // 감정 분석 모델 가져오기
 
-                    /*
                     Handler mHandler = new Handler();
                     mHandler.postDelayed(new Runnable() { public void run() {
-                        chatList.add(new ChatItem(0, "당신의 감정은 ~~~~ 하군요"));
-                        chatList.add(new ChatItem(0, "당신의 감정에 도움이 되는 컬러테라피와 음악을 제공해드릴게요"));
-                        chatList.add(new ChatItem(2, "조명", "사운드", "둘 다", "선택 안함", 1));
+                        chatList.add(new ChatItem(0, "일기에서 가장 많이 느껴지는 감정은 ~~입니다"));
+                        chatList.add(new ChatItem(0, "당신을 위해 ~~색 조명을 틀어드릴게요"));
+                        chatList.add(new ChatItem(2));
                         adapter.notifyDataSetChanged(); // 챗봇 메세지 리스트 갱신
                     } }, 600); // 0.6초 딜레이 후 함수 실행
 
                     et_input.setText(""); // 메세지 입력창 초기화
-                    sequence++; // 다음 단계로 이동할 수 있도록 변수값 변경
-                    et_input.setEnabled(false); // 메세지 입력창 사용 금지*/
+                    sequence++; // 다음 단계로 이동할 수 있도록 변수값 변경 (일기 입력이 완료된 단계라는 의미)
+                    et_input.setEnabled(false); // 메세지 입력창 사용 금지
+                } else if(sequence == 3) { // 컬러테라피가 끝난 후 의견을 입력받는 단계
+                    String message = et_input.getText().toString(); // 사용자가 입력한 메세지 가져옴
+                    chatList.add(new ChatItem(1, message)); // 사용자가 입력한 메시지를 챗봇 메세지 리스트에 추가
+                    chatList.add(new ChatItem(0, "의견을 남겨주셔서 감사합니다 :)"));
+                    rv_chat.scrollToPosition(chatList.size()-1); // 뷰 스크롤 가장 아래로 위
+                    et_input.setText(""); // 메세지 입력창 초기화
+                    adapter.notifyDataSetChanged();
                 }
             }
         });
@@ -97,10 +102,11 @@ public class ChatFragment extends Fragment {
     // 챗봇 초기 세팅
     private void initData(){
         chatList = new ArrayList<>();
-        chatList.add(new ChatItem(0,"오늘 하루는 어떠셨나요?"));
+        chatList.add(new ChatItem(0,"오늘 하루에 대해 일기를 남겨볼까요?"));
     }
 
-    public void Test(String text) {
+    //텍스트 형태소 분석 메소
+    private void changeText(String text) {
 
         //String text = "한국어를 처리하는 예시입니닼ㅋㅋㅋㅋㅋ #한국어";
 
@@ -133,7 +139,7 @@ public class ChatFragment extends Fragment {
 
     }
 
-        // 감정 분석 모델 가져오기
+    // 감정 분석 모델 가져오기
     private void getEmotionModel() {
         FirebaseCustomRemoteModel remoteModel = new FirebaseCustomRemoteModel.Builder("modelDY").build();
         FirebaseModelDownloadConditions conditions = new FirebaseModelDownloadConditions.Builder().requireWifi().build();
@@ -176,7 +182,7 @@ public class ChatFragment extends Fragment {
             Handler mHandler = new Handler();
             mHandler.postDelayed(new Runnable() { public void run() {
                 chatList.add(new ChatItem(0, "타이머를 설정해주세요"));
-                chatList.add(new ChatItem(2, "15분", "30분", "1시간", "직접 입력", 2));
+                chatList.add(new ChatItem(3));
                 adapter.notifyDataSetChanged(); // 챗봇 메세지 리스트 갱신
             } }, 600); // 0.6초 딜레이 후 함수 실행
         }
@@ -203,12 +209,33 @@ public class ChatFragment extends Fragment {
             public void onClick(DialogInterface dialog, int which) {
                 String value_hour = time_hour.getText().toString();
                 String value_min = time_min.getText().toString();
-                chatList.add(new ChatItem(1, value_hour + "시간 " + value_min + "분"));
-                dialog.dismiss();     //닫기
 
-                Long hour = Long.parseLong(value_hour);
-                Long minute = Long.parseLong(value_min);
-                startTimer((hour*60 + minute)*60*1000);
+                if(value_hour.equals("") && value_min.equals("")) {
+                    Toast.makeText(getContext(), "시간을 입력해주세요", Toast.LENGTH_SHORT).show();
+                } else if(value_hour.equals("") && !value_min.equals("")) {
+                    chatList.remove(chatList.size()-1);
+                    chatList.add(new ChatItem(1, value_min + "분"));
+                    dialog.dismiss(); // 팝업창 닫기
+
+                    Long minute = Long.parseLong(value_min);
+                    startTimer((minute)*60*1000);
+                } else if(!value_hour.equals("") && value_min.equals("")) {
+                    chatList.remove(chatList.size()-1);
+                    chatList.add(new ChatItem(1, value_hour + "시간"));
+                    dialog.dismiss(); // 팝업창 닫기
+
+                    Long hour = Long.parseLong(value_hour);
+                    startTimer((hour*60)*60*1000);
+                } else {
+                    chatList.remove(chatList.size()-1);
+                    chatList.add(new ChatItem(1, value_hour + "시간 " + value_min + "분"));
+                    dialog.dismiss(); // 팝업창 닫기
+
+                    Long hour = Long.parseLong(value_hour);
+                    Long minute = Long.parseLong(value_min);
+                    startTimer((hour*60 + minute)*60*1000);
+                }
+
             }
         });
 
@@ -228,8 +255,21 @@ public class ChatFragment extends Fragment {
     public void startTimer(long time) {
         Handler mHandler = new Handler();
         mHandler.postDelayed(new Runnable() { public void run() {
-            chatList.add(new ChatItem(3, time));
+            chatList.add(new ChatItem(4, time));
             adapter.notifyDataSetChanged(); // 챗봇 메세지 리스트 갱신
+        } }, 600); // 0.6초 딜레이 후 함수 실행
+    }
+
+    // 조명 서비스 후 의견을 입력받는 메소드
+    public void Comment() {
+        Handler mHandler = new Handler();
+        mHandler.postDelayed(new Runnable() { public void run() {
+            chatList.add(new ChatItem(0, "타이머가 종료되었습니다"));
+            chatList.add(new ChatItem(0, "~~색 조명이 당신의 감정에 도움이 되셨나요?"));
+            chatList.add(new ChatItem(0, "의견을 남겨주세요"));
+            et_input.setEnabled(true); // 메세지 입력창 사용 허용
+            adapter.notifyDataSetChanged(); // 챗봇 메세지 리스트 갱신
+            adapter.countDownTimer.cancel();
         } }, 600); // 0.6초 딜레이 후 함수 실행
     }
 
