@@ -33,6 +33,7 @@ import org.tensorflow.lite.Interpreter;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import ac.kr.duksung.moodiary.R;
@@ -49,6 +50,7 @@ public class ChatFragment extends Fragment {
     EditText et_input; // 메세지 입력창
     Button btn_push; // 전송 버튼
     Interpreter interpreter;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -73,7 +75,18 @@ public class ChatFragment extends Fragment {
                     chatList.add(new ChatItem(1, message)); // 사용자가 입력한 메시지를 챗봇 메세지 리스트에 추가
 
                     //changeText(message); // 입력한 메세지 형태소 분석 메소드 실행
-                    //getEmotionModel(); // 감정 분석 모델 가져오기
+                    getEmotionModel(); // 감정 분석 모델 가져오기
+
+                    int[][] input = {{727}, {2}, {304}, {122}, {1816}, {39}, {26600}, {2}, {0}, {0}, {0}, {0}, {0}, {0}, {0}, {0}, {0}, {0}, {0}, {0}};
+                    int[][] output = new int[][]{{1,7}};
+                    if(interpreter != null) {
+                        interpreter.run(input, output);
+                    }
+                    for (int i = 0; i < 7; i++) {
+                        chatList.add(new ChatItem(0,i + ": " + output[0][i]));
+                    }
+                    //chatList.add(new ChatItem(0, Arrays.toString(output)));
+                    adapter.notifyDataSetChanged();
 
                     Handler mHandler = new Handler();
                     mHandler.postDelayed(new Runnable() { public void run() {
@@ -105,7 +118,7 @@ public class ChatFragment extends Fragment {
         chatList.add(new ChatItem(0,"오늘 하루에 대해 일기를 남겨볼까요?"));
     }
 
-    //텍스트 형태소 분석 메소
+    //텍스트 형태소 분석 메소드
     private void changeText(String text) {
 
         //String text = "한국어를 처리하는 예시입니닼ㅋㅋㅋㅋㅋ #한국어";
