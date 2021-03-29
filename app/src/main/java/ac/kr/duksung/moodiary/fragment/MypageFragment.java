@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -35,9 +36,12 @@ import ac.kr.duksung.moodiary.adapter.MypageAdapter;
 import ac.kr.duksung.moodiary.domain.MypageItem;
 
 // 화면 설명 : 메인화면의 마이페이지 화면
-// Author : Soohyun, Last Modified : 2021.03.02
+// Author : Soohyun, Last Modified : 2021.03.10
 // Author : Seungyeon, Last Modified : 2021.01.26(리스트 클릭시 액티비티 연결)
 public class MypageFragment extends Fragment {
+    TextView tv_user_name; // 사용자 이름
+    TextView tv_user_id; // 사용자 아이디
+    TextView tv_user_email; // 사용자 이메일
     ArrayList<MypageItem> mypageList = new ArrayList<>(); // 마이페이지 메세지 리스트
     RecyclerView rv_mypage; // 마이페이지 리사이클러뷰
     MypageAdapter adapter; // 마이페이지 어댑터
@@ -48,9 +52,18 @@ public class MypageFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_mypage, container, false);
+
+        tv_user_name = view.findViewById(R.id.tv_user_name);
+        tv_user_id = view.findViewById(R.id.tv_user_id);
+        tv_user_email = view.findViewById(R.id.tv_user_email);
+
+        // 사용자 기본 정보 세팅
+        SharedPreferences auto = getContext().getSharedPreferences("autoLogin", Activity.MODE_PRIVATE);
+        tv_user_name.setText(auto.getString("Name",null) + "님");
+        tv_user_id.setText(auto.getString("ID",null));
+        tv_user_email.setText(auto.getString("Email",null));
 
         // 데이터 초기화
         mypageList.add(new MypageItem(1, "알림 설정"));
@@ -60,7 +73,7 @@ public class MypageFragment extends Fragment {
 
         rv_mypage = view.findViewById(R.id.rv_mypage);
         LinearLayoutManager manager = new LinearLayoutManager(getContext(), RecyclerView.VERTICAL,false); // 레이아웃 매니저
-        adapter = new MypageAdapter(mypageList);
+        adapter = new MypageAdapter(getContext(), mypageList);
         rv_mypage.setLayoutManager(manager); // 리사이클러뷰와 레이아웃 매니저 연결
         rv_mypage.setAdapter(adapter); // 리사이클러뷰와 어댑터 연결
 
@@ -70,7 +83,6 @@ public class MypageFragment extends Fragment {
             public void onItemClick(View v, int position) {
                 switch (position) {
                     case 0: // 알림 설정
-                        Toast.makeText(getContext(),"알림", Toast.LENGTH_SHORT).show();
                         break;
                     case 1: // 비밀번호 변경
                         Intent Change = new Intent(getActivity(), ChangePwActivity.class);
