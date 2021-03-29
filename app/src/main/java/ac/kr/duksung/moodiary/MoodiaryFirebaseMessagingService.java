@@ -14,7 +14,9 @@ import androidx.core.app.NotificationCompat;
 public class MoodiaryFirebaseMessagingService extends FirebaseMessagingService{
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
-        if (remoteMessage != null && remoteMessage.getData().size() > 0) {
+        if (remoteMessage != null) {
+            sendNotification(remoteMessage);
+        }else if(remoteMessage.getData().size() > 0){
             sendNotification(remoteMessage);
         }
     }
