@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Handler;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,12 +29,13 @@ import com.twitter.penguin.korean.TwitterKoreanProcessorJava;
 import com.twitter.penguin.korean.phrase_extractor.KoreanPhraseExtractor;
 import com.twitter.penguin.korean.tokenizer.KoreanTokenizer;
 
-import org.openkoreantext.processor.OpenKoreanTextProcessorJava;
 import org.tensorflow.lite.Interpreter;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.Executor;
 
 import ac.kr.duksung.moodiary.R;
 import ac.kr.duksung.moodiary.adapter.ChatAdapter;
@@ -41,7 +43,7 @@ import ac.kr.duksung.moodiary.domain.ChatItem;
 import scala.collection.Seq;
 
 // 화면 설명 : 메인화면의 챗봇 화면
-// Author : Soohyun, Last Modified : 2021.03.26
+// Author : Soohyun, Last Modified : 2021.03.29
 public class ChatFragment extends Fragment {
     public int sequence = 1; // 챗봇의 단계 처리를 위한 변수
     public ArrayList<ChatItem> chatList; // 챗봇 메세지 리스트
@@ -69,12 +71,21 @@ public class ChatFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 if(sequence == 1) { // 감정일기 쓰는 단계일 경우
-                    String message = et_input.getText().toString(); // 사용자가 입력한 메세지 가져옴
-                    chatList.add(new ChatItem(1, message)); // 사용자가 입력한 메시지를 챗봇 메세지 리스트에 추가
+                    //String message = et_input.getText().toString(); // 사용자가 입력한 메세지 가져옴
+                    //chatList.add(new ChatItem(1, message)); // 사용자가 입력한 메시지를 챗봇 메세지 리스트에 추가
 
                     //changeText(message); // 입력한 메세지 형태소 분석 메소드 실행
-                    //getEmotionModel(); // 감정 분석 모델 가져오기
+                    getEmotionModel(); // 감정 분석 모델 가져오기
+                    int[][] input = {{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 727, 2, 304, 122, 1816, 39, 26600, 2}};
+                    int[][] output = new int[1][7];
+                    if(interpreter != null)
+                        interpreter.run(input, output);
+                    for (int i = 0; i < 7; i++) {
+                        chatList.add(new ChatItem(0,i + ": " + output[0][i]));
+                    }
+                    adapter.notifyDataSetChanged();
 
+                    /*
                     Handler mHandler = new Handler();
                     mHandler.postDelayed(new Runnable() { public void run() {
                         chatList.add(new ChatItem(0, "일기에서 가장 많이 느껴지는 감정은 ~~입니다"));
@@ -86,6 +97,7 @@ public class ChatFragment extends Fragment {
                     et_input.setText(""); // 메세지 입력창 초기화
                     sequence++; // 다음 단계로 이동할 수 있도록 변수값 변경 (일기 입력이 완료된 단계라는 의미)
                     et_input.setEnabled(false); // 메세지 입력창 사용 금지
+                     */
                 } else if(sequence == 3) { // 컬러테라피가 끝난 후 의견을 입력받는 단계
                     String message = et_input.getText().toString(); // 사용자가 입력한 메세지 가져옴
                     chatList.add(new ChatItem(1, message)); // 사용자가 입력한 메시지를 챗봇 메세지 리스트에 추가
@@ -144,24 +156,21 @@ public class ChatFragment extends Fragment {
         FirebaseCustomRemoteModel remoteModel = new FirebaseCustomRemoteModel.Builder("modelDY").build();
         FirebaseModelDownloadConditions conditions = new FirebaseModelDownloadConditions.Builder().requireWifi().build();
         FirebaseModelManager.getInstance().download(remoteModel, conditions).addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void v) {
-                        // Download complete. Depending on your app, you could enable
-                        // the ML feature, or switch from the local model to the remote
-                        // model, etc.
-                        Toast.makeText(getContext(), "get model success", Toast.LENGTH_SHORT).show();
-                    }
-                });
-
-        FirebaseModelManager.getInstance().getLatestModelFile(remoteModel).addOnCompleteListener(new OnCompleteListener<File>() {
+            @Override
+            public void onSuccess(Void v) {
+                Toast.makeText(getContext(), "get model success", Toast.LENGTH_SHORT).show();
+                FirebaseModelManager.getInstance().getLatestModelFile(remoteModel).addOnCompleteListener(new OnCompleteListener<File>() {
                     @Override
                     public void onComplete(@NonNull Task<File> task) {
                         File modelFile = task.getResult();
                         if (modelFile != null) {
                             interpreter = new Interpreter(modelFile);
+                            Toast.makeText(getContext(), "get interpreter success", Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
+            }
+        });
     }
 
     // 버튼 뷰 삭제
