@@ -83,19 +83,9 @@ public class ChatFragment extends Fragment {
                     TextClassification client = new TextClassification(getContext()); // 데이터 전처리 클래스 호출
                     List<String> tokenizeText = client.tokenize(message); // 토큰화된 텍스트
                     List<Float> dicText = client.jsonParsing(tokenizeText); // 정수화된 텍스트
-                    float[] paddingText = client.padSequence(dicText); // 패딩된 텍스트
+                    float[][] paddingText = client.padSequence(dicText); // 패딩된 텍스트
 
-                    getEmotionModel(); // 감정 분석 모델 가져오기
-                    float[][] input = {{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 727, 2, 304, 122, 1816, 39, 26600, 2}};
-                    float[][] output = new float[1][7];
-                    if(interpreter != null) {
-                        interpreter.run(input, output);
-                    }
-
-                    for (int i = 0; i < 7; i++) {
-                        chatList.add(new ChatItem(0,i + ": " + output[0][i]));
-                    }
-                    adapter.notifyDataSetChanged();
+                    getEmotionModel(paddingText); // 감정 분석 모델 가져오기
 
                     /*
                     Handler mHandler = new Handler();
@@ -130,7 +120,7 @@ public class ChatFragment extends Fragment {
     }
 
     // 감정 분석 모델 가져오기
-    private void getEmotionModel() {
+    private void getEmotionModel(float[][] paddingText) {
 
         FirebaseCustomRemoteModel remoteModel = new FirebaseCustomRemoteModel.Builder("modelDY").build();
         FirebaseModelDownloadConditions conditions = new FirebaseModelDownloadConditions.Builder().requireWifi().build();
@@ -145,28 +135,22 @@ public class ChatFragment extends Fragment {
                         if (modelFile != null) {
                             interpreter = new Interpreter(modelFile);
                             Toast.makeText(getContext(), "get interpreter success", Toast.LENGTH_SHORT).show();
+
+                            //float[][] input = {{ 5304, 608, 2177, 1145, 71, 14, 362, 12987, 70, 6993}};
+                            float[][] input = paddingText;
+                            float[][] output = new float[1][7];
+                            if(interpreter != null) {
+                                interpreter.run(input, output);
+                                for (int i = 0; i < 7; i++) {
+                                    chatList.add(new ChatItem(0,i + ": " + output[0][i]));
+                                }
+                            }
+                            adapter.notifyDataSetChanged();
                         }
                     }
                 });
             }
         });
-
-        /*
-        CustomModelDownloadConditions conditions = new CustomModelDownloadConditions.Builder().requireWifi().build();
-        FirebaseModelDownloader.getInstance()
-                .getModel("modelDY", DownloadType.LOCAL_MODEL_UPDATE_IN_BACKGROUND, conditions)
-                .addOnSuccessListener(new OnSuccessListener<CustomModel>() {
-                    @Override
-                    public void onSuccess(CustomModel model) {
-                        Toast.makeText(getContext(), "get model success", Toast.LENGTH_SHORT).show();
-                        File modelFile = model.getFile();
-                        if (modelFile != null) {
-                            interpreter = new Interpreter(modelFile);
-                            Toast.makeText(getContext(), "get interpreter success", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
-         */
     }
 
     // 버튼 뷰 삭제
