@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Handler;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,31 +25,43 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.ml.common.modeldownload.FirebaseModelDownloadConditions;
 import com.google.firebase.ml.common.modeldownload.FirebaseModelManager;
 import com.google.firebase.ml.custom.FirebaseCustomRemoteModel;
+import com.google.firebase.ml.modeldownloader.CustomModel;
+import com.google.firebase.ml.modeldownloader.CustomModelDownloadConditions;
+import com.google.firebase.ml.modeldownloader.DownloadType;
+import com.google.firebase.ml.modeldownloader.FirebaseModelDownloader;
 import com.twitter.penguin.korean.TwitterKoreanProcessorJava;
 import com.twitter.penguin.korean.phrase_extractor.KoreanPhraseExtractor;
 import com.twitter.penguin.korean.tokenizer.KoreanTokenizer;
 
-import org.openkoreantext.processor.OpenKoreanTextProcessorJava;
 import org.tensorflow.lite.Interpreter;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.Executor;
 
 import ac.kr.duksung.moodiary.R;
+import ac.kr.duksung.moodiary.TextClassification;
 import ac.kr.duksung.moodiary.adapter.ChatAdapter;
 import ac.kr.duksung.moodiary.domain.ChatItem;
 import scala.collection.Seq;
 
 // 화면 설명 : 메인화면의 챗봇 화면
-// Author : Soohyun, Last Modified : 2021.03.26
+// Author : Soohyun, Last Modified : 2021.04.02
 public class ChatFragment extends Fragment {
     public int sequence = 1; // 챗봇의 단계 처리를 위한 변수
     public ArrayList<ChatItem> chatList; // 챗봇 메세지 리스트
-    ChatAdapter adapter;
+    RecyclerView rv_chat; // 챗봇 리사이클러뷰
+    ChatAdapter adapter; // 챗봇 어댑터
     EditText et_input; // 메세지 입력창
     Button btn_push; // 전송 버튼
-    Interpreter interpreter;
+    Interpreter interpreter; // 모델 인터프리터
+
+    float maxEmotion = 0; // 최대 감정 정보(퍼센트)
+    int maxIndex = -1; // 최대 감정 인덱스
+    String[] emotion = {"공포", "놀람", "분노", "슬픔", "중립", "행복", "혐오"}; // 감정 정보
+    String[] color = {"파란색", "노란색", "빨강", "주황색", "흰색", "흰색", "초록색"}; // 컬러테라피 정보
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -56,7 +69,7 @@ public class ChatFragment extends Fragment {
 
         initData(); // 데이터 초기화
 
-        RecyclerView rv_chat = view.findViewById(R.id.rv_chat); // 리사이클러뷰
+        rv_chat = view.findViewById(R.id.rv_chat);
         LinearLayoutManager manager = new LinearLayoutManager(getContext(),RecyclerView.VERTICAL,false); // 레이아웃 매니저
         adapter = new ChatAdapter(chatList, ChatFragment.this); // 챗봇 어댑터
         rv_chat.setLayoutManager(manager); // 리사이클러뷰와 레이아웃 매니저 연결
@@ -71,26 +84,22 @@ public class ChatFragment extends Fragment {
                 if(sequence == 1) { // 감정일기 쓰는 단계일 경우
                     String message = et_input.getText().toString(); // 사용자가 입력한 메세지 가져옴
                     chatList.add(new ChatItem(1, message)); // 사용자가 입력한 메시지를 챗봇 메세지 리스트에 추가
+                    chatList.add(new ChatItem(0, "감정을 분석 중입니다."));
+                    adapter.notifyDataSetChanged();
 
-                    //changeText(message); // 입력한 메세지 형태소 분석 메소드 실행
-                    //getEmotionModel(); // 감정 분석 모델 가져오기
+                    // 데이터 전처리
+                    TextClassification client = new TextClassification(getContext()); // 데이터 전처리 클래스 호출
+                    List<String> tokenizeText = client.tokenize(message); // 토큰화된 텍스트
+                    List<Float> dicText = client.jsonParsing(tokenizeText); // 정수화된 텍스트
+                    float[][] paddingText = client.padSequence(dicText); // 패딩된 텍스트
 
-                    Handler mHandler = new Handler();
-                    mHandler.postDelayed(new Runnable() { public void run() {
-                        chatList.add(new ChatItem(0, "일기에서 가장 많이 느껴지는 감정은 ~~입니다"));
-                        chatList.add(new ChatItem(0, "당신을 위해 ~~색 조명을 틀어드릴게요"));
-                        chatList.add(new ChatItem(2));
-                        adapter.notifyDataSetChanged(); // 챗봇 메세지 리스트 갱신
-                    } }, 600); // 0.6초 딜레이 후 함수 실행
+                    getEmotionModel(paddingText); // 감정 분석 모델 실행
 
-                    et_input.setText(""); // 메세지 입력창 초기화
-                    sequence++; // 다음 단계로 이동할 수 있도록 변수값 변경 (일기 입력이 완료된 단계라는 의미)
-                    et_input.setEnabled(false); // 메세지 입력창 사용 금지
                 } else if(sequence == 3) { // 컬러테라피가 끝난 후 의견을 입력받는 단계
                     String message = et_input.getText().toString(); // 사용자가 입력한 메세지 가져옴
                     chatList.add(new ChatItem(1, message)); // 사용자가 입력한 메시지를 챗봇 메세지 리스트에 추가
                     chatList.add(new ChatItem(0, "의견을 남겨주셔서 감사합니다 :)"));
-                    rv_chat.scrollToPosition(chatList.size()-1); // 뷰 스크롤 가장 아래로 위
+                    rv_chat.scrollToPosition(chatList.size()-1); // 뷰 스크롤 가장 아래로 위치 변경
                     et_input.setText(""); // 메세지 입력창 초기화
                     adapter.notifyDataSetChanged();
                 }
@@ -105,63 +114,50 @@ public class ChatFragment extends Fragment {
         chatList.add(new ChatItem(0,"오늘 하루에 대해 일기를 남겨볼까요?"));
     }
 
-    //텍스트 형태소 분석 메소
-    private void changeText(String text) {
-
-        //String text = "한국어를 처리하는 예시입니닼ㅋㅋㅋㅋㅋ #한국어";
-
-        // Normalize
-        CharSequence normalized = TwitterKoreanProcessorJava.normalize(text);
-        System.out.println(normalized);
-        // 한국어를 처리하는 예시입니다ㅋㅋ #한국어
-
-
-        // Tokenize
-        Seq<KoreanTokenizer.KoreanToken> tokens = TwitterKoreanProcessorJava.tokenize(normalized);
-        System.out.println(TwitterKoreanProcessorJava.tokensToJavaStringList(tokens));
-        // [한국어, 를, 처리, 하는, 예시, 입니, 다, ㅋㅋ, #한국어]
-        System.out.println(TwitterKoreanProcessorJava.tokensToJavaKoreanTokenList(tokens));
-        // [한국어(Noun: 0, 3), 를(Josa: 3, 1),  (Space: 4, 1), 처리(Noun: 5, 2), 하는(Verb: 7, 2),  (Space: 9, 1), 예시(Noun: 10, 2), 입니(Adjective: 12, 2), 다(Eomi: 14, 1), ㅋㅋ(KoreanParticle: 15, 2),  (Space: 17, 1), #한국어(Hashtag: 18, 4)]
-
-
-        // Stemming
-        Seq<KoreanTokenizer.KoreanToken> stemmed = TwitterKoreanProcessorJava.stem(tokens);
-        System.out.println(TwitterKoreanProcessorJava.tokensToJavaStringList(stemmed));
-        // [한국어, 를, 처리, 하다, 예시, 이다, ㅋㅋ, #한국어]
-        System.out.println(TwitterKoreanProcessorJava.tokensToJavaKoreanTokenList(stemmed));
-        // [한국어(Noun: 0, 3), 를(Josa: 3, 1),  (Space: 4, 1), 처리(Noun: 5, 2), 하다(Verb: 7, 2),  (Space: 9, 1), 예시(Noun: 10, 2), 이다(Adjective: 12, 3), ㅋㅋ(KoreanParticle: 15, 2),  (Space: 17, 1), #한국어(Hashtag: 18, 4)]
-
-
-        // Phrase extraction
-        List<KoreanPhraseExtractor.KoreanPhrase> phrases = TwitterKoreanProcessorJava.extractPhrases(tokens, true, true);
-        System.out.println(phrases);
-        // [한국어(Noun: 0, 3), 처리(Noun: 5, 2), 처리하는 예시(Noun: 5, 7), 예시(Noun: 10, 2), #한국어(Hashtag: 18, 4)]
-
-    }
-
     // 감정 분석 모델 가져오기
-    private void getEmotionModel() {
-        FirebaseCustomRemoteModel remoteModel = new FirebaseCustomRemoteModel.Builder("modelDY").build();
+    private void getEmotionModel(float[][] paddingText) {
+
+        FirebaseCustomRemoteModel remoteModel = new FirebaseCustomRemoteModel.Builder("modelSR").build();
         FirebaseModelDownloadConditions conditions = new FirebaseModelDownloadConditions.Builder().requireWifi().build();
         FirebaseModelManager.getInstance().download(remoteModel, conditions).addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void v) {
-                        // Download complete. Depending on your app, you could enable
-                        // the ML feature, or switch from the local model to the remote
-                        // model, etc.
-                        Toast.makeText(getContext(), "get model success", Toast.LENGTH_SHORT).show();
-                    }
-                });
-
-        FirebaseModelManager.getInstance().getLatestModelFile(remoteModel).addOnCompleteListener(new OnCompleteListener<File>() {
+            @Override
+            public void onSuccess(Void v) {
+                Toast.makeText(getContext(), "get model success", Toast.LENGTH_SHORT).show();
+                FirebaseModelManager.getInstance().getLatestModelFile(remoteModel).addOnCompleteListener(new OnCompleteListener<File>() {
                     @Override
                     public void onComplete(@NonNull Task<File> task) {
                         File modelFile = task.getResult();
                         if (modelFile != null) {
                             interpreter = new Interpreter(modelFile);
+                            Toast.makeText(getContext(), "get interpreter success", Toast.LENGTH_SHORT).show();
+
+                            float[][] input = paddingText; // input 텍스트
+                            float[][] output = new float[1][7]; // 모델 output 결과
+                            if(interpreter != null) {
+                                interpreter.run(input, output); // 모델 실행
+                                // 모델 결과값 가져온 후 최대 감정 뽑아내기
+                                for (int i = 0; i < 7; i++) {
+                                    if(maxEmotion < output[0][i]) {
+                                        maxEmotion = output[0][i];
+                                        maxIndex = i;
+                                    }
+                                    System.out.println(i + " : " + output[0][i]);
+                                }
+                            }
+
+                            chatList.add(new ChatItem(0, "일기에서 가장 많이 느껴지는 감정은 " + emotion[maxIndex] + "입니다"));
+                            chatList.add(new ChatItem(0, "당신을 위해 " + color[maxIndex] +" 조명을 틀어드릴게요"));
+                            chatList.add(new ChatItem(2));
+                            adapter.notifyDataSetChanged(); // 챗봇 메세지 리스트 갱신
+
+                            et_input.setText(""); // 메세지 입력창 초기화
+                            sequence++; // 다음 단계로 이동할 수 있도록 변수값 변경 (일기 입력이 완료된 단계라는 의미)
+                            et_input.setEnabled(false); // 메세지 입력창 사용 금지
                         }
                     }
                 });
+            }
+        });
     }
 
     // 버튼 뷰 삭제
@@ -265,7 +261,7 @@ public class ChatFragment extends Fragment {
         Handler mHandler = new Handler();
         mHandler.postDelayed(new Runnable() { public void run() {
             chatList.add(new ChatItem(0, "타이머가 종료되었습니다"));
-            chatList.add(new ChatItem(0, "~~색 조명이 당신의 감정에 도움이 되셨나요?"));
+            chatList.add(new ChatItem(0, color[maxIndex] + " 조명이 당신의 감정에 도움이 되셨나요?"));
             chatList.add(new ChatItem(0, "의견을 남겨주세요"));
             et_input.setEnabled(true); // 메세지 입력창 사용 허용
             adapter.notifyDataSetChanged(); // 챗봇 메세지 리스트 갱신
