@@ -83,12 +83,12 @@ public final class TextClassification {
     }
 
     // 정수화된 텍스트를 패딩하는 메소드
-    public float[] padSequence(List<Float> dicText) {
-        float paddingText[] = new float[maxlen]; // 패딩된 텍스트
+    public float[][] padSequence(List<Float> dicText) {
+        float paddingText[][] = new float[1][maxlen]; // 패딩된 텍스트
         List<Float> padding = new ArrayList<>(); // maxlen 크기로 자른 텍스트
 
         if (dicText.size() > maxlen) { // maxlen 보다 긴 경우
-            padding = dicText.subList(0,20); // maxlen 크기로 텍스트 자르기
+            padding = dicText.subList(0,maxlen); // maxlen 크기로 텍스트 자르기
         } else if (dicText.size() < maxlen) { // maxlen보다 작은 경우
             padding = dicText;
             for(int i=dicText.size(); i<maxlen; i++) { // maxlen 크기에 맞춰 나머지는 0으로 채우기
@@ -99,7 +99,7 @@ public final class TextClassification {
         //  maxlen 크기로 자른 텍스트를 배열로 변환
         int i = 0;
         for(float value : padding) {
-            paddingText[i++] = value;
+            paddingText[0][i++] = value;
         }
 
         System.out.println("Padding: " + dicText);

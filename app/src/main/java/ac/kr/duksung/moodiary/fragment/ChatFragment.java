@@ -78,19 +78,8 @@ public class ChatFragment extends Fragment {
                     TextClassification client = new TextClassification(getContext()); // 데이터 전처리 클래스 호출
                     List<String> tokenizeText = client.tokenize(message); // 토큰화된 텍스트
                     List<Float> dicText = client.jsonParsing(tokenizeText); // 정수화된 텍스트
-                    float[] paddingText = client.padSequence(dicText); // 패딩된 텍스트
+                    float[][] paddingText = client.padSequence(dicText); // 패딩된 텍스트
 
-                    getEmotionModel(); // 감정 분석 모델 가져오기
-
-                    float[][] input = {{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 727, 2, 304, 122, 1816, 39, 26600, 2}};
-                    float[][] output = new float[1][7];
-                    if(interpreter != null) {
-                        interpreter.run(input, output);
-                    }
-                    for (int i = 0; i < 7; i++) {
-                        chatList.add(new ChatItem(0,i + ": " + output[0][i]));
-                    }
-                    adapter.notifyDataSetChanged();
 
                     /*
                     Handler mHandler = new Handler();
@@ -126,43 +115,38 @@ public class ChatFragment extends Fragment {
 
 
     // 감정 분석 모델 가져오기
-    private void getEmotionModel() {
-            FirebaseCustomRemoteModel remoteModel = new FirebaseCustomRemoteModel.Builder("modelSR").build();
-            FirebaseModelDownloadConditions conditions = new FirebaseModelDownloadConditions.Builder().requireWifi().build();
-            FirebaseModelManager.getInstance().download(remoteModel, conditions).addOnSuccessListener(new OnSuccessListener<Void>() {
-                @Override
-                public void onSuccess(Void v) {
-                    Toast.makeText(getContext(), "get model success", Toast.LENGTH_SHORT).show();
-                    FirebaseModelManager.getInstance().getLatestModelFile(remoteModel).addOnCompleteListener(new OnCompleteListener<File>() {
-                        @Override
-                        public void onComplete(@NonNull Task<File> task) {
-                            File modelFile = task.getResult();
-                            if (modelFile != null) {
-                                interpreter = new Interpreter(modelFile);
-                                Toast.makeText(getContext(), "get interpreter success", Toast.LENGTH_LONG).show();
-                            }
-                        }
-                    });
-                }
-            });
-    }
+    private void getEmotionModel(float[][] paddingText) {
 
-        /*
-        CustomModelDownloadConditions conditions = new CustomModelDownloadConditions.Builder().requireWifi().build();
-        FirebaseModelDownloader.getInstance()
-                .getModel("modelDY", DownloadType.LOCAL_MODEL_UPDATE_IN_BACKGROUND, conditions)
-                .addOnSuccessListener(new OnSuccessListener<CustomModel>() {
+        FirebaseCustomRemoteModel remoteModel = new FirebaseCustomRemoteModel.Builder("modelDY").build();
+        FirebaseModelDownloadConditions conditions = new FirebaseModelDownloadConditions.Builder().requireWifi().build();
+        FirebaseModelManager.getInstance().download(remoteModel, conditions).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void v) {
+                Toast.makeText(getContext(), "get model success", Toast.LENGTH_SHORT).show();
+                FirebaseModelManager.getInstance().getLatestModelFile(remoteModel).addOnCompleteListener(new OnCompleteListener<File>() {
                     @Override
-                    public void onSuccess(CustomModel model) {
-                        Toast.makeText(getContext(), "get model success", Toast.LENGTH_SHORT).show();
-                        File modelFile = model.getFile();
+                    public void onComplete(@NonNull Task<File> task) {
+                        File modelFile = task.getResult();
                         if (modelFile != null) {
                             interpreter = new Interpreter(modelFile);
                             Toast.makeText(getContext(), "get interpreter success", Toast.LENGTH_SHORT).show();
+
+                            //float[][] input = {{ 5304, 608, 2177, 1145, 71, 14, 362, 12987, 70, 6993}};
+                            float[][] input = paddingText;
+                            float[][] output = new float[1][7];
+                            if(interpreter != null) {
+                                interpreter.run(input, output);
+                                for (int i = 0; i < 7; i++) {
+                                    chatList.add(new ChatItem(0,i + ": " + output[0][i]));
+                                }
+                            }
+                            adapter.notifyDataSetChanged();
                         }
                     }
                 });
-         */
+            }
+        });
+    }
 
     // 버튼 뷰 삭제
     public void deleteButton() {
