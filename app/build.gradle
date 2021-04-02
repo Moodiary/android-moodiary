@@ -47,8 +47,9 @@ dependencies {
     compile 'com.github.PhilJay:MpAndroidChart:v3.0.2'
     implementation 'com.google.firebase:firebase-analytics'
     implementation 'com.google.firebase:firebase-messaging:21.0.1'
-    implementation 'org.tensorflow:tensorflow-lite:+'
-    implementation platform('com.google.firebase:firebase-bom:26.6.0')
+    implementation platform('com.google.firebase:firebase-bom:26.7.0')
+    implementation 'com.google.firebase:firebase-ml-modeldownloader'
+    implementation 'org.tensorflow:tensorflow-lite:2.3.0'
     implementation 'com.google.firebase:firebase-ml-model-interpreter'
     implementation files('libs/open-korean-text-2.1.0.jar')
     implementation 'com.twitter.penguin:korean-text:4.4.4'

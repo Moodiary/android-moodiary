@@ -36,21 +36,21 @@ import java.util.List;
 import javax.xml.transform.Result;
 
 import ac.kr.duksung.moodiary.R;
+import ac.kr.duksung.moodiary.TextClassification;
 import ac.kr.duksung.moodiary.adapter.ChatAdapter;
 import ac.kr.duksung.moodiary.domain.ChatItem;
 import scala.collection.Seq;
 
 // 화면 설명 : 메인화면의 챗봇 화면
-// Author : Soohyun, Last Modified : 2021.03.29
+// Author : Soohyun, Last Modified : 2021.04.01
 public class ChatFragment extends Fragment {
     public int sequence = 1; // 챗봇의 단계 처리를 위한 변수
     public ArrayList<ChatItem> chatList; // 챗봇 메세지 리스트
-    ChatAdapter adapter;
+    ChatAdapter adapter; // 챗봇 어댑터
     EditText et_input; // 메세지 입력창
     Button btn_push; // 전송 버튼
-    Interpreter interpreter;
-    File modelFile;
 
+    Interpreter interpreter; // 모델 인터프리터
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -71,19 +71,24 @@ public class ChatFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 if(sequence == 1) { // 감정일기 쓰는 단계일 경우
-                    //String message = et_input.getText().toString(); // 사용자가 입력한 메세지 가져옴
-                    //chatList.add(new ChatItem(1, message)); // 사용자가 입력한 메시지를 챗봇 메세지 리스트에 추가
+                    String message = et_input.getText().toString(); // 사용자가 입력한 메세지 가져옴
+                    chatList.add(new ChatItem(1, message)); // 사용자가 입력한 메시지를 챗봇 메세지 리스트에 추가
 
-                    //changeText(message); // 입력한 메세지 형태소 분석 메소드 실행
+                    // 데이터 전처리
+                    TextClassification client = new TextClassification(getContext()); // 데이터 전처리 클래스 호출
+                    List<String> tokenizeText = client.tokenize(message); // 토큰화된 텍스트
+                    List<Float> dicText = client.jsonParsing(tokenizeText); // 정수화된 텍스트
+                    float[] paddingText = client.padSequence(dicText); // 패딩된 텍스트
+
                     getEmotionModel(); // 감정 분석 모델 가져오기
 
-                    float[][] input = {{0}, {0}, {0}, {0}, {0}, {0}, {0}, {0}, {0}, {0}, {0}, {0}, {727}, {2}, {304}, {122}, {1816}, {39}, {26600}, {2}};
+                    float[][] input = {{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 727, 2, 304, 122, 1816, 39, 26600, 2}};
                     float[][] output = new float[1][7];
-                    if(interpreter != null){
+                    if(interpreter != null) {
                         interpreter.run(input, output);
-                        for (int i = 0; i < 7; i++) {
-                            chatList.add(new ChatItem(0,i + ": " + output[0][i]));
-                        }
+                    }
+                    for (int i = 0; i < 7; i++) {
+                        chatList.add(new ChatItem(0,i + ": " + output[0][i]));
                     }
                     adapter.notifyDataSetChanged();
 
@@ -119,62 +124,45 @@ public class ChatFragment extends Fragment {
         chatList.add(new ChatItem(0,"오늘 하루에 대해 일기를 남겨볼까요?"));
     }
 
-    //텍스트 형태소 분석 메소드
-    private void changeText(String text) {
-
-        //String text = "한국어를 처리하는 예시입니닼ㅋㅋㅋㅋㅋ #한국어";
-
-        // Normalize
-        CharSequence normalized = TwitterKoreanProcessorJava.normalize(text);
-        System.out.println(normalized);
-        // 한국어를 처리하는 예시입니다ㅋㅋ #한국어
-
-
-        // Tokenize
-        Seq<KoreanTokenizer.KoreanToken> tokens = TwitterKoreanProcessorJava.tokenize(normalized);
-        System.out.println(TwitterKoreanProcessorJava.tokensToJavaStringList(tokens));
-        // [한국어, 를, 처리, 하는, 예시, 입니, 다, ㅋㅋ, #한국어]
-        System.out.println(TwitterKoreanProcessorJava.tokensToJavaKoreanTokenList(tokens));
-        // [한국어(Noun: 0, 3), 를(Josa: 3, 1),  (Space: 4, 1), 처리(Noun: 5, 2), 하는(Verb: 7, 2),  (Space: 9, 1), 예시(Noun: 10, 2), 입니(Adjective: 12, 2), 다(Eomi: 14, 1), ㅋㅋ(KoreanParticle: 15, 2),  (Space: 17, 1), #한국어(Hashtag: 18, 4)]
-
-
-        // Stemming
-        Seq<KoreanTokenizer.KoreanToken> stemmed = TwitterKoreanProcessorJava.stem(tokens);
-        System.out.println(TwitterKoreanProcessorJava.tokensToJavaStringList(stemmed));
-        // [한국어, 를, 처리, 하다, 예시, 이다, ㅋㅋ, #한국어]
-        System.out.println(TwitterKoreanProcessorJava.tokensToJavaKoreanTokenList(stemmed));
-        // [한국어(Noun: 0, 3), 를(Josa: 3, 1),  (Space: 4, 1), 처리(Noun: 5, 2), 하다(Verb: 7, 2),  (Space: 9, 1), 예시(Noun: 10, 2), 이다(Adjective: 12, 3), ㅋㅋ(KoreanParticle: 15, 2),  (Space: 17, 1), #한국어(Hashtag: 18, 4)]
-
-
-        // Phrase extraction
-        List<KoreanPhraseExtractor.KoreanPhrase> phrases = TwitterKoreanProcessorJava.extractPhrases(tokens, true, true);
-        System.out.println(phrases);
-        // [한국어(Noun: 0, 3), 처리(Noun: 5, 2), 처리하는 예시(Noun: 5, 7), 예시(Noun: 10, 2), #한국어(Hashtag: 18, 4)]
-
-    }
 
     // 감정 분석 모델 가져오기
     private void getEmotionModel() {
+            FirebaseCustomRemoteModel remoteModel = new FirebaseCustomRemoteModel.Builder("modelSR").build();
+            FirebaseModelDownloadConditions conditions = new FirebaseModelDownloadConditions.Builder().requireWifi().build();
+            FirebaseModelManager.getInstance().download(remoteModel, conditions).addOnSuccessListener(new OnSuccessListener<Void>() {
+                @Override
+                public void onSuccess(Void v) {
+                    Toast.makeText(getContext(), "get model success", Toast.LENGTH_SHORT).show();
+                    FirebaseModelManager.getInstance().getLatestModelFile(remoteModel).addOnCompleteListener(new OnCompleteListener<File>() {
+                        @Override
+                        public void onComplete(@NonNull Task<File> task) {
+                            File modelFile = task.getResult();
+                            if (modelFile != null) {
+                                interpreter = new Interpreter(modelFile);
+                                Toast.makeText(getContext(), "get interpreter success", Toast.LENGTH_LONG).show();
+                            }
+                        }
+                    });
+                }
+            });
+    }
 
-        FirebaseCustomRemoteModel remoteModel = new FirebaseCustomRemoteModel.Builder("modelSR").build();
-        FirebaseModelDownloadConditions conditions = new FirebaseModelDownloadConditions.Builder().requireWifi().build();
-        FirebaseModelManager.getInstance().download(remoteModel, conditions).addOnSuccessListener(new OnSuccessListener<Void>() {
-            @Override
-            public void onSuccess(Void v) {
-                Toast.makeText(getContext(), "get model success", Toast.LENGTH_SHORT).show();
-                FirebaseModelManager.getInstance().getLatestModelFile(remoteModel).addOnCompleteListener(new OnCompleteListener<File>() {
+        /*
+        CustomModelDownloadConditions conditions = new CustomModelDownloadConditions.Builder().requireWifi().build();
+        FirebaseModelDownloader.getInstance()
+                .getModel("modelDY", DownloadType.LOCAL_MODEL_UPDATE_IN_BACKGROUND, conditions)
+                .addOnSuccessListener(new OnSuccessListener<CustomModel>() {
                     @Override
-                    public void onComplete(@NonNull Task<File> task) {
-                        modelFile = task.getResult();
+                    public void onSuccess(CustomModel model) {
+                        Toast.makeText(getContext(), "get model success", Toast.LENGTH_SHORT).show();
+                        File modelFile = model.getFile();
                         if (modelFile != null) {
                             interpreter = new Interpreter(modelFile);
-                            Toast.makeText(getContext(), "get interpreter success", Toast.LENGTH_LONG).show();
+                            Toast.makeText(getContext(), "get interpreter success", Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
-            }
-        });
-    }
+         */
 
     // 버튼 뷰 삭제
     public void deleteButton() {
