@@ -2,6 +2,7 @@ package ac.kr.duksung.moodiary.adapter;
 
 import android.content.Context;
 import android.os.CountDownTimer;
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,7 +22,7 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private ArrayList<ChatItem> chatList = null;
     ChatFragment fragment;
-    CountDownTimer countDownTimer; // 남은 시간 알려주는 타이머
+    public CountDownTimer countDownTimer; // 남은 시간 알려주는 타이머
 
     public ChatAdapter(ArrayList<ChatItem> chatList, ChatFragment fragment){
         this.chatList = chatList;
@@ -35,16 +36,19 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         Context context = parent.getContext();
         LayoutInflater inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-        if(type == 0){ // 챗봇 뷰일 경우
+        if(type == 0){ // 디어 뷰일 경우
             view = inflater.inflate(R.layout.chat_item_chatbot,parent,false);
             return new ChatbotViewHolder(view);
         } else if(type == 1){ // 사용자 뷰일 경우
             view = inflater.inflate(R.layout.chat_item_user,parent,false);
             return new UserViewHolder(view);
-        } else if(type == 2) { // 버튼 뷰일 경우
-            view = inflater.inflate(R.layout.chat_item_button, parent, false);
+        } else if(type == 2) { // 조명 뷰일 경우
+            view = inflater.inflate(R.layout.chat_item_button_light, parent, false);
+            return new LightViewHolder(view);
+        } else if(type == 3) { // 타이머 설정 뷰일 경우
+            view = inflater.inflate(R.layout.chat_item_button_time, parent, false);
             return new ButtonViewHolder(view);
-        } else if(type == 3) { // 타이머 뷰일 경우
+        } else if(type == 4) { // 실시간 타이머 뷰일 경우
             view = inflater.inflate(R.layout.chat_item_timer, parent, false);
             return new TimerViewHolder(view);
         } else
@@ -58,11 +62,6 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             ((ChatbotViewHolder)viewHolder).tv_chatbot.setText(chatList.get(position).getContent());
         } else if(viewHolder instanceof UserViewHolder){
             ((UserViewHolder)viewHolder).tv_user.setText(chatList.get(position).getContent());
-        } else if(viewHolder instanceof ButtonViewHolder) {
-            ((ButtonViewHolder) viewHolder).button1.setText(chatList.get(position).getBtn_text1());
-            ((ButtonViewHolder) viewHolder).button2.setText(chatList.get(position).getBtn_text2());
-            ((ButtonViewHolder) viewHolder).button3.setText(chatList.get(position).getBtn_text3());
-            ((ButtonViewHolder) viewHolder).button4.setText(chatList.get(position).getBtn_text4());
         } else if (viewHolder instanceof TimerViewHolder) {
             long time = chatList.get(position).getTime(); // 설정된 타이머 값
 
@@ -79,7 +78,9 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
                 @Override
                 public void onFinish() {
-                    ((TimerViewHolder) viewHolder).tv_timer.setText("종료");
+                    fragment.deleteButton();
+                    fragment.sequence++; // 다음 단계로 이동할 수 있도록 변수값 변경 (컬러테라피 완료된 단계라는 의미)
+                    fragment.Comment(); // 의견 입력 메소드 실행
                 }
             };
             countDownTimer.start(); // 타이머 시작
@@ -99,7 +100,7 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     }
 
     // 뷰 홀더에 들어갈 아이템 세팅
-    // 챗봇 뷰 홀더
+    // 디어 뷰 홀더
     public class ChatbotViewHolder extends RecyclerView.ViewHolder{
         TextView tv_chatbot;
 
@@ -119,7 +120,41 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         }
     }
 
-    // 버튼 뷰 홀더
+    // 조명 설정 뷰 홀더
+    public class LightViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+        TextView button1;
+        TextView button2;
+
+        public LightViewHolder(@NonNull View itemView) {
+            super(itemView);
+            button1 = itemView.findViewById(R.id.button1);
+            button2 = itemView.findViewById(R.id.button2);
+
+            button1.setOnClickListener(this);
+            button2.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View v) {
+            int pos = getAdapterPosition(); // 리스트에서 위치
+
+            switch (v.getId()) {
+                case R.id.button1:
+                    fragment.deleteButton();
+                    fragment.userClick("좋아요");
+                    fragment.setTimer();
+                    break;
+                case R.id.button2:
+                    fragment.deleteButton();
+                    fragment.userClick("싫어요");
+                    fragment.chatList.add(new ChatItem(0, "오늘의 감정일기는 '모아보기'에서 꺼내볼 수 있어요"));
+                    fragment.chatList.add(new ChatItem(0, "내일도 감정일기를 쓰면서 하루를 정리해보아요 :)"));
+                    break;
+            }
+        }
+    }
+
+    // 타이머 설정 뷰 홀더
     public class ButtonViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         TextView button1;
         TextView button2;
@@ -137,66 +172,36 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             button2.setOnClickListener(this);
             button3.setOnClickListener(this);
             button4.setOnClickListener(this);
-
         }
 
         @Override
         public void onClick(View v) {
             int pos = getAdapterPosition(); // 리스트에서 위치
-            int type = chatList.get(pos).getBtn_type(); // 버튼 뷰의 타입 값
 
             switch (v.getId()) {
                 case R.id.button1:
-                    if(type == 1) {
-                        fragment.deleteButton();
-                        fragment.userClick("컬러테라피");
-                        fragment.setTimer();
-                    }
-                    else if (type == 2) {
-                        fragment.deleteButton();
-                        fragment.userClick("15분");
-                        fragment.startTimer(15*60*1000);
-                    }
+                    fragment.deleteButton();
+                    fragment.userClick("15분");
+                    fragment.startTimer(15*60*1000);
                     break;
                 case R.id.button2:
-                    if(type == 1) {
-                        fragment.deleteButton();
-                        fragment.userClick("음악");
-                        fragment.setTimer();
-                    }
-                    else if (type == 2) {
-                        fragment.deleteButton();
-                        fragment.userClick("30분");
-                        fragment.startTimer(30*60*1000);
-                    }
+                    fragment.deleteButton();
+                    fragment.userClick("30분");
+                    fragment.startTimer(30*60*1000);
                     break;
                 case R.id.button3:
-                    if(type == 1) {
-                        fragment.deleteButton();
-                        fragment.userClick("둘 다");
-                        fragment.setTimer();
-                    }
-                    else if (type == 2) {
-                        fragment.deleteButton();
-                        fragment.userClick("1시간");
-                        fragment.startTimer(60*60*1000);
-                    }
+                    fragment.deleteButton();
+                    fragment.userClick("1시간");
+                    fragment.startTimer(60*60*1000);
                     break;
                 case R.id.button4:
-                    if(type == 1) {
-                        fragment.deleteButton();
-                        fragment.userClick("선택 안함");
-                    }
-                    else if (type == 2) {
-                        fragment.deleteButton();
-                        fragment.showAlert();
-                    }
+                    fragment.showAlert();
                     break;
             }
         }
     }
 
-    // 타이머 뷰 홀더
+    // 실시간 타이머 뷰 홀더
     public class TimerViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         TextView tv_timer;
         Button btn_finish;
@@ -214,8 +219,9 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             switch (v.getId()) {
                 case R.id.btn_finish:
                     countDownTimer.cancel(); // 타이머 종료
-                    tv_timer.setText("종료");
-                    break;
+                    fragment.deleteButton();
+                    fragment.sequence++; // 다음 단계로 이동할 수 있도록 변수값 변경 (컬러테라가 완료된 단계라는 의미)
+                    fragment.Comment(); // 의견 입력 메소드 실행
             }
         }
 

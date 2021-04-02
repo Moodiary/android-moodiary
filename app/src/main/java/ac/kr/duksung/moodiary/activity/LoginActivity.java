@@ -27,7 +27,7 @@ import org.json.JSONObject;
 import ac.kr.duksung.moodiary.R;
 
 // 화면 설명 : 로그인 화면
-// Author : Soohyun, Last Modified : 2021.02.08
+// Author : Soohyun, Last Modified : 2021.03.10
 public class LoginActivity extends AppCompatActivity {
     EditText et_id; // 아이디 입력창
     EditText et_password; // 비밀번호 입력창
@@ -75,12 +75,14 @@ public class LoginActivity extends AppCompatActivity {
                     RequestQueue requestQueue = Volley.newRequestQueue(LoginActivity.this);
 
                     // 3. node 서버 IP와 받을 경로 수정 (http://192.168.99.83:3000/post)  하고,
-                    JsonObjectRequest R_Object = new JsonObjectRequest(Request.Method.POST, "http://192.168.99.84:3000/user/login", requestJsonObject, new Response.Listener<JSONObject>() {
+                    JsonObjectRequest R_Object = new JsonObjectRequest(Request.Method.POST, "http://192.168.0.6:3000/user/login", requestJsonObject, new Response.Listener<JSONObject>() {
 
                         @Override
                         public void onResponse(JSONObject response) {
                             try {
                                 String result = response.getString("code"); // 응답 메시지 가져오기
+                                String name = response.getString("name"); // 응답 메시지 중 이름 데이터 가져오기
+                                String email = response.getString("email"); // 응답 메시지 중 이메일 데이터 가져오기
 
                                 // 응답 메시지에 따른 처리
                                 if(result.equals("200")) {
@@ -88,6 +90,8 @@ public class LoginActivity extends AppCompatActivity {
                                     SharedPreferences.Editor editor = auto.edit();
                                     editor.putString("ID", user_id); // 아이디 값 저장
                                     editor.putString("PW", user_pw); // 비밀번호 값 저장
+                                    editor.putString("Name", name); // 이름 값 저장
+                                    editor.putString("Email", email); // 이메일 값 저장
                                     editor.putString("Noti", "false"); // 알림 설정 여부 저장
                                     editor.commit(); // 변경사항 저장
 
