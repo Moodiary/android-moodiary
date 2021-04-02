@@ -48,14 +48,20 @@ import ac.kr.duksung.moodiary.domain.ChatItem;
 import scala.collection.Seq;
 
 // 화면 설명 : 메인화면의 챗봇 화면
-// Author : Soohyun, Last Modified : 2021.04.01
+// Author : Soohyun, Last Modified : 2021.04.02
 public class ChatFragment extends Fragment {
     public int sequence = 1; // 챗봇의 단계 처리를 위한 변수
     public ArrayList<ChatItem> chatList; // 챗봇 메세지 리스트
+    RecyclerView rv_chat; // 챗봇 리사이클러뷰
     ChatAdapter adapter; // 챗봇 어댑터
     EditText et_input; // 메세지 입력창
     Button btn_push; // 전송 버튼
     Interpreter interpreter; // 모델 인터프리터
+
+    float maxEmotion = 0; // 최대 감정 정보(퍼센트)
+    int maxIndex = -1; // 최대 감정 인덱스
+    String[] emotion = {"공포", "놀람", "분노", "슬픔", "중립", "행복", "혐오"}; // 감정 정보
+    String[] color = {"파란색", "노란색", "빨강", "주황색", "흰색", "흰색", "초록색"}; // 컬러테라피 정보
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -63,7 +69,7 @@ public class ChatFragment extends Fragment {
 
         initData(); // 데이터 초기화
 
-        RecyclerView rv_chat = view.findViewById(R.id.rv_chat); // 리사이클러뷰
+        rv_chat = view.findViewById(R.id.rv_chat);
         LinearLayoutManager manager = new LinearLayoutManager(getContext(),RecyclerView.VERTICAL,false); // 레이아웃 매니저
         adapter = new ChatAdapter(chatList, ChatFragment.this); // 챗봇 어댑터
         rv_chat.setLayoutManager(manager); // 리사이클러뷰와 레이아웃 매니저 연결
@@ -78,6 +84,8 @@ public class ChatFragment extends Fragment {
                 if(sequence == 1) { // 감정일기 쓰는 단계일 경우
                     String message = et_input.getText().toString(); // 사용자가 입력한 메세지 가져옴
                     chatList.add(new ChatItem(1, message)); // 사용자가 입력한 메시지를 챗봇 메세지 리스트에 추가
+                    chatList.add(new ChatItem(0, "감정을 분석 중입니다."));
+                    adapter.notifyDataSetChanged();
 
                     // 데이터 전처리
                     TextClassification client = new TextClassification(getContext()); // 데이터 전처리 클래스 호출
@@ -85,26 +93,13 @@ public class ChatFragment extends Fragment {
                     List<Float> dicText = client.jsonParsing(tokenizeText); // 정수화된 텍스트
                     float[][] paddingText = client.padSequence(dicText); // 패딩된 텍스트
 
-                    getEmotionModel(paddingText); // 감정 분석 모델 가져오기
+                    getEmotionModel(paddingText); // 감정 분석 모델 실행
 
-                    /*
-                    Handler mHandler = new Handler();
-                    mHandler.postDelayed(new Runnable() { public void run() {
-                        chatList.add(new ChatItem(0, "일기에서 가장 많이 느껴지는 감정은 ~~입니다"));
-                        chatList.add(new ChatItem(0, "당신을 위해 ~~색 조명을 틀어드릴게요"));
-                        chatList.add(new ChatItem(2));
-                        adapter.notifyDataSetChanged(); // 챗봇 메세지 리스트 갱신
-                    } }, 600); // 0.6초 딜레이 후 함수 실행
-
-                    et_input.setText(""); // 메세지 입력창 초기화
-                    sequence++; // 다음 단계로 이동할 수 있도록 변수값 변경 (일기 입력이 완료된 단계라는 의미)
-                    et_input.setEnabled(false); // 메세지 입력창 사용 금지
-                     */
                 } else if(sequence == 3) { // 컬러테라피가 끝난 후 의견을 입력받는 단계
                     String message = et_input.getText().toString(); // 사용자가 입력한 메세지 가져옴
                     chatList.add(new ChatItem(1, message)); // 사용자가 입력한 메시지를 챗봇 메세지 리스트에 추가
                     chatList.add(new ChatItem(0, "의견을 남겨주셔서 감사합니다 :)"));
-                    rv_chat.scrollToPosition(chatList.size()-1); // 뷰 스크롤 가장 아래로 위
+                    rv_chat.scrollToPosition(chatList.size()-1); // 뷰 스크롤 가장 아래로 위치 변경
                     et_input.setText(""); // 메세지 입력창 초기화
                     adapter.notifyDataSetChanged();
                 }
@@ -122,7 +117,7 @@ public class ChatFragment extends Fragment {
     // 감정 분석 모델 가져오기
     private void getEmotionModel(float[][] paddingText) {
 
-        FirebaseCustomRemoteModel remoteModel = new FirebaseCustomRemoteModel.Builder("modelDY").build();
+        FirebaseCustomRemoteModel remoteModel = new FirebaseCustomRemoteModel.Builder("modelSR").build();
         FirebaseModelDownloadConditions conditions = new FirebaseModelDownloadConditions.Builder().requireWifi().build();
         FirebaseModelManager.getInstance().download(remoteModel, conditions).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
@@ -136,16 +131,28 @@ public class ChatFragment extends Fragment {
                             interpreter = new Interpreter(modelFile);
                             Toast.makeText(getContext(), "get interpreter success", Toast.LENGTH_SHORT).show();
 
-                            //float[][] input = {{ 5304, 608, 2177, 1145, 71, 14, 362, 12987, 70, 6993}};
-                            float[][] input = paddingText;
-                            float[][] output = new float[1][7];
+                            float[][] input = paddingText; // input 텍스트
+                            float[][] output = new float[1][7]; // 모델 output 결과
                             if(interpreter != null) {
-                                interpreter.run(input, output);
+                                interpreter.run(input, output); // 모델 실행
+                                // 모델 결과값 가져온 후 최대 감정 뽑아내기
                                 for (int i = 0; i < 7; i++) {
-                                    chatList.add(new ChatItem(0,i + ": " + output[0][i]));
+                                    if(maxEmotion < output[0][i]) {
+                                        maxEmotion = output[0][i];
+                                        maxIndex = i;
+                                    }
+                                    System.out.println(i + " : " + output[0][i]);
                                 }
                             }
-                            adapter.notifyDataSetChanged();
+
+                            chatList.add(new ChatItem(0, "일기에서 가장 많이 느껴지는 감정은 " + emotion[maxIndex] + "입니다"));
+                            chatList.add(new ChatItem(0, "당신을 위해 " + color[maxIndex] +" 조명을 틀어드릴게요"));
+                            chatList.add(new ChatItem(2));
+                            adapter.notifyDataSetChanged(); // 챗봇 메세지 리스트 갱신
+
+                            et_input.setText(""); // 메세지 입력창 초기화
+                            sequence++; // 다음 단계로 이동할 수 있도록 변수값 변경 (일기 입력이 완료된 단계라는 의미)
+                            et_input.setEnabled(false); // 메세지 입력창 사용 금지
                         }
                     }
                 });
@@ -254,7 +261,7 @@ public class ChatFragment extends Fragment {
         Handler mHandler = new Handler();
         mHandler.postDelayed(new Runnable() { public void run() {
             chatList.add(new ChatItem(0, "타이머가 종료되었습니다"));
-            chatList.add(new ChatItem(0, "~~색 조명이 당신의 감정에 도움이 되셨나요?"));
+            chatList.add(new ChatItem(0, color[maxIndex] + " 조명이 당신의 감정에 도움이 되셨나요?"));
             chatList.add(new ChatItem(0, "의견을 남겨주세요"));
             et_input.setEnabled(true); // 메세지 입력창 사용 허용
             adapter.notifyDataSetChanged(); // 챗봇 메세지 리스트 갱신
