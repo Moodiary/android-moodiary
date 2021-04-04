@@ -1,7 +1,9 @@
 package ac.kr.duksung.moodiary.fragment;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -10,42 +12,40 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Handler;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.ml.common.modeldownload.FirebaseModelDownloadConditions;
 import com.google.firebase.ml.common.modeldownload.FirebaseModelManager;
 import com.google.firebase.ml.custom.FirebaseCustomRemoteModel;
-import com.google.firebase.ml.modeldownloader.CustomModel;
-import com.google.firebase.ml.modeldownloader.CustomModelDownloadConditions;
-import com.google.firebase.ml.modeldownloader.DownloadType;
-import com.google.firebase.ml.modeldownloader.FirebaseModelDownloader;
-import com.twitter.penguin.korean.TwitterKoreanProcessorJava;
-import com.twitter.penguin.korean.phrase_extractor.KoreanPhraseExtractor;
-import com.twitter.penguin.korean.tokenizer.KoreanTokenizer;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.tensorflow.lite.Interpreter;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.Executor;
 
 import ac.kr.duksung.moodiary.R;
 import ac.kr.duksung.moodiary.TextClassification;
+import ac.kr.duksung.moodiary.activity.MainActivity;
+import ac.kr.duksung.moodiary.activity.SignupActivity;
 import ac.kr.duksung.moodiary.adapter.ChatAdapter;
 import ac.kr.duksung.moodiary.domain.ChatItem;
-import scala.collection.Seq;
 
 // 화면 설명 : 메인화면의 챗봇 화면
 // Author : Soohyun, Last Modified : 2021.04.02
@@ -82,7 +82,7 @@ public class ChatFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 if(sequence == 1) { // 감정일기 쓰는 단계일 경우
-                    String message = et_input.getText().toString(); // 사용자가 입력한 메세지 가져옴
+                    String message = et_input.getText().toString().trim(); // 사용자가 입력한 메세지 가져옴
                     chatList.add(new ChatItem(1, message)); // 사용자가 입력한 메시지를 챗봇 메세지 리스트에 추가
                     chatList.add(new ChatItem(0, "감정을 분석 중입니다."));
                     adapter.notifyDataSetChanged();
@@ -93,7 +93,7 @@ public class ChatFragment extends Fragment {
                     List<Float> dicText = client.jsonParsing(tokenizeText); // 정수화된 텍스트
                     float[][] paddingText = client.padSequence(dicText); // 패딩된 텍스트
 
-                    getEmotionModel(paddingText); // 감정 분석 모델 실행
+                    getEmotionModel(message, paddingText); // 감정 분석 모델 실행
 
                 } else if(sequence == 3) { // 컬러테라피가 끝난 후 의견을 입력받는 단계
                     String message = et_input.getText().toString(); // 사용자가 입력한 메세지 가져옴
@@ -115,7 +115,7 @@ public class ChatFragment extends Fragment {
     }
 
     // 감정 분석 모델 가져오기
-    private void getEmotionModel(float[][] paddingText) {
+    private void getEmotionModel(String message, float[][] paddingText) {
 
         FirebaseCustomRemoteModel remoteModel = new FirebaseCustomRemoteModel.Builder("modelSR").build();
         FirebaseModelDownloadConditions conditions = new FirebaseModelDownloadConditions.Builder().requireWifi().build();
@@ -154,6 +154,8 @@ public class ChatFragment extends Fragment {
                             sequence++; // 다음 단계로 이동할 수 있도록 변수값 변경 (일기 입력이 완료된 단계라는 의미)
                             et_input.setEnabled(false); // 메세지 입력창 사용 금지
                         }
+
+                        saveDairy(message); // 일기와 감정 정보 저장 메소드 실행
                     }
                 });
             }
@@ -170,6 +172,54 @@ public class ChatFragment extends Fragment {
     public void userClick(String text) {
         chatList.add(new ChatItem(1, text));
         adapter.notifyDataSetChanged();
+    }
+
+    // 일기와 감정 정보 저장 메소드
+    public void saveDairy(String content) {
+        SharedPreferences auto = this.getActivity().getSharedPreferences("autoLogin", Activity.MODE_PRIVATE); // 자동로그인 데이터 저장되어있는 곳
+        String user_id = auto.getString("ID",null); // 저장된 아이디 값, 없으면 null
+
+        // 사용자 입력 정보 JSON 형태로 변환
+        JSONObject requestJsonObject = new JSONObject();
+        try {
+            requestJsonObject.put("user_id",user_id);
+            requestJsonObject.put("content", content);
+            requestJsonObject.put("emotion", emotion[maxIndex]);
+        } catch(JSONException e) {
+            e.printStackTrace();
+        }
+
+        RequestQueue requestQueue = Volley.newRequestQueue(getActivity());
+
+        // 서버에 데이터 전달
+        JsonObjectRequest jsonObject = new JsonObjectRequest(Request.Method.POST, "http://192.168.0.6:3000/diary/savediary", requestJsonObject, new Response.Listener<JSONObject>() {
+
+            @Override
+            public void onResponse(JSONObject response) { // 데이터 전달 후 받은 응답
+
+                try {
+                    String result = response.getString("code"); // 응답 메시지 가져오기
+
+                    // 응답 메시지에 따른 처리
+                    if(result.equals("400"))
+                        Toast.makeText(getContext(),"에러가 발생했습니다", Toast.LENGTH_SHORT).show();
+                    if(result.equals("200")) {
+                        System.out.println("감정 일기 저장 완료");
+                    }
+
+                } catch(JSONException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        }, new Response.ErrorListener() { // 데이터 전달 및 응답 실패시
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(getContext(), "네트워크 연결 오류", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        requestQueue.add(jsonObject);
     }
 
     // 타이머 설정하는 메소드
