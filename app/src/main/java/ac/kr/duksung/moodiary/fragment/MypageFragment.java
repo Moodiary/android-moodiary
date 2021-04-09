@@ -136,7 +136,7 @@ public class MypageFragment extends Fragment {
         RequestQueue requestQueue = Volley.newRequestQueue(getContext());
 
         // 서버에 데이터 전달
-        JsonObjectRequest jsonObject = new JsonObjectRequest(Request.Method.POST, "http://192.168.99.84:3000/user/deleteuser", requestJsonObject, new Response.Listener<JSONObject>() {
+        JsonObjectRequest jsonObject = new JsonObjectRequest(Request.Method.POST, "http://192.168.35.186:3000/user/deleteuser", requestJsonObject, new Response.Listener<JSONObject>() {
 
             @Override
             public void onResponse(JSONObject response) { // 데이터 전달 후 받은 응답

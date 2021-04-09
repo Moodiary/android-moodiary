@@ -42,8 +42,6 @@ import java.util.List;
 
 import ac.kr.duksung.moodiary.R;
 import ac.kr.duksung.moodiary.TextClassification;
-import ac.kr.duksung.moodiary.activity.MainActivity;
-import ac.kr.duksung.moodiary.activity.SignupActivity;
 import ac.kr.duksung.moodiary.adapter.ChatAdapter;
 import ac.kr.duksung.moodiary.domain.ChatItem;
 
@@ -56,6 +54,7 @@ public class ChatFragment extends Fragment {
     ChatAdapter adapter; // 챗봇 어댑터
     EditText et_input; // 메세지 입력창
     Button btn_push; // 전송 버튼
+
     Interpreter interpreter; // 모델 인터프리터
 
     float maxEmotion = 0; // 최대 감정 정보(퍼센트)
@@ -113,6 +112,7 @@ public class ChatFragment extends Fragment {
         chatList = new ArrayList<>();
         chatList.add(new ChatItem(0,"오늘 하루에 대해 일기를 남겨볼까요?"));
     }
+
 
     // 감정 분석 모델 가져오기
     private void getEmotionModel(String message, float[][] paddingText) {
