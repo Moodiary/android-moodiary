@@ -10,13 +10,11 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Handler;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -25,10 +23,6 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.ml.common.modeldownload.FirebaseModelDownloadConditions;
 import com.google.firebase.ml.common.modeldownload.FirebaseModelManager;
 import com.google.firebase.ml.custom.FirebaseCustomRemoteModel;
-import com.google.firebase.ml.modeldownloader.CustomModel;
-import com.google.firebase.ml.modeldownloader.CustomModelDownloadConditions;
-import com.google.firebase.ml.modeldownloader.DownloadType;
-import com.google.firebase.ml.modeldownloader.FirebaseModelDownloader;
 import com.twitter.penguin.korean.TwitterKoreanProcessorJava;
 import com.twitter.penguin.korean.phrase_extractor.KoreanPhraseExtractor;
 import com.twitter.penguin.korean.tokenizer.KoreanTokenizer;
@@ -37,9 +31,9 @@ import org.tensorflow.lite.Interpreter;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.Executor;
+
+import javax.xml.transform.Result;
 
 import ac.kr.duksung.moodiary.R;
 import ac.kr.duksung.moodiary.TextClassification;
@@ -56,6 +50,7 @@ public class ChatFragment extends Fragment {
     ChatAdapter adapter; // 챗봇 어댑터
     EditText et_input; // 메세지 입력창
     Button btn_push; // 전송 버튼
+
     Interpreter interpreter; // 모델 인터프리터
 
     float maxEmotion = 0; // 최대 감정 정보(퍼센트)
@@ -93,6 +88,7 @@ public class ChatFragment extends Fragment {
                     List<Float> dicText = client.jsonParsing(tokenizeText); // 정수화된 텍스트
                     float[][] paddingText = client.padSequence(dicText); // 패딩된 텍스트
 
+
                     getEmotionModel(paddingText); // 감정 분석 모델 실행
 
                 } else if(sequence == 3) { // 컬러테라피가 끝난 후 의견을 입력받는 단계
@@ -113,6 +109,7 @@ public class ChatFragment extends Fragment {
         chatList = new ArrayList<>();
         chatList.add(new ChatItem(0,"오늘 하루에 대해 일기를 남겨볼까요?"));
     }
+
 
     // 감정 분석 모델 가져오기
     private void getEmotionModel(float[][] paddingText) {
