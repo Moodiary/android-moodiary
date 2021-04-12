@@ -122,14 +122,14 @@ public class ChatFragment extends Fragment {
         FirebaseModelManager.getInstance().download(remoteModel, conditions).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void v) {
-                Toast.makeText(getContext(), "get model success", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getContext(), "get model success", Toast.LENGTH_SHORT).show();
                 FirebaseModelManager.getInstance().getLatestModelFile(remoteModel).addOnCompleteListener(new OnCompleteListener<File>() {
                     @Override
                     public void onComplete(@NonNull Task<File> task) {
                         File modelFile = task.getResult();
                         if (modelFile != null) {
                             interpreter = new Interpreter(modelFile);
-                            Toast.makeText(getContext(), "get interpreter success", Toast.LENGTH_SHORT).show();
+                            //Toast.makeText(getContext(), "get interpreter success", Toast.LENGTH_SHORT).show();
 
                             float[][] input = paddingText; // input 텍스트
                             float[][] output = new float[1][7]; // 모델 output 결과
@@ -192,7 +192,7 @@ public class ChatFragment extends Fragment {
         RequestQueue requestQueue = Volley.newRequestQueue(getActivity());
 
         // 서버에 데이터 전달
-        JsonObjectRequest jsonObject = new JsonObjectRequest(Request.Method.POST, "http://192.168.0.6:3000/diary/savediary", requestJsonObject, new Response.Listener<JSONObject>() {
+        JsonObjectRequest jsonObject = new JsonObjectRequest(Request.Method.POST, "http://172.30.1.56:3000/diary/savediary", requestJsonObject, new Response.Listener<JSONObject>() {
 
             @Override
             public void onResponse(JSONObject response) { // 데이터 전달 후 받은 응답
