@@ -31,13 +31,16 @@ public class SplashActivity extends AppCompatActivity {
 
         // 네트워크 연결 확인
         NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
-        isConnected = networkInfo != null && networkInfo.isConnectedOrConnecting();
 
         // 네트워크 연결 여부에 따른 동작
-        if(isConnected)
-            handler.postDelayed(new splashhandler(), 3000); // 3초 후 실행
-        else
+        if(networkInfo != null){
+            int type = networkInfo.getType();
+            if(type == ConnectivityManager.TYPE_MOBILE || type == ConnectivityManager.TYPE_WIFI){ // 3G, LTE, 와이파이로 연결된 경우 앱 실행
+                handler.postDelayed(new splashhandler(), 3000); // 3초 후 실행
+            }
+        } else {
             Toast.makeText(getApplicationContext(), "네트워크가 연결되어 있지 않습니다", Toast.LENGTH_LONG).show();
+        }
 
     }
 
