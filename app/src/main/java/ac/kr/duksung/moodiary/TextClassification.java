@@ -2,6 +2,7 @@ package ac.kr.duksung.moodiary;
 
 import android.content.Context;
 import android.content.res.AssetManager;
+import android.os.AsyncTask;
 import android.util.Log;
 
 import com.twitter.penguin.korean.TwitterKoreanProcessorJava;
@@ -20,7 +21,7 @@ import scala.collection.Seq;
 
 // 화면 설명 : 데이터 전처리 클래스
 // Author : Soohyun, Last Modified : 2021.04.01
-public final class TextClassification {
+public final class TextClassification{
     private Context context;
     private String filename = "word_dict_sr.json";
     private int maxlen = 10;
@@ -45,24 +46,27 @@ public final class TextClassification {
     // 정수화된 텍스트를 패딩하는 메소드
     public String[][] padSequence(List<String> tokenizeText) {
         String paddingText[][] = new String[1][maxlen]; // 패딩된 텍스트
-        List<String> padding = new ArrayList<>(); // maxlen 크기로 자른 텍스트
 
-        if (tokenizeText.size() > maxlen) { // maxlen 보다 긴 경우
-            padding = tokenizeText.subList(0,maxlen); // maxlen 크기로 텍스트 자르기
+        if (tokenizeText.size() >= maxlen) { // maxlen 보다 같거나 긴 경우
+            for(int i=0; i<maxlen; i++) {
+                paddingText[0][i] = tokenizeText.get(i);
+            }
         } else if (tokenizeText.size() < maxlen) { // maxlen보다 작은 경우
-            padding = tokenizeText;
-            for(int i=tokenizeText.size(); i<maxlen; i++) { // maxlen 크기에 맞춰 나머지는 0으로 채우기
-                padding.add("");
+            for(int i=0; i<maxlen; i++) { // maxlen 크기에 맞춰 나머지는 0으로 채우기
+                if(i >= tokenizeText.size()) {
+                    paddingText[0][i] = "";
+                } else {
+                    paddingText[0][i] = tokenizeText.get(i);
+                }
             }
         }
 
-        //  maxlen 크기로 자른 텍스트를 배열로 변환
-        int i = 0;
-        for(String value : padding) {
-            paddingText[0][i++] = value;
+        System.out.print("padding: [");
+        for(int i=0; i<maxlen; i++) {
+            System.out.print(paddingText[0][i] + ", ");
         }
+        System.out.print("]\n");
 
-        System.out.println("Padding: " + padding);
         return paddingText;
     }
 
