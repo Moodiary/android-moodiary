@@ -152,7 +152,7 @@ public class ChatFragment extends Fragment {
                             et_input.setEnabled(false); // 메세지 입력창 사용 금지
                         }
 
-                        //saveDairy(message); // 일기와 감정 정보 저장 메소드 실행
+                        saveDairy(message); // 일기와 감정 정보 저장 메소드 실행
                     }
                 });
             }
