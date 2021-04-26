@@ -21,7 +21,7 @@ import scala.collection.Seq;
 
 // 화면 설명 : 데이터 전처리 클래스
 // Author : Soohyun, Last Modified : 2021.04.01
-public final class TextClassification{
+public final class TextClassification {
     private Context context;
     private String filename = "word_dict_sr.json";
     private int maxlen = 10;
