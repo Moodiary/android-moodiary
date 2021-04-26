@@ -75,7 +75,7 @@ public class LoginActivity extends AppCompatActivity {
                     RequestQueue requestQueue = Volley.newRequestQueue(LoginActivity.this);
 
                     // 3. node 서버 IP와 받을 경로 수정 (http://192.168.99.83:3000/post)  하고
-                    JsonObjectRequest R_Object = new JsonObjectRequest(Request.Method.POST, "http://192.168.35.186:3000/user/login", requestJsonObject, new Response.Listener<JSONObject>() {
+                    JsonObjectRequest R_Object = new JsonObjectRequest(Request.Method.POST, "http://192.168.0.6:3000/user/login", requestJsonObject, new Response.Listener<JSONObject>() {
 
                         @Override
                         public void onResponse(JSONObject response) {
