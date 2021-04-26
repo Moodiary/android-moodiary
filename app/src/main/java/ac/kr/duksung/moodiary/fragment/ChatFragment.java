@@ -89,10 +89,10 @@ public class ChatFragment extends Fragment {
                     // 데이터 전처리
                     TextClassification client = new TextClassification(getContext()); // 데이터 전처리 클래스 호출
                     List<String> tokenizeText = client.tokenize(message); // 토큰화된 텍스트
-                    List<Float> dicText = client.jsonParsing(tokenizeText); // 정수화된 텍스트
-                    float[][] paddingText = client.padSequence(dicText); // 패딩된 텍스트
+                    String[][] paddingText = client.padSequence(tokenizeText); // 패딩된 텍스트
+                    float[][] dicText = client.jsonParsing(paddingText); // 정수화된 텍스트
 
-                    getEmotionModel(message, paddingText); // 감정 분석 모델 실행
+                    getEmotionModel(message, dicText); // 감정 분석 모델 실행
 
                 } else if(sequence == 3) { // 컬러테라피가 끝난 후 의견을 입력받는 단계
                     String message = et_input.getText().toString(); // 사용자가 입력한 메세지 가져옴
@@ -152,7 +152,7 @@ public class ChatFragment extends Fragment {
                             et_input.setEnabled(false); // 메세지 입력창 사용 금지
                         }
 
-                        saveDairy(message); // 일기와 감정 정보 저장 메소드 실행
+                        //saveDairy(message); // 일기와 감정 정보 저장 메소드 실행
                     }
                 });
             }
@@ -191,6 +191,7 @@ public class ChatFragment extends Fragment {
         // 서버에 데이터 전달
 
         JsonObjectRequest jsonObject = new JsonObjectRequest(Request.Method.POST, "http://172.30.1.28:3000/diary/savediary", requestJsonObject, new Response.Listener<JSONObject>() {
+
 
             @Override
             public void onResponse(JSONObject response) { // 데이터 전달 후 받은 응답
