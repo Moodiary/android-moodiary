@@ -125,7 +125,7 @@ public class ChatFragment extends Fragment {
                     observable.subscribeOn(Schedulers.io()).subscribe(observer); // io스레드에서 실행
 
 
-                    /*
+/*
                     // 데이터 전처리
                     TextClassification client = new TextClassification(getContext()); // 데이터 전처리 클래스 호출
                     List<String> tokenizeText = client.tokenize(message); // 토큰화된 텍스트
@@ -163,14 +163,12 @@ public class ChatFragment extends Fragment {
         FirebaseModelManager.getInstance().download(remoteModel, conditions).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void v) {
-
                 FirebaseModelManager.getInstance().getLatestModelFile(remoteModel).addOnCompleteListener(new OnCompleteListener<File>() {
                     @Override
                     public void onComplete(@NonNull Task<File> task) {
                         File modelFile = task.getResult();
                         if (modelFile != null) {
                             interpreter = new Interpreter(modelFile);
-
                             float[][] input = paddingText; // input 텍스트
                             float[][] output = new float[1][7]; // 모델 output 결과
                             if(interpreter != null) {
@@ -196,7 +194,7 @@ public class ChatFragment extends Fragment {
                             et_input.setEnabled(false); // 메세지 입력창 사용 금지
                         }
 
-                        //saveDairy(message); // 일기와 감정 정보 저장 메소드 실행
+                        saveDairy(message); // 일기와 감정 정보 저장 메소드 실행
                     }
                 });
             }
@@ -233,7 +231,9 @@ public class ChatFragment extends Fragment {
         RequestQueue requestQueue = Volley.newRequestQueue(getActivity());
 
         // 서버에 데이터 전달
-        JsonObjectRequest jsonObject = new JsonObjectRequest(Request.Method.POST, "http://192.168.0.6:3000/diary/savediary", requestJsonObject, new Response.Listener<JSONObject>() {
+
+        JsonObjectRequest jsonObject = new JsonObjectRequest(Request.Method.POST, "http://172.30.1.55:3000/diary/savediary", requestJsonObject, new Response.Listener<JSONObject>() {
+
 
             @Override
             public void onResponse(JSONObject response) { // 데이터 전달 후 받은 응답

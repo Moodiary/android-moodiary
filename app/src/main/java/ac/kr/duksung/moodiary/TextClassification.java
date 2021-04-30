@@ -23,8 +23,8 @@ import scala.collection.Seq;
 // Author : Soohyun, Last Modified : 2021.04.01
 public final class TextClassification {
     private Context context;
-    private String filename = "word_dict_sr.json";
-    private int maxlen = 10;
+    private String filename = "word_dict_rnn.json";
+    private int maxlen = 20;
     private HashMap vocabData;
 
     // 생성자
@@ -109,7 +109,6 @@ public final class TextClassification {
                 System.out.print(dicText[0][i] + ", ");
             }
             System.out.print("]\n");
-
             return dicText;
         } catch (IOException e) {
             e.printStackTrace();
