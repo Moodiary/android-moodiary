@@ -53,6 +53,11 @@ dependencies {
     implementation 'com.google.firebase:firebase-ml-model-interpreter'
     implementation files('libs/open-korean-text-2.1.0.jar')
     implementation 'com.twitter.penguin:korean-text:4.4.4'
+    implementation 'io.reactivex.rxjava3:rxandroid:3.0.0'
+    implementation 'io.reactivex.rxjava3:rxjava:3.0.6'
+    implementation 'com.jakewharton.rxbinding3:rxbinding:3.1.0'
+
+
 
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'

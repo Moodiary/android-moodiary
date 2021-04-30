@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
+
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -12,6 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Handler;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -44,6 +46,9 @@ import ac.kr.duksung.moodiary.R;
 import ac.kr.duksung.moodiary.TextClassification;
 import ac.kr.duksung.moodiary.adapter.ChatAdapter;
 import ac.kr.duksung.moodiary.domain.ChatItem;
+import io.reactivex.Observable;
+import io.reactivex.observers.DisposableObserver;
+import io.reactivex.schedulers.Schedulers;
 
 // 화면 설명 : 메인화면의 챗봇 화면
 // Author : Soohyun, Last Modified : 2021.04.02
@@ -76,6 +81,7 @@ public class ChatFragment extends Fragment {
         et_input = view.findViewById(R.id.et_input);
         btn_push = view.findViewById(R.id.btn_push);
 
+
         // 전송 버튼 클릭시
         btn_push.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -85,14 +91,48 @@ public class ChatFragment extends Fragment {
                     chatList.add(new ChatItem(1, message)); // 사용자가 입력한 메시지를 챗봇 메세지 리스트에 추가
                     chatList.add(new ChatItem(0, "감정을 분석 중입니다."));
                     adapter.notifyDataSetChanged();
+                    et_input.setText("");
 
+                    DisposableObserver<String> observer = new DisposableObserver<String>() {
+                        @Override
+                        public void onNext(@NonNull String s) {
+                            // 데이터 전처리
+                            TextClassification client = new TextClassification(getContext()); // 데이터 전처리 클래스 호출
+                            List<String> tokenizeText = client.tokenize(message); // 토큰화된 텍스트
+                            String[][] paddingText = client.padSequence(tokenizeText); // 패딩된 텍스트
+                            float[][] dicText = client.jsonParsing(paddingText); // 정수화된 텍스트
+
+                            getEmotionModel(message, dicText); // 감정 분석 모델 실행
+                        }
+
+                        @Override
+                        public void onError(@NonNull Throwable e) {
+                            Log.d("TEST", "Observer Error...");
+                        }
+
+                        @Override
+                        public void onComplete() {
+                            Log.d("TEST", "Observer Complete!");
+                        }
+                    };
+
+                    Observable<String> observable = Observable.create(emitter -> {
+                                emitter.onNext(Thread.currentThread().getName() + "\n: RxJava Observer Test");
+                                emitter.onComplete();
+                            }
+                    );
+
+                    observable.subscribeOn(Schedulers.io()).subscribe(observer); // io스레드에서 실행
+
+
+/*
                     // 데이터 전처리
                     TextClassification client = new TextClassification(getContext()); // 데이터 전처리 클래스 호출
                     List<String> tokenizeText = client.tokenize(message); // 토큰화된 텍스트
                     String[][] paddingText = client.padSequence(tokenizeText); // 패딩된 텍스트
                     float[][] dicText = client.jsonParsing(paddingText); // 정수화된 텍스트
 
-                    getEmotionModel(message, dicText); // 감정 분석 모델 실행
+                    getEmotionModel(message, dicText); // 감정 분석 모델 실행*/
 
                 } else if(sequence == 3) { // 컬러테라피가 끝난 후 의견을 입력받는 단계
                     String message = et_input.getText().toString(); // 사용자가 입력한 메세지 가져옴
@@ -104,6 +144,7 @@ public class ChatFragment extends Fragment {
                 }
             }
         });
+
         return view;
     }
 
@@ -122,14 +163,12 @@ public class ChatFragment extends Fragment {
         FirebaseModelManager.getInstance().download(remoteModel, conditions).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void v) {
-
                 FirebaseModelManager.getInstance().getLatestModelFile(remoteModel).addOnCompleteListener(new OnCompleteListener<File>() {
                     @Override
                     public void onComplete(@NonNull Task<File> task) {
                         File modelFile = task.getResult();
                         if (modelFile != null) {
                             interpreter = new Interpreter(modelFile);
-
                             float[][] input = paddingText; // input 텍스트
                             float[][] output = new float[1][7]; // 모델 output 결과
                             if(interpreter != null) {
@@ -191,7 +230,9 @@ public class ChatFragment extends Fragment {
         RequestQueue requestQueue = Volley.newRequestQueue(getActivity());
 
         // 서버에 데이터 전달
-        JsonObjectRequest jsonObject = new JsonObjectRequest(Request.Method.POST, "http://192.168.0.6:3000/diary/savediary", requestJsonObject, new Response.Listener<JSONObject>() {
+
+        JsonObjectRequest jsonObject = new JsonObjectRequest(Request.Method.POST, "http://172.30.1.28:3000/diary/savediary", requestJsonObject, new Response.Listener<JSONObject>() {
+
 
             @Override
             public void onResponse(JSONObject response) { // 데이터 전달 후 받은 응답

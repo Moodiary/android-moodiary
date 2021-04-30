@@ -76,7 +76,9 @@ public class CollectFragment extends Fragment {
         RequestQueue requestQueue = Volley.newRequestQueue(getContext());
 
         // 서버에 데이터 전달
-        JsonObjectRequest jsonObject = new JsonObjectRequest(Request.Method.POST, "http://172.30.1.40:3000/diary/collect", requestJsonObject, new Response.Listener<JSONObject>() {
+
+        JsonObjectRequest jsonObject = new JsonObjectRequest(Request.Method.POST, "http://172.30.1.28:3000/diary/collect", requestJsonObject, new Response.Listener<JSONObject>() {
+
 
             @Override
             public void onResponse(JSONObject response) { // 데이터 전달 후 받은 응답
@@ -122,5 +124,6 @@ public class CollectFragment extends Fragment {
 
         requestQueue.add(jsonObject);
     }
+
 
 }
