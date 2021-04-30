@@ -62,16 +62,12 @@ public class CollectFragment extends Fragment {
         diary_content = view.findViewById(R.id.diary_content);
 
         requestCollect(); // 일기 데이터 메소드 실행
-
         diary_calendar.setOnDateChangedListener(new OnDateSelectedListener(){
             @Override
             public void onDateSelected(@NonNull MaterialCalendarView widget, @NonNull CalendarDay date, boolean selected) {
 
-            }
-
-            public void onSelectedDayChange(@NonNull CalendarView calendarView, int year, int month, int dayOfMonth) {
                 SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd"); // 날짜 형식
-                Date selectedDate = null; // 선택된 날짜
+                Date selectedDate = date.getDate(); // 선택된 날짜
                 Date createdDate = null; // createdList의 특정 날짜
 
                 // 초기화
@@ -79,8 +75,6 @@ public class CollectFragment extends Fragment {
                 diary_content.setText("");
 
                 try {
-                    selectedDate = format.parse(year + "-" + (month+1) + "-" + dayOfMonth);
-
                     // 선택된 날짜와 날짜 리스트의 날짜가 같으면 일기 정보 표시
                     for(int i=0; i<createdList.size(); i++) {
                         createdDate = format.parse(createdList.get(i));
@@ -179,7 +173,7 @@ public class CollectFragment extends Fragment {
 
         // 서버에 데이터 전달
 
-        JsonObjectRequest jsonObject = new JsonObjectRequest(Request.Method.POST, "http://172.30.1.17:3000/diary/collect", requestJsonObject, new Response.Listener<JSONObject>() {
+        JsonObjectRequest jsonObject = new JsonObjectRequest(Request.Method.POST, "http://192.168.0.6:3000/diary/collect", requestJsonObject, new Response.Listener<JSONObject>() {
 
 
             @Override
