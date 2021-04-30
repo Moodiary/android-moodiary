@@ -91,6 +91,7 @@ public class ChatFragment extends Fragment {
                     chatList.add(new ChatItem(1, message)); // 사용자가 입력한 메시지를 챗봇 메세지 리스트에 추가
                     chatList.add(new ChatItem(0, "감정을 분석 중입니다."));
                     adapter.notifyDataSetChanged();
+                    et_input.setText("");
 
                     DisposableObserver<String> observer = new DisposableObserver<String>() {
                         @Override
@@ -124,7 +125,7 @@ public class ChatFragment extends Fragment {
                     observable.subscribeOn(Schedulers.io()).subscribe(observer); // io스레드에서 실행
 
 
-                    /*
+/*
                     // 데이터 전처리
                     TextClassification client = new TextClassification(getContext()); // 데이터 전처리 클래스 호출
                     List<String> tokenizeText = client.tokenize(message); // 토큰화된 텍스트
