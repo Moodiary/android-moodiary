@@ -30,10 +30,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
-import java.util.List;
+import java.util.Date;
 
 import ac.kr.duksung.moodiary.CalendarEvent.EventDecorator;
 import ac.kr.duksung.moodiary.CalendarEvent.SundayDecorator;
@@ -44,6 +45,7 @@ import ac.kr.duksung.moodiary.R;
 public class CollectFragment extends Fragment {
 
     CalendarView diary_calendar; // 달력
+    TextView diary_emotion; // 일기 감정
     TextView diary_content; // 일기내용
     ArrayList<String> contentList = new ArrayList<>(); // 일기내용 리스트
     ArrayList<String> emotionList = new ArrayList<>(); // 일기감정 리스트
@@ -55,16 +57,43 @@ public class CollectFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_collect, container, false);
 
         MaterialCalendarView diary_calendar = view.findViewById(R.id.diary_calendar);
+        //diary_calendar = view.findViewById(R.id.diary_calendar);
+        diary_emotion = view.findViewById(R.id.diary_emotion);
         diary_content = view.findViewById(R.id.diary_content);
-        //MaterialCalendarView calendarView = view.findViewById(R.id.diary_calendar); //일기커스텀뷰 객체
 
         requestCollect(); // 일기 데이터 메소드 실행
 
         diary_calendar.setOnDateChangedListener(new OnDateSelectedListener(){
-
             @Override
             public void onDateSelected(@NonNull MaterialCalendarView widget, @NonNull CalendarDay date, boolean selected) {
 
+            }
+
+            public void onSelectedDayChange(@NonNull CalendarView calendarView, int year, int month, int dayOfMonth) {
+                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd"); // 날짜 형식
+                Date selectedDate = null; // 선택된 날짜
+                Date createdDate = null; // createdList의 특정 날짜
+
+                // 초기화
+                diary_emotion.setText("");
+                diary_content.setText("");
+
+                try {
+                    selectedDate = format.parse(year + "-" + (month+1) + "-" + dayOfMonth);
+
+                    // 선택된 날짜와 날짜 리스트의 날짜가 같으면 일기 정보 표시
+                    for(int i=0; i<createdList.size(); i++) {
+                        createdDate = format.parse(createdList.get(i));
+
+                        if(createdDate.equals(selectedDate)) {
+                            diary_emotion.setText(emotionList.get(i));
+                            diary_content.setText(contentList.get(i));
+                            break;
+                        }
+                    }
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
             }
         });
 
@@ -181,6 +210,7 @@ public class CollectFragment extends Fragment {
                         for(int i=0; i<contentList.size(); i++) {
                             System.out.println(contentList.get(i) + " / " + emotionList.get(i) + " / " + createdList.get(i));
                         }
+                        init(); // 일기 초기화 메소드 실행
                     }
 
                 } catch(JSONException e) {
@@ -198,5 +228,26 @@ public class CollectFragment extends Fragment {
         requestQueue.add(jsonObject);
     }
 
+    // 현재 날짜 일기 초기화 메소드
+    public void init() {
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd"); // 날짜 형식
+        Date now = new Date(); // 현재 날짜
+        String nowStr = format.format(now);
 
+        try {
+            Date nowDate = format.parse(nowStr);
+
+            for(int i=0; i<createdList.size(); i++) {
+                Date createdDate = format.parse(createdList.get(i));
+
+                if(createdDate.equals(nowDate)) {
+                    diary_emotion.setText(emotionList.get(i));
+                    diary_content.setText(contentList.get(i));
+                    break;
+                }
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+    }
 }

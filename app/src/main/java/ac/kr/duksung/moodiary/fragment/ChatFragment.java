@@ -182,6 +182,7 @@ public class ChatFragment extends Fragment {
                                     System.out.println(i + " : " + output[0][i]);
                                 }
                             }
+                            interpreter.close();
 
                             chatList.add(new ChatItem(0, "일기에서 가장 많이 느껴지는 감정은 " + emotion[maxIndex] + "입니다"));
                             chatList.add(new ChatItem(0, "당신을 위해 " + color[maxIndex] +" 조명을 틀어드릴게요"));
@@ -230,6 +231,7 @@ public class ChatFragment extends Fragment {
         RequestQueue requestQueue = Volley.newRequestQueue(getActivity());
 
         // 서버에 데이터 전달
+
 
         JsonObjectRequest jsonObject = new JsonObjectRequest(Request.Method.POST, "http://172.30.1.17:3000/diary/savediary", requestJsonObject, new Response.Listener<JSONObject>() {
 
