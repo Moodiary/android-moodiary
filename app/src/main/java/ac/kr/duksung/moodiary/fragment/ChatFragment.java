@@ -91,6 +91,7 @@ public class ChatFragment extends Fragment {
                     chatList.add(new ChatItem(1, message)); // 사용자가 입력한 메시지를 챗봇 메세지 리스트에 추가
                     chatList.add(new ChatItem(0, "감정을 분석 중입니다."));
                     adapter.notifyDataSetChanged();
+                    et_input.setText("");
 
                     DisposableObserver<String> observer = new DisposableObserver<String>() {
                         @Override
@@ -183,6 +184,7 @@ public class ChatFragment extends Fragment {
                                     System.out.println(i + " : " + output[0][i]);
                                 }
                             }
+                            interpreter.close();
 
                             chatList.add(new ChatItem(0, "일기에서 가장 많이 느껴지는 감정은 " + emotion[maxIndex] + "입니다"));
                             chatList.add(new ChatItem(0, "당신을 위해 " + color[maxIndex] +" 조명을 틀어드릴게요"));
@@ -194,7 +196,7 @@ public class ChatFragment extends Fragment {
                             et_input.setEnabled(false); // 메세지 입력창 사용 금지
                         }
 
-                        saveDairy(message); // 일기와 감정 정보 저장 메소드 실행
+                        //saveDairy(message); // 일기와 감정 정보 저장 메소드 실행
                     }
                 });
             }

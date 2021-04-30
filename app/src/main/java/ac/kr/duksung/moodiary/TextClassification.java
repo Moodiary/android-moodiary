@@ -34,6 +34,7 @@ public final class TextClassification {
 
     // 입력받은 텍스트를 토큰화하는 메소드
     public List<String> tokenize(String text) {
+
         CharSequence normalized = TwitterKoreanProcessorJava.normalize(text); // Normalize
 
         Seq<KoreanTokenizer.KoreanToken> tokens = TwitterKoreanProcessorJava.tokenize(normalized); // Tokenize
@@ -72,7 +73,7 @@ public final class TextClassification {
 
     // 토큰화된 텍스트를 정수화하는 메소드
     public float[][] jsonParsing(String[][] paddingText) {
-        String json = null; // json 파일의 전체 내용
+        String json = ""; // json 파일의 전체 내용
         //List<Float> dicText = new ArrayList<>(); // 정수화된 텍스트
         float[][] dicText = new float[1][maxlen];
 
