@@ -17,7 +17,7 @@ public class EventDecorator implements DayViewDecorator {
 
     public EventDecorator(int color, ArrayList<CalendarDay> dates) {
         this.color = color;
-        this.dates = new ArrayList<CalendarDay>(dates);
+        this.dates = new ArrayList<>(dates);
     }
 
     @Override
@@ -27,6 +27,6 @@ public class EventDecorator implements DayViewDecorator {
 
     @Override
     public void decorate(DayViewFacade view) {
-        view.addSpan(new DotSpan(5, color));
+        view.addSpan(new DotSpan(10, color));
     }
 }

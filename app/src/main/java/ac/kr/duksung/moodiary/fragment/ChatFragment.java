@@ -233,7 +233,7 @@ public class ChatFragment extends Fragment {
         // 서버에 데이터 전달
 
 
-        JsonObjectRequest jsonObject = new JsonObjectRequest(Request.Method.POST, "http://172.30.1.17:3000/diary/savediary", requestJsonObject, new Response.Listener<JSONObject>() {
+        JsonObjectRequest jsonObject = new JsonObjectRequest(Request.Method.POST, "http://192.168.35.186:3000/diary/savediary", requestJsonObject, new Response.Listener<JSONObject>() {
 
 
             @Override
