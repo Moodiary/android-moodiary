@@ -3,7 +3,6 @@ package ac.kr.duksung.moodiary.fragment;
 import android.app.Activity;
 import android.content.SharedPreferences;
 import android.graphics.Color;
-import android.os.AsyncTask;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -33,31 +32,29 @@ import org.json.JSONObject;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 
 import ac.kr.duksung.moodiary.CalendarEvent.EventDecorator;
+import ac.kr.duksung.moodiary.CalendarEvent.SaturdayDecorator;
 import ac.kr.duksung.moodiary.CalendarEvent.SundayDecorator;
 import ac.kr.duksung.moodiary.R;
 
 // 화면 설명 : 메인화면의 모아보기 화면
 // Author : Soohyun, Last Modified : 2021.04.09
 public class CollectFragment extends Fragment {
-
-    CalendarView diary_calendar; // 달력
     TextView diary_emotion; // 일기 감정
     TextView diary_content; // 일기내용
     ArrayList<String> contentList = new ArrayList<>(); // 일기내용 리스트
     ArrayList<String> emotionList = new ArrayList<>(); // 일기감정 리스트
     ArrayList<String> createdList = new ArrayList<>(); // 일기작성날짜 리스트
-    ArrayList<CalendarDay> dates = new ArrayList<>();
+    ArrayList<CalendarDay> dates = new ArrayList<>(); //일정표시 리스트
+    MaterialCalendarView diary_calendar; // 캘린더 뷰
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_collect, container, false);
 
-        MaterialCalendarView diary_calendar = view.findViewById(R.id.diary_calendar);
-        //diary_calendar = view.findViewById(R.id.diary_calendar);
+        diary_calendar = view.findViewById(R.id.diary_calendar);
         diary_emotion = view.findViewById(R.id.diary_emotion);
         diary_content = view.findViewById(R.id.diary_content);
 
@@ -89,68 +86,13 @@ public class CollectFragment extends Fragment {
                     e.printStackTrace();
                 }
             }
+
         });
-
-        class ApiSimulator extends AsyncTask<Void, Void, ArrayList<CalendarDay>> {
-
-            @Override
-            protected ArrayList<CalendarDay> doInBackground(@NonNull Void... voids) {
-                try {
-                    Thread.sleep(500);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-
-                Calendar calendar = Calendar.getInstance();
-
-
-
-                /*특정날짜 달력에 점표시해주는곳*/
-                /*월은 0이 1월 년,일은 그대로*/
-                //string 문자열인 Time_Result 을 받아와서 ,를 기준으로 짜르고 string을 int 로 변환
-                for (int i = 0; i < createdList.size(); i++) {
-
-
-                    //이부분에서 day를 선언하면 초기 값에 오늘 날짜 데이터 들어간다.
-                    //오늘 날짜 데이터를 첫 번째 인자로 넣기 때문에 데이터가 하나씩 밀려 마지막 데이터는 표시되지 않고, 오늘 날짜 데이터가 표시 됨.
-                    // day선언 주석처리
-
-                    //                CalendarDay day = CalendarDay.from(calendar);
-                    //                Log.e("데이터 확인","day"+day);
-                    String[] time = createdList.get(i).split(",");
-
-                    int year = Integer.parseInt(time[0]);
-                    int month = Integer.parseInt(time[1]);
-                    int dayy = Integer.parseInt(time[2]);
-
-                    //선언문을 아래와 같은 위치에 선언
-                    //먼저 .set 으로 데이터를 설정한 다음 CalendarDay day = CalendarDay.from(calendar); 선언해주면 첫 번째 인자로 새로 정렬한 데이터를 넣어 줌.
-                    calendar.set(year, month - 1, dayy);
-                    CalendarDay day = CalendarDay.from(calendar);
-                    dates.add(day);
-
-                }
-                return dates;
-            }
-
-            @Override
-            protected void onPostExecute(@NonNull ArrayList<CalendarDay> calendarDays) {
-                super.onPostExecute(calendarDays);
-
-                /*if (isFinishing()) {
-                    return;
-                }*/
-
-                diary_calendar.addDecorator(new EventDecorator(Color.RED, calendarDays));
-            }
-
-
-        }
 
         //일기 커스텀뷰
         diary_calendar.setSelectedDate(CalendarDay.today());
-        //diary_calendar.addDecorator(new EventDecorator(Color.GREEN, CalendarDay));
         diary_calendar.addDecorator(new SundayDecorator());
+        diary_calendar.addDecorator(new SaturdayDecorator());
 
         return view;
     }
@@ -173,7 +115,7 @@ public class CollectFragment extends Fragment {
 
         // 서버에 데이터 전달
 
-        JsonObjectRequest jsonObject = new JsonObjectRequest(Request.Method.POST, "http://192.168.0.6:3000/diary/collect", requestJsonObject, new Response.Listener<JSONObject>() {
+        JsonObjectRequest jsonObject = new JsonObjectRequest(Request.Method.POST, "http://172.30.1.23:3000/diary/collect", requestJsonObject, new Response.Listener<JSONObject>() {
 
 
             @Override
@@ -243,5 +185,18 @@ public class CollectFragment extends Fragment {
         } catch (ParseException e) {
             e.printStackTrace();
         }
+
+        // 일기있는 날짜에 빨간 점 표시
+        try {
+            for(int i=0; i<createdList.size(); i++) {
+                Date createdDate = format.parse(createdList.get(i));
+                dates.add(CalendarDay.from(createdDate));   //dates리스트에 CalendarDay형식으로 날짜추가
+            }
+            diary_calendar.addDecorator(new EventDecorator(Color.RED, dates));  //일정에 점찍기
+
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
     }
+
 }
