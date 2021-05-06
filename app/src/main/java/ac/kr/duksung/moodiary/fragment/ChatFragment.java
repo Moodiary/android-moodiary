@@ -2,9 +2,14 @@ package ac.kr.duksung.moodiary.fragment;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothSocket;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 
+import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -39,9 +44,14 @@ import org.json.JSONObject;
 import org.tensorflow.lite.Interpreter;
 
 import java.io.File;
+import java.io.IOException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 
+import ac.kr.duksung.moodiary.ConnectedThread;
 import ac.kr.duksung.moodiary.R;
 import ac.kr.duksung.moodiary.TextClassification;
 import ac.kr.duksung.moodiary.adapter.ChatAdapter;
@@ -51,7 +61,7 @@ import io.reactivex.observers.DisposableObserver;
 import io.reactivex.schedulers.Schedulers;
 
 // 화면 설명 : 메인화면의 챗봇 화면
-// Author : Soohyun, Last Modified : 2021.04.02
+// Author : Soohyun, Last Modified : 2021.05.06
 public class ChatFragment extends Fragment {
     public int sequence = 1; // 챗봇의 단계 처리를 위한 변수
     public ArrayList<ChatItem> chatList; // 챗봇 메세지 리스트
@@ -61,6 +71,12 @@ public class ChatFragment extends Fragment {
     Button btn_push; // 전송 버튼
 
     Interpreter interpreter; // 모델 인터프리터
+    BluetoothAdapter btAdapter; // 블루투스 통신을 위한 어댑터
+    BluetoothSocket btSocket; // 블루투스 통신을 위한 소켓
+    ConnectedThread connectedThread; // 소켓 통신을 위한 스레드
+    private final static int REQUEST_ENABLE_BT = 1; // 블루투스 연결 번호
+    private static String btAddress = "00:20:12:08:1D:EF"; // 장치의 MAC주소
+    private static final UUID MY_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB"); // UDDI 값
 
     float maxEmotion = 0; // 최대 감정 정보(퍼센트)
     int maxIndex = -1; // 최대 감정 인덱스
@@ -124,16 +140,6 @@ public class ChatFragment extends Fragment {
 
                     observable.subscribeOn(Schedulers.io()).subscribe(observer); // io스레드에서 실행
 
-
-/*
-                    // 데이터 전처리
-                    TextClassification client = new TextClassification(getContext()); // 데이터 전처리 클래스 호출
-                    List<String> tokenizeText = client.tokenize(message); // 토큰화된 텍스트
-                    String[][] paddingText = client.padSequence(tokenizeText); // 패딩된 텍스트
-                    float[][] dicText = client.jsonParsing(paddingText); // 정수화된 텍스트
-
-                    getEmotionModel(message, dicText); // 감정 분석 모델 실행*/
-
                 } else if(sequence == 3) { // 컬러테라피가 끝난 후 의견을 입력받는 단계
                     String message = et_input.getText().toString(); // 사용자가 입력한 메세지 가져옴
                     chatList.add(new ChatItem(1, message)); // 사용자가 입력한 메시지를 챗봇 메세지 리스트에 추가
@@ -194,7 +200,7 @@ public class ChatFragment extends Fragment {
                             et_input.setEnabled(false); // 메세지 입력창 사용 금지
                         }
 
-                        saveDairy(message); // 일기와 감정 정보 저장 메소드 실행
+                        //saveDairy(message); // 일기와 감정 정보 저장 메소드 실행
                     }
                 });
             }
@@ -341,6 +347,8 @@ public class ChatFragment extends Fragment {
 
     // 타이머 실행 메소드
     public void startTimer(long time) {
+        connectBT();
+
         Handler mHandler = new Handler();
         mHandler.postDelayed(new Runnable() { public void run() {
             chatList.add(new ChatItem(4, time));
@@ -348,17 +356,102 @@ public class ChatFragment extends Fragment {
         } }, 600); // 0.6초 딜레이 후 함수 실행
     }
 
+    // 블루투스 통신 및 조명 서비스를 제공하는 메소드
+    public void connectBT() {
+        btAdapter = BluetoothAdapter.getDefaultAdapter(); // 블루투스 어댑터 할당
+
+        if (!btAdapter.isEnabled()) {
+            // 블루투스가 비활성화인 상태 -> 사용자에게 블루투스 사용 동의 요청
+            Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+        } else {
+            // 블루투스를 지원하며 활성 상태인 경우 -> 페어링된 장치가 있는지 확인
+            Set<BluetoothDevice> pairedDevices = btAdapter.getBondedDevices(); // 페어링된 장치 목록
+            
+            if (pairedDevices.size() > 0) {
+                // 페어링된 장치가 있는 경우.
+                boolean flag = true; // 소켓이 정상적으로 만들어지고 연결되어 있는지 확인하는 변수
+                BluetoothDevice device = btAdapter.getRemoteDevice(btAddress); // 페어링된 장치
+                
+                try {
+                    btSocket = createBluetoothSocket(device); // 소켓을 생성
+                    btSocket.connect(); // 소켓과 연결
+                } catch (IOException e) {
+                    flag = false;
+                    System.out.println("connected fail!");
+                    Toast.makeText(getContext(),"어플을 종료하고 다시 실행해주세요",Toast.LENGTH_SHORT).show();
+                    e.printStackTrace();
+                }
+
+                if(flag){
+                    // 소켓과 정상적으로 연결되어 있는 경우
+                    connectedThread = new ConnectedThread(btSocket); // 소켓과 통신할 스레드 생성
+                    connectedThread.start(); // 스레드 시작
+ 
+                    // 일기의 최대 감정에 따라 조명에 넘겨줄 데이터를 정의한 부분
+                    switch (maxIndex) {
+                        case 0: // 공포
+                            connectedThread.write("1"); // 스레드를 통해 데이터 전송
+                            break;
+                        case 1: // 놀람
+                            connectedThread.write("2");
+                            break;
+                        case 2: // 분노
+                            connectedThread.write("3");
+                            break;
+                        case 3: // 슬픔
+                            connectedThread.write("4");
+                            break;
+                        case 4: // 중립
+                            connectedThread.write("5");
+                            break;
+                        case 5: // 행복
+                            connectedThread.write("5");
+                            break;
+                        case 6: // 혐오
+                            connectedThread.write("6");
+                            break;
+                    }
+                }
+
+            } else {
+                // 페어링된 장치가 없는 경우.
+                Toast.makeText(getContext(), "먼저 Bluetooth 설정에 들어가 페어링을 진행해 주세요.", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    // 블루투스 통신 소켓을 생성하는 메소드
+    private BluetoothSocket createBluetoothSocket(BluetoothDevice device) throws IOException {
+        if(Build.VERSION.SDK_INT >= 10){
+            try {
+                final Method m = device.getClass().getMethod("createInsecureRfcommSocketToServiceRecord", new Class[] { UUID.class });
+                return (BluetoothSocket) m.invoke(device, MY_UUID);
+            } catch (Exception e) {
+                System.out.println("Could not create Insecure RFComm Connection" + e);
+            }
+        }
+        return  device.createRfcommSocketToServiceRecord(MY_UUID);
+    }
+
+    // 블루투스로 연결된 조명을 끄는 메소드
+    public void finishBT() {
+        connectedThread.write("0"); // 스레드를 통해 데이터 전송
+    }
+
     // 조명 서비스 후 의견을 입력받는 메소드
-    public void Comment() {
+    public void Comment () {
         Handler mHandler = new Handler();
-        mHandler.postDelayed(new Runnable() { public void run() {
-            chatList.add(new ChatItem(0, "타이머가 종료되었습니다"));
-            chatList.add(new ChatItem(0, color[maxIndex] + " 조명이 당신의 감정에 도움이 되셨나요?"));
-            chatList.add(new ChatItem(0, "의견을 남겨주세요"));
-            et_input.setEnabled(true); // 메세지 입력창 사용 허용
-            adapter.notifyDataSetChanged(); // 챗봇 메세지 리스트 갱신
-            adapter.countDownTimer.cancel();
-        } }, 600); // 0.6초 딜레이 후 함수 실행
+        mHandler.postDelayed(new Runnable() {
+            public void run() {
+                chatList.add(new ChatItem(0, "타이머가 종료되었습니다"));
+                chatList.add(new ChatItem(0, color[maxIndex] + " 조명이 당신의 감정에 도움이 되셨나요?"));
+                chatList.add(new ChatItem(0, "의견을 남겨주세요"));
+                et_input.setEnabled(true); // 메세지 입력창 사용 허용
+                adapter.notifyDataSetChanged(); // 챗봇 메세지 리스트 갱신
+                adapter.countDownTimer.cancel();
+            }
+        }, 600); // 0.6초 딜레이 후 함수 실행
     }
 
 }
