@@ -42,20 +42,19 @@ import ac.kr.duksung.moodiary.R;
 // 화면 설명 : 메인화면의 모아보기 화면
 // Author : Soohyun, Last Modified : 2021.04.09
 public class CollectFragment extends Fragment {
-
-    CalendarView diary_calendar; // 달력
     TextView diary_emotion; // 일기 감정
     TextView diary_content; // 일기내용
     ArrayList<String> contentList = new ArrayList<>(); // 일기내용 리스트
     ArrayList<String> emotionList = new ArrayList<>(); // 일기감정 리스트
     ArrayList<String> createdList = new ArrayList<>(); // 일기작성날짜 리스트
     ArrayList<CalendarDay> dates = new ArrayList<>(); //일정표시 리스트
+    MaterialCalendarView diary_calendar; // 캘린더 뷰
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_collect, container, false);
 
-        MaterialCalendarView diary_calendar = view.findViewById(R.id.diary_calendar);
+        diary_calendar = view.findViewById(R.id.diary_calendar);
         diary_emotion = view.findViewById(R.id.diary_emotion);
         diary_content = view.findViewById(R.id.diary_content);
 
@@ -86,24 +85,12 @@ public class CollectFragment extends Fragment {
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
-
-                try {
-                    // 일기있는 날짜에 빨간 점 표시
-                    for(int i=0; i<createdList.size(); i++) {
-                        createdDate = format.parse(createdList.get(i));
-                        dates.add(CalendarDay.from(createdDate));   //dates리스트에 CalendarDay형식으로 날짜추가
-
-                    }
-                    diary_calendar.addDecorator(new EventDecorator(Color.RED, dates));  //일정에 점찍기
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
             }
+
         });
 
         //일기 커스텀뷰
         diary_calendar.setSelectedDate(CalendarDay.today());
-        //diary_calendar.addDecorator(new EventDecorator(Color.RED, dates));
         diary_calendar.addDecorator(new SundayDecorator());
         diary_calendar.addDecorator(new SaturdayDecorator());
 
@@ -128,7 +115,7 @@ public class CollectFragment extends Fragment {
 
         // 서버에 데이터 전달
 
-        JsonObjectRequest jsonObject = new JsonObjectRequest(Request.Method.POST, "http://192.168.35.186:3000/diary/collect", requestJsonObject, new Response.Listener<JSONObject>() {
+        JsonObjectRequest jsonObject = new JsonObjectRequest(Request.Method.POST, "http://172.30.1.23:3000/diary/collect", requestJsonObject, new Response.Listener<JSONObject>() {
 
 
             @Override
@@ -198,5 +185,18 @@ public class CollectFragment extends Fragment {
         } catch (ParseException e) {
             e.printStackTrace();
         }
+
+        // 일기있는 날짜에 빨간 점 표시
+        try {
+            for(int i=0; i<createdList.size(); i++) {
+                Date createdDate = format.parse(createdList.get(i));
+                dates.add(CalendarDay.from(createdDate));   //dates리스트에 CalendarDay형식으로 날짜추가
+            }
+            diary_calendar.addDecorator(new EventDecorator(Color.RED, dates));  //일정에 점찍기
+
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
     }
+
 }
