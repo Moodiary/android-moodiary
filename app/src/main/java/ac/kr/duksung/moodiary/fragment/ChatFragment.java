@@ -174,21 +174,27 @@ public class ChatFragment extends Fragment {
                     public void onComplete(@NonNull Task<File> task) {
                         File modelFile = task.getResult();
                         if (modelFile != null) {
-                            interpreter = new Interpreter(modelFile);
+                            interpreter = new Interpreter(modelFile); // 인터프리터 생성
                             float[][] input = paddingText; // input 텍스트
                             float[][] output = new float[1][7]; // 모델 output 결과
+
                             if(interpreter != null) {
                                 interpreter.run(input, output); // 모델 실행
-                                // 모델 결과값 가져온 후 최대 감정 뽑아내기
-                                for (int i = 0; i < 7; i++) {
-                                    if(maxEmotion < output[0][i]) {
-                                        maxEmotion = output[0][i];
-                                        maxIndex = i;
-                                    }
-                                    System.out.println(i + " : " + output[0][i]);
-                                }
+                            } else {
+                                interpreter = new Interpreter(modelFile); // 인터프리터 생성
+                                interpreter.run(input, output); // 모델 실행
                             }
-                            interpreter.close();
+
+                            // 모델 결과값 가져온 후 최대 감정 뽑아내기
+                            for (int i = 0; i < 7; i++) {
+                                if(maxEmotion < output[0][i]) {
+                                    maxEmotion = output[0][i];
+                                    maxIndex = i;
+                                }
+                                System.out.println(i + " : " + output[0][i]);
+                            }
+
+                            interpreter.close(); // 인터프리터 종료
 
                             chatList.add(new ChatItem(0, "일기에서 가장 많이 느껴지는 감정은 " + emotion[maxIndex] + "입니다"));
                             chatList.add(new ChatItem(0, "당신을 위해 " + color[maxIndex] +" 조명을 틀어드릴게요"));
