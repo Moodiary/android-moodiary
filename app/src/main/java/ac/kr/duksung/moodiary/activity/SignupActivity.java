@@ -107,7 +107,7 @@ public class SignupActivity extends AppCompatActivity {
         RequestQueue requestQueue = Volley.newRequestQueue(SignupActivity.this);
 
         // 서버에 데이터 전달
-        JsonObjectRequest jsonObject = new JsonObjectRequest(Request.Method.POST, "http://172.30.1.21:3000/user/signup", requestJsonObject, new Response.Listener<JSONObject>() {
+        JsonObjectRequest jsonObject = new JsonObjectRequest(Request.Method.POST, "http://172.30.1.36:3000/user/signup", requestJsonObject, new Response.Listener<JSONObject>() {
 
             @Override
             public void onResponse(JSONObject response) { // 데이터 전달 후 받은 응답
