@@ -7,7 +7,10 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,6 +42,7 @@ import ac.kr.duksung.moodiary.CalendarEvent.EventDecorator;
 import ac.kr.duksung.moodiary.CalendarEvent.SaturdayDecorator;
 import ac.kr.duksung.moodiary.CalendarEvent.SundayDecorator;
 import ac.kr.duksung.moodiary.R;
+import ac.kr.duksung.moodiary.domain.ChatItem;
 
 // 화면 설명 : 메인화면의 모아보기 화면
 // Author : Soohyun, Last Modified : 2021.04.09
@@ -51,6 +55,7 @@ public class CollectFragment extends Fragment {
     ArrayList<String> createdList = new ArrayList<>(); // 일기작성날짜 리스트
     ArrayList<CalendarDay> dates = new ArrayList<>(); //일정표시 리스트
     MaterialCalendarView diary_calendar; // 캘린더 뷰
+    EventDecorator eventDecorator;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -62,6 +67,7 @@ public class CollectFragment extends Fragment {
         deleteButton = view.findViewById(R.id.deleteButton);
 
         requestCollect(); // 일기 데이터 메소드 실행
+
         diary_calendar.setOnDateChangedListener(new OnDateSelectedListener(){
             @Override
             public void onDateSelected(@NonNull MaterialCalendarView widget, @NonNull CalendarDay date, boolean selected) {
@@ -70,7 +76,7 @@ public class CollectFragment extends Fragment {
                 Date selectedDate = date.getDate(); // 선택된 날짜
                 Date createdDate = null; // createdList의 특정 날짜
 
-                String created_at = date.toString();  //삭제할 날짜
+                String created_at = format.format(selectedDate); // 삭제할 날짜
 
                 // 초기화
                 diary_emotion.setText("");
@@ -91,7 +97,7 @@ public class CollectFragment extends Fragment {
                     e.printStackTrace();
                 }
 
-                //삭제버튼 클릭했을 때
+                //삭제 버튼 클릭했을 때
                 deleteButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
@@ -99,7 +105,17 @@ public class CollectFragment extends Fragment {
                     }
                 });
             }
+        });
 
+        deleteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd"); // 날짜 형식
+                Date now = new Date(); // 현재 날짜
+                String nowStr = format.format(now);
+
+                deletediary(nowStr);
+            }
         });
 
 
@@ -129,7 +145,7 @@ public class CollectFragment extends Fragment {
 
         // 서버에 데이터 전달
 
-        JsonObjectRequest jsonObject = new JsonObjectRequest(Request.Method.POST, "http://172.30.1.36:3000/diary/collect", requestJsonObject, new Response.Listener<JSONObject>() {
+        JsonObjectRequest jsonObject = new JsonObjectRequest(Request.Method.POST, "http://172.30.1.35:3000/diary/collect", requestJsonObject, new Response.Listener<JSONObject>() {
 
 
             @Override
@@ -156,7 +172,6 @@ public class CollectFragment extends Fragment {
                     if(result.equals("400"))
                         Toast.makeText(getContext(),"에러가 발생했습니다", Toast.LENGTH_SHORT).show();
                     if(result.equals("200")) {
-                        Toast.makeText(getContext(), "일기 모아보기입니다.", Toast.LENGTH_SHORT).show();
                         for(int i=0; i<contentList.size(); i++) {
                             System.out.println(contentList.get(i) + " / " + emotionList.get(i) + " / " + createdList.get(i));
                         }
@@ -197,7 +212,7 @@ public class CollectFragment extends Fragment {
 
         // 서버에 데이터 전달
 
-        JsonObjectRequest jsonObject = new JsonObjectRequest(Request.Method.POST, "http://172.30.1.36:3000/diary/collect", requestJsonObject, new Response.Listener<JSONObject>() {
+        JsonObjectRequest jsonObject = new JsonObjectRequest(Request.Method.POST, "http://172.30.1.35:3000/diary/deletediary", requestJsonObject, new Response.Listener<JSONObject>() {
 
             @Override
             public void onResponse(JSONObject response) { // 데이터 전달 후 받은 응답
@@ -209,7 +224,19 @@ public class CollectFragment extends Fragment {
                         Toast.makeText(getContext(),"에러가 발생했습니다", Toast.LENGTH_SHORT).show();
                     if(result.equals("200")) {
                         Toast.makeText(getContext(),"일기가 삭제되었습니다", Toast.LENGTH_SHORT).show();
+
+                        // 캘린더의 모든 데이터 초기화
+                        contentList.clear();
+                        emotionList.clear();
+                        createdList.clear();
+                        dates.clear();
+                        diary_calendar.removeDecorator(eventDecorator);
+                        diary_content.setText("");
+                        diary_emotion.setText("");
+
+                        requestCollect(); // 일기 데이터 메소드 실행
                     }
+
 
                 } catch(JSONException e) {
                     e.printStackTrace();
@@ -253,7 +280,9 @@ public class CollectFragment extends Fragment {
                 Date createdDate = format.parse(createdList.get(i));
                 dates.add(CalendarDay.from(createdDate));   //dates리스트에 CalendarDay형식으로 날짜추가
             }
-            diary_calendar.addDecorator(new EventDecorator(Color.RED, dates));  //일정에 점찍기
+
+            eventDecorator = new EventDecorator(Color.RED, dates);
+            diary_calendar.addDecorator(eventDecorator);  //일정에 점찍기
 
         } catch (ParseException e) {
             e.printStackTrace();
