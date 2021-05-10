@@ -63,7 +63,6 @@ public class CollectFragment extends Fragment {
         diary_emotion = view.findViewById(R.id.diary_emotion);
         diary_content = view.findViewById(R.id.diary_content);
         deleteButton = view.findViewById(R.id.deleteButton);
-        deleteButton.setVisibility(View.GONE);
 
         requestCollect(); // 일기 데이터 메소드 실행
 
@@ -104,7 +103,6 @@ public class CollectFragment extends Fragment {
                     @Override
                     public void onClick(View view) {
                         deletediary(created_at);
-                        init();
                     }
                 });
             }
@@ -267,10 +265,12 @@ public class CollectFragment extends Fragment {
 
             for(int i=0; i<createdList.size(); i++) {
                 Date createdDate = format.parse(createdList.get(i));
+                deleteButton.setVisibility(View.GONE);
 
                 if(createdDate.equals(nowDate)) {
                     diary_emotion.setText(emotionList.get(i));
                     diary_content.setText(contentList.get(i));
+                    deleteButton.setVisibility(View.VISIBLE);
                     break;
                 }
             }
