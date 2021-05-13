@@ -64,6 +64,8 @@ public class CollectFragment extends Fragment {
         diary_content = view.findViewById(R.id.diary_content);
         deleteButton = view.findViewById(R.id.deleteButton);
 
+        deleteButton.setVisibility(View.GONE);
+
         requestCollect(); // 일기 데이터 메소드 실행
 
         diary_calendar.setOnDateChangedListener(new OnDateSelectedListener(){
@@ -146,7 +148,7 @@ public class CollectFragment extends Fragment {
 
         // 서버에 데이터 전달
 
-        JsonObjectRequest jsonObject = new JsonObjectRequest(Request.Method.POST, "http://172.30.1.36:3000/diary/collect", requestJsonObject, new Response.Listener<JSONObject>() {
+        JsonObjectRequest jsonObject = new JsonObjectRequest(Request.Method.POST, "http://172.30.1.26:3000/diary/collect", requestJsonObject, new Response.Listener<JSONObject>() {
 
 
             @Override
@@ -265,7 +267,6 @@ public class CollectFragment extends Fragment {
 
             for(int i=0; i<createdList.size(); i++) {
                 Date createdDate = format.parse(createdList.get(i));
-                deleteButton.setVisibility(View.GONE);
 
                 if(createdDate.equals(nowDate)) {
                     diary_emotion.setText(emotionList.get(i));
