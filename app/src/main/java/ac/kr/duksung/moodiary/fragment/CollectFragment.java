@@ -263,10 +263,12 @@ public class CollectFragment extends Fragment {
 
             for(int i=0; i<createdList.size(); i++) {
                 Date createdDate = format.parse(createdList.get(i));
+                deleteButton.setVisibility(View.GONE);
 
                 if(createdDate.equals(nowDate)) {
                     diary_emotion.setText(emotionList.get(i));
                     diary_content.setText(contentList.get(i));
+                    deleteButton.setVisibility(View.VISIBLE);
                     break;
                 }
             }
