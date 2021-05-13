@@ -7,6 +7,8 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.os.Handler;
 import android.view.LayoutInflater;
@@ -64,6 +66,8 @@ public class CollectFragment extends Fragment {
         diary_content = view.findViewById(R.id.diary_content);
         deleteButton = view.findViewById(R.id.deleteButton);
 
+        deleteButton.setVisibility(View.GONE);
+
         requestCollect(); // 일기 데이터 메소드 실행
 
         diary_calendar.setOnDateChangedListener(new OnDateSelectedListener(){
@@ -74,7 +78,7 @@ public class CollectFragment extends Fragment {
                 Date selectedDate = date.getDate(); // 선택된 날짜
                 Date createdDate = null; // createdList의 특정 날짜
 
-                String created_at = format.format(selectedDate);  //삭제할 날짜
+                String created_at = format.format(selectedDate); // 삭제할 날짜
 
                 // 초기화
                 diary_emotion.setText("");
@@ -84,13 +88,10 @@ public class CollectFragment extends Fragment {
                     // 선택된 날짜와 날짜 리스트의 날짜가 같으면 일기 정보 표시
                     for(int i=0; i<createdList.size(); i++) {
                         createdDate = format.parse(createdList.get(i));
-                        deleteButton.setVisibility(View.GONE);
 
                         if(createdDate.equals(selectedDate)) {
                             diary_emotion.setText(emotionList.get(i));
                             diary_content.setText(contentList.get(i));
-                            deleteButton.setVisibility(View.VISIBLE);
-
                             break;
                         }
                     }
@@ -103,6 +104,7 @@ public class CollectFragment extends Fragment {
                     @Override
                     public void onClick(View view) {
                         deletediary(created_at);
+                        deleteButton.setVisibility(View.GONE);
                     }
                 });
             }
@@ -116,6 +118,7 @@ public class CollectFragment extends Fragment {
                 String nowStr = format.format(now);
 
                 deletediary(nowStr);
+                deleteButton.setVisibility(View.GONE);
             }
         });
 
@@ -146,8 +149,7 @@ public class CollectFragment extends Fragment {
 
         // 서버에 데이터 전달
 
-        JsonObjectRequest jsonObject = new JsonObjectRequest(Request.Method.POST, "http://172.30.1.36:3000/diary/collect", requestJsonObject, new Response.Listener<JSONObject>() {
-
+        JsonObjectRequest jsonObject = new JsonObjectRequest(Request.Method.POST, "http://172.30.1.9:3000/diary/collect", requestJsonObject, new Response.Listener<JSONObject>() {
 
             @Override
             public void onResponse(JSONObject response) { // 데이터 전달 후 받은 응답
@@ -212,9 +214,7 @@ public class CollectFragment extends Fragment {
         RequestQueue requestQueue = Volley.newRequestQueue(getContext());
 
         // 서버에 데이터 전달
-
-        JsonObjectRequest jsonObject = new JsonObjectRequest(Request.Method.POST, "http://172.30.1.36:3000/diary/deletediary", requestJsonObject, new Response.Listener<JSONObject>() {
-
+        JsonObjectRequest jsonObject = new JsonObjectRequest(Request.Method.POST, "http://172.30.1.9:3000/diary/deletediary", requestJsonObject, new Response.Listener<JSONObject>() {
 
             @Override
             public void onResponse(JSONObject response) { // 데이터 전달 후 받은 응답
@@ -226,6 +226,7 @@ public class CollectFragment extends Fragment {
                         Toast.makeText(getContext(),"에러가 발생했습니다", Toast.LENGTH_SHORT).show();
                     if(result.equals("200")) {
                         Toast.makeText(getContext(),"일기가 삭제되었습니다", Toast.LENGTH_SHORT).show();
+
                         // 캘린더의 모든 데이터 초기화
                         contentList.clear();
                         emotionList.clear();
@@ -255,7 +256,6 @@ public class CollectFragment extends Fragment {
 
     // 현재 날짜 일기 초기화 메소드
     public void init() {
-
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd"); // 날짜 형식
         Date now = new Date(); // 현재 날짜
         String nowStr = format.format(now);
@@ -265,7 +265,6 @@ public class CollectFragment extends Fragment {
 
             for(int i=0; i<createdList.size(); i++) {
                 Date createdDate = format.parse(createdList.get(i));
-                deleteButton.setVisibility(View.GONE);
 
                 if(createdDate.equals(nowDate)) {
                     diary_emotion.setText(emotionList.get(i));
@@ -291,7 +290,6 @@ public class CollectFragment extends Fragment {
         } catch (ParseException e) {
             e.printStackTrace();
         }
-
     }
 
 }
