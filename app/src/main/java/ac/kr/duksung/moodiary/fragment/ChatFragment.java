@@ -489,6 +489,7 @@ public class ChatFragment extends Fragment {
                     // 오늘 작성한 일기가 없는 경우 - 흰색 조명을 틀어줌
                     if(result.equals("204")) {
                         chatList.add(new ChatItem(0, "오늘 작성한 일기가 없으므로 흰색 조명을 틀어드릴게요"));
+                        adapter.notifyDataSetChanged();
                         maxIndex = 4;
                         connectBT();
                     }
@@ -504,6 +505,7 @@ public class ChatFragment extends Fragment {
                         else if(emotion.equals("혐오")) { maxIndex = 6; }
 
                         chatList.add(new ChatItem(0,color[maxIndex] +" 조명을 틀어드릴게요"));
+                        adapter.notifyDataSetChanged();
                         connectBT();
                     }
 
