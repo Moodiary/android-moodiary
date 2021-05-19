@@ -92,7 +92,10 @@ public class CollectFragment extends Fragment {
                         if(createdDate.equals(selectedDate)) {
                             diary_emotion.setText(emotionList.get(i));
                             diary_content.setText(contentList.get(i));
+                            deleteButton.setVisibility(View.VISIBLE);
                             break;
+                        }else {
+                            deleteButton.setVisibility(View.GONE);
                         }
                     }
                 } catch (ParseException e) {
