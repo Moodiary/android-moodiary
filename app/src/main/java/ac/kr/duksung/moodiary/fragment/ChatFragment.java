@@ -64,10 +64,10 @@ import io.reactivex.schedulers.Schedulers;
 // Author : Soohyun, Last Modified : 2021.05.06
 public class ChatFragment extends Fragment {
     public int sequence = 1; // 챗봇의 단계 처리를 위한 변수
-    public ArrayList<ChatItem> chatList; // 챗봇 메세지 리스트
+    public ArrayList<ChatItem> chatList = new ArrayList<>(); ; // 챗봇 메세지 리스트
     RecyclerView rv_chat; // 챗봇 리사이클러뷰
     ChatAdapter adapter; // 챗봇 어댑터
-    EditText et_input; // 메세지 입력창
+    public EditText et_input; // 메세지 입력창
     Button btn_push; // 전송 버튼
 
     Interpreter interpreter; // 모델 인터프리터
@@ -87,8 +87,6 @@ public class ChatFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_chat, container, false);
 
-        initData(); // 데이터 초기화
-
         rv_chat = view.findViewById(R.id.rv_chat);
         LinearLayoutManager manager = new LinearLayoutManager(getContext(),RecyclerView.VERTICAL,false); // 레이아웃 매니저
         adapter = new ChatAdapter(chatList, ChatFragment.this); // 챗봇 어댑터
@@ -97,6 +95,7 @@ public class ChatFragment extends Fragment {
         et_input = view.findViewById(R.id.et_input);
         btn_push = view.findViewById(R.id.btn_push);
 
+        init(); // 데이터 초기화
 
         // 전송 버튼 클릭시
         btn_push.setOnClickListener(new View.OnClickListener() {
@@ -155,11 +154,11 @@ public class ChatFragment extends Fragment {
     }
 
     // 챗봇 초기 세팅
-    private void initData(){
-        chatList = new ArrayList<>();
-        chatList.add(new ChatItem(0,"오늘 하루에 대해 일기를 남겨볼까요?"));
+    private void init(){
+        chatList.add(new ChatItem(0,"어떤 것을 원하시나요?"));
+        chatList.add(new ChatItem(5)); // 일기/조명 선택 옵션 보여주기
+        et_input.setEnabled(false); // 메세지 입력창 사용 금지
     }
-
 
     // 감정 분석 모델 가져오기
     private void getEmotionModel(String message, float[][] paddingText) {
@@ -458,6 +457,69 @@ public class ChatFragment extends Fragment {
                 adapter.countDownTimer.cancel();
             }
         }, 600); // 0.6초 딜레이 후 함수 실행
+    }
+
+    public void todayDiary() {
+        SharedPreferences auto = this.getActivity().getSharedPreferences("autoLogin", Activity.MODE_PRIVATE); // 자동로그인 데이터 저장되어있는 곳
+        String user_id = auto.getString("ID",null); // 저장된 아이디 값, 없으면 null
+
+        // 사용자 입력 정보 JSON 형태로 변환
+        JSONObject requestJsonObject = new JSONObject();
+        try {
+            requestJsonObject.put("user_id",user_id);
+        } catch(JSONException e) {
+            e.printStackTrace();
+        }
+
+        RequestQueue requestQueue = Volley.newRequestQueue(getActivity());
+
+        // 서버에 데이터 전달
+        JsonObjectRequest jsonObject = new JsonObjectRequest(Request.Method.POST, "http://192.168.0.5:3000/diary/todaydiary", requestJsonObject, new Response.Listener<JSONObject>() {
+
+
+            @Override
+            public void onResponse(JSONObject response) { // 데이터 전달 후 받은 응답
+
+                try {
+                    String result = response.getString("code"); // 응답 메시지 가져오기
+
+                    // 응답 메시지에 따른 처리
+                    if(result.equals("400"))
+                        Toast.makeText(getContext(),"에러가 발생했습니다", Toast.LENGTH_SHORT).show();
+                    // 오늘 작성한 일기가 없는 경우 - 흰색 조명을 틀어줌
+                    if(result.equals("204")) {
+                        chatList.add(new ChatItem(0, "오늘 작성한 일기가 없으므로 흰색 조명을 틀어드릴게요"));
+                        maxIndex = 4;
+                        connectBT();
+                    }
+                    // 오늘 작성한 일기가 있는 경우
+                    if(result.equals("200")) {
+                        String emotion = response.getString("emotion"); // 오늘 일기 감정
+                        if(emotion.equals("공포")) { maxIndex = 0; }
+                        else if(emotion.equals("놀람")) { maxIndex = 1; }
+                        else if(emotion.equals("분노")) { maxIndex = 2; }
+                        else if(emotion.equals("슬픔")) { maxIndex = 3; }
+                        else if(emotion.equals("중립")) { maxIndex = 4; }
+                        else if(emotion.equals("행복")) { maxIndex = 5; }
+                        else if(emotion.equals("혐오")) { maxIndex = 6; }
+
+                        chatList.add(new ChatItem(0,color[maxIndex] +" 조명을 틀어드릴게요"));
+                        connectBT();
+                    }
+
+                } catch(JSONException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        }, new Response.ErrorListener() { // 데이터 전달 및 응답 실패시
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(getContext(), "네트워크 연결 오류", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        requestQueue.add(jsonObject);
     }
 
 }
