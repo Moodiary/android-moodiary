@@ -51,6 +51,9 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         } else if(type == 4) { // 실시간 타이머 뷰일 경우
             view = inflater.inflate(R.layout.chat_item_timer, parent, false);
             return new TimerViewHolder(view);
+        } else if(type == 5) { // 일기/조명 선택 뷰일 경우
+            view = inflater.inflate(R.layout.chat_item_select, parent, false);
+            return new SelectViewHolder(view);
         } else
             return null;
     }
@@ -227,5 +230,39 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             }
         }
 
+    }
+
+    // 일기/ 조명 선택 뷰 홀더
+    public class SelectViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+        TextView button1;
+        TextView button2;
+
+        public SelectViewHolder(@NonNull View itemView) {
+            super(itemView);
+            button1 = itemView.findViewById(R.id.button1);
+            button2 = itemView.findViewById(R.id.button2);
+
+            button1.setOnClickListener(this);
+            button2.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View v) {
+            int pos = getAdapterPosition(); // 리스트에서 위치
+
+            switch (v.getId()) {
+                case R.id.button1:
+                    fragment.deleteButton();
+                    fragment.userClick("일기 쓰기");
+                    fragment.chatList.add(new ChatItem(0, "오늘 하루에 대해 일기를 남겨볼까요?"));
+                    fragment.et_input.setEnabled(true); // 메세지 입력창 활성화
+                    break;
+                case R.id.button2:
+                    fragment.deleteButton();
+                    fragment.userClick("조명 켜기");
+                    fragment.todayDiary();
+                    break;
+            }
+        }
     }
 }
