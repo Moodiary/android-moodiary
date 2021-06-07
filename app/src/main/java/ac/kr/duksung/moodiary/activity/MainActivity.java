@@ -2,25 +2,24 @@ package ac.kr.duksung.moodiary.activity;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.Manifest;
+import android.bluetooth.BluetoothAdapter;
+import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MenuItem;
+import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.firebase.messaging.FirebaseMessaging;
 
 import ac.kr.duksung.moodiary.fragment.MypageFragment;
 import ac.kr.duksung.moodiary.R;
 import ac.kr.duksung.moodiary.fragment.ChatFragment;
 import ac.kr.duksung.moodiary.fragment.CollectFragment;
 import ac.kr.duksung.moodiary.fragment.StaticsFragment;
-
-import static android.content.ContentValues.TAG;
 
 // 화면 설명 : 메인(홈) 화면
 // Author : Soohyun, Last Modified : 2021.01.20

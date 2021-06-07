@@ -2,6 +2,7 @@ package ac.kr.duksung.moodiary;
 
 import android.content.Context;
 import android.content.res.AssetManager;
+import android.os.AsyncTask;
 import android.util.Log;
 
 import com.twitter.penguin.korean.TwitterKoreanProcessorJava;
@@ -22,8 +23,8 @@ import scala.collection.Seq;
 // Author : Soohyun, Last Modified : 2021.04.01
 public final class TextClassification {
     private Context context;
-    private String filename = "word_dict_sr.json";
-    private int maxlen = 10;
+    private String filename = "word_dict_rnn.json";
+    private int maxlen = 20;
     private HashMap vocabData;
 
     // 생성자
@@ -33,6 +34,7 @@ public final class TextClassification {
 
     // 입력받은 텍스트를 토큰화하는 메소드
     public List<String> tokenize(String text) {
+
         CharSequence normalized = TwitterKoreanProcessorJava.normalize(text); // Normalize
 
         Seq<KoreanTokenizer.KoreanToken> tokens = TwitterKoreanProcessorJava.tokenize(normalized); // Tokenize
@@ -42,10 +44,38 @@ public final class TextClassification {
         return tokenizeText;
     }
 
+    // 정수화된 텍스트를 패딩하는 메소드
+    public String[][] padSequence(List<String> tokenizeText) {
+        String paddingText[][] = new String[1][maxlen]; // 패딩된 텍스트
+
+        if (tokenizeText.size() >= maxlen) { // maxlen 보다 같거나 긴 경우
+            for(int i=0; i<maxlen; i++) {
+                paddingText[0][i] = tokenizeText.get(i);
+            }
+        } else if (tokenizeText.size() < maxlen) { // maxlen보다 작은 경우
+            for(int i=0; i<maxlen; i++) { // maxlen 크기에 맞춰 나머지는 0으로 채우기
+                if(i >= tokenizeText.size()) {
+                    paddingText[0][i] = "";
+                } else {
+                    paddingText[0][i] = tokenizeText.get(i);
+                }
+            }
+        }
+
+        System.out.print("padding: [");
+        for(int i=0; i<maxlen; i++) {
+            System.out.print(paddingText[0][i] + ", ");
+        }
+        System.out.print("]\n");
+
+        return paddingText;
+    }
+
     // 토큰화된 텍스트를 정수화하는 메소드
-    public List<Float> jsonParsing(List<String> tokenizeText) {
-        String json = null; // json 파일의 전체 내용
-        List<Float> dicText = new ArrayList<>(); // 정수화된 텍스트
+    public float[][] jsonParsing(String[][] paddingText) {
+        String json = ""; // json 파일의 전체 내용
+        //List<Float> dicText = new ArrayList<>(); // 정수화된 텍스트
+        float[][] dicText = new float[1][maxlen];
 
         try {
             AssetManager assetManager = context.getAssets(); // assets폴더의 파일을 가져오기 위해 창고관리자 얻어오기
@@ -62,48 +92,28 @@ public final class TextClassification {
             try {
                 JSONObject jsonObject = new JSONObject(json); // json 내용을 jsonObject로 가져옴
                 // 토큰화된 텍스트를 정수로 변환
-                for(int i=0; i<tokenizeText.size(); i++) {
-                    if(jsonObject.has(tokenizeText.get(i))) { // 키(토큰화된 텍스트)값이 있는지 확인 - 있으면 true, 없으면 false 반환
-                        Float dic = (float)jsonObject.getDouble(tokenizeText.get(i)); // 변환된 정수값 가져오기
-                        dicText.add(dic); // 정수화된 텍스트를 추가
+                for(int i=0; i<maxlen; i++) {
+                    if(jsonObject.has(paddingText[0][i])) { // 키(토큰화된 텍스트)값이 있는지 확인 - 있으면 true, 없으면 false 반환
+                        Float dic = (float)jsonObject.getDouble(paddingText[0][i]); // 변환된 정수값 가져오기
+                        dicText[0][i] = dic; // 정수화된 텍스트를 추가
                     } else {
-                        dicText.add((float)0); // 단어사전에 해당하는 값이 없으면 0으로 할당
+                        dicText[0][i] = 0; // 단어사전에 해당하는 값이 없으면 0으로 할당
                     }
                 }
             } catch (JSONException e) {
                 Log.e("MYAPP", "unexpected JSON exception", e);
             }
 
-            System.out.println("word_dict: " + dicText);
+            System.out.print("word_dict: [");
+            for(int i=0; i<maxlen; i++) {
+                System.out.print(dicText[0][i] + ", ");
+            }
+            System.out.print("]\n");
             return dicText;
         } catch (IOException e) {
             e.printStackTrace();
             return null;
         }
-    }
-
-    // 정수화된 텍스트를 패딩하는 메소드
-    public float[][] padSequence(List<Float> dicText) {
-        float paddingText[][] = new float[1][maxlen]; // 패딩된 텍스트
-        List<Float> padding = new ArrayList<>(); // maxlen 크기로 자른 텍스트
-
-        if (dicText.size() > maxlen) { // maxlen 보다 긴 경우
-            padding = dicText.subList(0,maxlen); // maxlen 크기로 텍스트 자르기
-        } else if (dicText.size() < maxlen) { // maxlen보다 작은 경우
-            padding = dicText;
-            for(int i=dicText.size(); i<maxlen; i++) { // maxlen 크기에 맞춰 나머지는 0으로 채우기
-                padding.add((float)0);
-            }
-        }
-
-        //  maxlen 크기로 자른 텍스트를 배열로 변환
-        int i = 0;
-        for(float value : padding) {
-            paddingText[0][i++] = value;
-        }
-
-        System.out.println("Padding: " + dicText);
-        return paddingText;
     }
 
 }
