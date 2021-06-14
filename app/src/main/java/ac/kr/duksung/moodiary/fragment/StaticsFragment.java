@@ -132,7 +132,7 @@ public class StaticsFragment extends Fragment {
 
         // 서버에 데이터 전달
 
-        JsonObjectRequest jsonObject = new JsonObjectRequest(Request.Method.POST, "http://172.30.1.36:3000/diary/statics", requestJsonObject, new Response.Listener<JSONObject>() {
+        JsonObjectRequest jsonObject = new JsonObjectRequest(Request.Method.POST, "http://192.168.0.6:3000/diary/statics", requestJsonObject, new Response.Listener<JSONObject>() {
 
 
             @Override
@@ -190,13 +190,13 @@ public class StaticsFragment extends Fragment {
 
         // 감정 데이터 리스트
         ArrayList<PieEntry> emotion = new ArrayList<PieEntry>();
-        emotion.add(new PieEntry(pleasure, "행복"));
-        emotion.add(new PieEntry(sadness, "슬픔"));
-        emotion.add(new PieEntry(surprised, "놀람"));
-        emotion.add(new PieEntry(anger, "분노"));
-        emotion.add(new PieEntry(fear, "공포"));
-        emotion.add(new PieEntry(aversion, "혐오"));
-        emotion.add(new PieEntry(neutrality, "중립"));
+        if(pleasure != 0) emotion.add(new PieEntry(pleasure, "행복"));
+        if(sadness != 0) emotion.add(new PieEntry(sadness, "슬픔"));
+        if(surprised != 0) emotion.add(new PieEntry(surprised, "놀람"));
+        if(anger != 0) emotion.add(new PieEntry(anger, "분노"));
+        if(fear != 0) emotion.add(new PieEntry(fear, "공포"));
+        if(aversion != 0) emotion.add(new PieEntry(aversion, "혐오"));
+        if(neutrality != 0) emotion.add(new PieEntry(neutrality, "중립"));
 
         PieDataSet dataSet = new PieDataSet(emotion, "Emotions"); // 데이터의 카테고리
         dataSet.setSliceSpace(3); // 그래프의 데이터 사이 간격
