@@ -49,6 +49,7 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Set;
 import java.util.UUID;
 
@@ -231,7 +232,7 @@ public class ChatFragment extends Fragment {
         RequestQueue requestQueue = Volley.newRequestQueue(getActivity());
 
         // 서버에 데이터 전달
-        JsonObjectRequest jsonObject = new JsonObjectRequest(Request.Method.POST, "http://02a4ec2c8178.ngrok.io", requestJsonObject, new Response.Listener<JSONObject>() {
+        JsonObjectRequest jsonObject = new JsonObjectRequest(Request.Method.POST, "http://c554ac6779d9.ngrok.io", requestJsonObject, new Response.Listener<JSONObject>() {
 
 
             @Override
@@ -248,20 +249,13 @@ public class ChatFragment extends Fragment {
                         JSONObject jObj = new JSONObject(emotions);
 
                         // 각 감정의 퍼센트 값 가져오기
-                        int sadness = jObj.getInt("슬픔");
-                        int neutrality = jObj.getInt("중립");
-                        int pleasure = jObj.getInt("행복");
+                        String[] first = jObj.getString("0").split(" ");
+                        String[] second = jObj.getString("1").split(" ");
+                        String[] third = jObj.getString("2").split(" ");
 
-                        int[] emotion = {0, 0, 0, sadness, neutrality, pleasure, 0};
-                        // 최대 감정 뽑아내기
-                        for (int i = 0; i < 7; i++) {
-                            if(maxEmotion < emotion[i]) {
-                                maxEmotion = emotion[i];
-                                maxIndex = i;
-                            }
-                        }
+                        maxIndex = Arrays.asList(emotion).indexOf(first[0]); // 최대 감정 뽑기
 
-                        chatList.add(new ChatItem(0, "일기에서 행복이"  + pleasure + "%, 슬픔이 " + sadness + "%, 중립이 " + neutrality + "% 만큼\n보여집니다." ));
+                        chatList.add(new ChatItem(0, "일기에서 보여지는 감정입니다.\n" + first[0] + " " + first[1] + "%\n" + second[0] + " " + second[1] + "%\n" + third[0] + " " + third[1] + "%"));
                         chatList.add(new ChatItem(0, "당신을 위해 " + color[maxIndex] +" 조명을 틀어드릴게요"));
                         chatList.add(new ChatItem(2));
                         adapter.notifyDataSetChanged(); // 챗봇 메세지 리스트 갱신
@@ -270,7 +264,7 @@ public class ChatFragment extends Fragment {
                         sequence++; // 다음 단계로 이동할 수 있도록 변수값 변경 (일기 입력이 완료된 단계라는 의미)
                         et_input.setEnabled(false); // 메세지 입력창 사용 금지*/
 
-                        //saveDairy(content);
+                        saveDairy(content);
                     }
 
                 } catch(JSONException e) {
