@@ -244,7 +244,7 @@ public class ChatFragment extends Fragment {
         // 서버에 데이터 전달
 
 
-        JsonObjectRequest jsonObject = new JsonObjectRequest(Request.Method.POST, "http://172.20.18.162:3000/diary/savediary", requestJsonObject, new Response.Listener<JSONObject>() {
+        JsonObjectRequest jsonObject = new JsonObjectRequest(Request.Method.POST, "http://172.30.1.23:3000/diary/savediary", requestJsonObject, new Response.Listener<JSONObject>() {
 
 
             @Override
@@ -474,7 +474,7 @@ public class ChatFragment extends Fragment {
         RequestQueue requestQueue = Volley.newRequestQueue(getActivity());
 
         // 서버에 데이터 전달
-        JsonObjectRequest jsonObject = new JsonObjectRequest(Request.Method.POST, "http://192.168.0.5:3000/diary/todaydiary", requestJsonObject, new Response.Listener<JSONObject>() {
+        JsonObjectRequest jsonObject = new JsonObjectRequest(Request.Method.POST, "http://172.30.1.23:3000/diary/todaydiary", requestJsonObject, new Response.Listener<JSONObject>() {
 
 
             @Override
@@ -489,8 +489,9 @@ public class ChatFragment extends Fragment {
                     // 오늘 작성한 일기가 없는 경우 - 흰색 조명을 틀어줌
                     if(result.equals("204")) {
                         chatList.add(new ChatItem(0, "오늘 작성한 일기가 없으므로 흰색 조명을 틀어드릴게요"));
+                        adapter.notifyDataSetChanged();
                         maxIndex = 4;
-                        connectBT();
+                        //connectBT();
                     }
                     // 오늘 작성한 일기가 있는 경우
                     if(result.equals("200")) {
@@ -504,7 +505,8 @@ public class ChatFragment extends Fragment {
                         else if(emotion.equals("혐오")) { maxIndex = 6; }
 
                         chatList.add(new ChatItem(0,color[maxIndex] +" 조명을 틀어드릴게요"));
-                        connectBT();
+                        adapter.notifyDataSetChanged();
+                        //connectBT();
                     }
 
                 } catch(JSONException e) {

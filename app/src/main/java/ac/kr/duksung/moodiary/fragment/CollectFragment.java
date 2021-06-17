@@ -94,11 +94,7 @@ public class CollectFragment extends Fragment {
                             diary_content.setText(contentList.get(i));
                             deleteButton.setVisibility(View.VISIBLE);
                             break;
-<<<<<<< HEAD
                         }else {
-=======
-                        } else {
->>>>>>> 88bbc6805cca2958d34b359d98a7cb28e0eea6f8
                             deleteButton.setVisibility(View.GONE);
                         }
                     }
@@ -156,12 +152,7 @@ public class CollectFragment extends Fragment {
 
         // 서버에 데이터 전달
 
-<<<<<<< HEAD
-        JsonObjectRequest jsonObject = new JsonObjectRequest(Request.Method.POST, "http://172.20.18.162:3000/diary/collect", requestJsonObject, new Response.Listener<JSONObject>() {
-
-=======
-        JsonObjectRequest jsonObject = new JsonObjectRequest(Request.Method.POST, "http://172.20.26.236:3000/diary/collect", requestJsonObject, new Response.Listener<JSONObject>() {
->>>>>>> 88bbc6805cca2958d34b359d98a7cb28e0eea6f8
+        JsonObjectRequest jsonObject = new JsonObjectRequest(Request.Method.POST, "http://172.30.1.23:3000/diary/collect", requestJsonObject, new Response.Listener<JSONObject>() {
 
             @Override
             public void onResponse(JSONObject response) { // 데이터 전달 후 받은 응답
@@ -226,11 +217,7 @@ public class CollectFragment extends Fragment {
         RequestQueue requestQueue = Volley.newRequestQueue(getContext());
 
         // 서버에 데이터 전달
-<<<<<<< HEAD
-        JsonObjectRequest jsonObject = new JsonObjectRequest(Request.Method.POST, "http://172.20.18.162:3000/diary/deletediary", requestJsonObject, new Response.Listener<JSONObject>() {
-=======
-        JsonObjectRequest jsonObject = new JsonObjectRequest(Request.Method.POST, "http://172.20.26.236:3000/diary/deletediary", requestJsonObject, new Response.Listener<JSONObject>() {
->>>>>>> 88bbc6805cca2958d34b359d98a7cb28e0eea6f8
+        JsonObjectRequest jsonObject = new JsonObjectRequest(Request.Method.POST, "http://172.30.1.23:3000/diary/deletediary", requestJsonObject, new Response.Listener<JSONObject>() {
 
             @Override
             public void onResponse(JSONObject response) { // 데이터 전달 후 받은 응답
