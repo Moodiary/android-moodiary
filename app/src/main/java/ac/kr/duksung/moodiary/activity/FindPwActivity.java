@@ -67,7 +67,9 @@ public class FindPwActivity extends AppCompatActivity {
                     RequestQueue requestQueue = Volley.newRequestQueue(FindPwActivity.this);
 
                     // 3. node 서버 IP와 받을 경로 수정 (http://192.168.99.83:3000/post)  하고,
-                    JsonObjectRequest R_Object = new JsonObjectRequest(Request.Method.POST, "http://172.30.1.23:3000/user/findpw", requestJsonObject, new Response.Listener<JSONObject>() {
+
+                    JsonObjectRequest R_Object = new JsonObjectRequest(Request.Method.POST, "http://172.20.26.236:3000/user/findpw", requestJsonObject, new Response.Listener<JSONObject>() {
+
 
                         @Override
                         public void onResponse(JSONObject response) {

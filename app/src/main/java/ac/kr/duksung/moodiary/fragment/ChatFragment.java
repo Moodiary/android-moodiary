@@ -38,7 +38,9 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.ml.common.modeldownload.FirebaseModelDownloadConditions;
 import com.google.firebase.ml.common.modeldownload.FirebaseModelManager;
 import com.google.firebase.ml.custom.FirebaseCustomRemoteModel;
+import com.google.gson.JsonParser;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.tensorflow.lite.Interpreter;
@@ -47,7 +49,6 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -61,7 +62,7 @@ import io.reactivex.observers.DisposableObserver;
 import io.reactivex.schedulers.Schedulers;
 
 // 화면 설명 : 메인화면의 챗봇 화면
-// Author : Soohyun, Last Modified : 2021.05.06
+// Author : Soohyun, Last Modified : 2021.06.14
 public class ChatFragment extends Fragment {
     public int sequence = 1; // 챗봇의 단계 처리를 위한 변수
     public ArrayList<ChatItem> chatList = new ArrayList<>(); ; // 챗봇 메세지 리스트
@@ -108,6 +109,9 @@ public class ChatFragment extends Fragment {
                     adapter.notifyDataSetChanged();
                     et_input.setText("");
 
+                    getEmotion(message);
+
+                    /*
                     DisposableObserver<String> observer = new DisposableObserver<String>() {
                         @Override
                         public void onNext(@NonNull String s) {
@@ -138,6 +142,7 @@ public class ChatFragment extends Fragment {
                     );
 
                     observable.subscribeOn(Schedulers.io()).subscribe(observer); // io스레드에서 실행
+                     */
 
                 } else if(sequence == 3) { // 컬러테라피가 끝난 후 의견을 입력받는 단계
                     String message = et_input.getText().toString(); // 사용자가 입력한 메세지 가져옴
@@ -212,6 +217,77 @@ public class ChatFragment extends Fragment {
         });
     }
 
+    // 일기 감정 분석 결과 가져오는 메소드
+    public void getEmotion(String content) {
+
+        // 사용자 입력 정보 JSON 형태로 변환
+        JSONObject requestJsonObject = new JSONObject();
+        try {
+            requestJsonObject.put("content", content);
+        } catch(JSONException e) {
+            e.printStackTrace();
+        }
+
+        RequestQueue requestQueue = Volley.newRequestQueue(getActivity());
+
+        // 서버에 데이터 전달
+        JsonObjectRequest jsonObject = new JsonObjectRequest(Request.Method.POST, "http://86de957c0d82.ngrok.io", requestJsonObject, new Response.Listener<JSONObject>() {
+
+
+            @Override
+            public void onResponse(JSONObject response) { // 데이터 전달 후 받은 응답
+
+                try {
+                    String result = response.getString("code"); // 응답 메시지 가져오기
+
+                    // 응답 메시지에 따른 처리
+                    if(result.equals("400"))
+                        Toast.makeText(getContext(),"에러가 발생했습니다", Toast.LENGTH_SHORT).show();
+                    if(result.equals("200")) {
+                        String emotions = response.getString("result"); // 일기 감정 분석 결과값 가져오기
+                        JSONObject jObj = new JSONObject(emotions);
+
+                        // 각 감정의 퍼센트 값 가져오기
+                        int sadness = jObj.getInt("슬픔");
+                        int neutrality = jObj.getInt("중립");
+                        int pleasure = jObj.getInt("행복");
+
+                        int[] emotion = {0, 0, 0, sadness, neutrality, pleasure, 0};
+                        // 최대 감정 뽑아내기
+                        for (int i = 0; i < 7; i++) {
+                            if(maxEmotion < emotion[i]) {
+                                maxEmotion = emotion[i];
+                                maxIndex = i;
+                            }
+                        }
+
+                        chatList.add(new ChatItem(0, "일기에서 행복이"  + pleasure + "%, 슬픔이 " + sadness + "%, 중립이 " + neutrality + "% 만큼\n보여집니다." ));
+                        chatList.add(new ChatItem(0, "당신을 위해 " + color[maxIndex] +" 조명을 틀어드릴게요"));
+                        chatList.add(new ChatItem(2));
+                        adapter.notifyDataSetChanged(); // 챗봇 메세지 리스트 갱신
+
+                        et_input.setText(""); // 메세지 입력창 초기화
+                        sequence++; // 다음 단계로 이동할 수 있도록 변수값 변경 (일기 입력이 완료된 단계라는 의미)
+                        et_input.setEnabled(false); // 메세지 입력창 사용 금지*/
+
+                    }
+                    saveDairy(content);
+
+                } catch(JSONException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        }, new Response.ErrorListener() { // 데이터 전달 및 응답 실패시
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(getContext(), "네트워크 연결 오류", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        requestQueue.add(jsonObject);
+    }
+
     // 버튼 뷰 삭제
     public void deleteButton() {
         chatList.remove(chatList.size()-1);
@@ -244,7 +320,8 @@ public class ChatFragment extends Fragment {
         // 서버에 데이터 전달
 
 
-        JsonObjectRequest jsonObject = new JsonObjectRequest(Request.Method.POST, "http://172.30.1.23:3000/diary/savediary", requestJsonObject, new Response.Listener<JSONObject>() {
+        JsonObjectRequest jsonObject = new JsonObjectRequest(Request.Method.POST, "http://172.20.26.236:3000/diary/savediary", requestJsonObject, new Response.Listener<JSONObject>() {
+
 
 
             @Override
@@ -474,7 +551,9 @@ public class ChatFragment extends Fragment {
         RequestQueue requestQueue = Volley.newRequestQueue(getActivity());
 
         // 서버에 데이터 전달
-        JsonObjectRequest jsonObject = new JsonObjectRequest(Request.Method.POST, "http://172.30.1.23:3000/diary/todaydiary", requestJsonObject, new Response.Listener<JSONObject>() {
+
+        JsonObjectRequest jsonObject = new JsonObjectRequest(Request.Method.POST, "http://172.20.26.236:3000/diary/todaydiary", requestJsonObject, new Response.Listener<JSONObject>() {
+
 
 
             @Override
@@ -506,7 +585,9 @@ public class ChatFragment extends Fragment {
 
                         chatList.add(new ChatItem(0,color[maxIndex] +" 조명을 틀어드릴게요"));
                         adapter.notifyDataSetChanged();
-                        //connectBT();
+
+                        connectBT();
+
                     }
 
                 } catch(JSONException e) {
