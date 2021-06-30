@@ -189,6 +189,8 @@ public class StaticsFragment extends Fragment {
         emotion_chart.setHoleColor(Color.WHITE); // 그래프 가운데 Hole 컬러
         emotion_chart.setTransparentCircleRadius(10f); // Hole의 크기
 
+        emotion_chart.setEntryLabelColor(Color.BLACK); // 라벨 텍스트 컬러
+
         // 감정 데이터 리스트
         ArrayList<PieEntry> emotion = new ArrayList<PieEntry>();
         if(pleasure != 0) emotion.add(new PieEntry(pleasure, "행복"));
@@ -199,13 +201,13 @@ public class StaticsFragment extends Fragment {
         if(aversion != 0) emotion.add(new PieEntry(aversion, "혐오"));
         if(neutrality != 0) emotion.add(new PieEntry(neutrality, "중립"));
 
-        PieDataSet dataSet = new PieDataSet(emotion, "Emotions"); // 데이터의 카테고리
+        PieDataSet dataSet = new PieDataSet(emotion, ""); // 데이터의 카테고리
         dataSet.setSliceSpace(3); // 그래프의 데이터 사이 간격
         dataSet.setColors(ColorTemplate.JOYFUL_COLORS); // 그래프 색상 테마
 
         PieData data = new PieData(dataSet); // 데이터를 담는 그릇
         data.setValueTextSize(15); // 데이터 텍스트 크기
-        data.setValueTextColor(Color.YELLOW); // 데이터 텍스트 컬러
+        data.setValueTextColor(Color.BLACK); // 데이터 텍스트 컬러
         emotion_chart.setData(data); // 그래프에 데이터 할당
 
         emotion_chart.invalidate(); // 차트 갱신

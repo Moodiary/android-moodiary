@@ -257,8 +257,9 @@ public class ChatFragment extends Fragment {
 
                         maxIndex = Arrays.asList(emotion).indexOf(first[0]); // 최대 감정 뽑기
 
-                        chatList.add(new ChatItem(0, "일기에서 보여지는 감정입니다.\n" + first[0] + " " + first[1] + "%\n" + second[0] + " " + second[1] + "%\n" + third[0] + " " + third[1] + "%"));
-                        chatList.add(new ChatItem(0, "당신을 위해 " + color[maxIndex] +" 조명을 틀어드릴게요"));
+                        //chatList.add(new ChatItem(0, "일기에서 보여지는 감정입니다.\n" + first[0] + " " + first[1] + "%\n" + second[0] + " " + second[1] + "%\n" + third[0] + " " + third[1] + "%"));
+                        chatList.add(new ChatItem(0, "일기에서 가장 많이 보여지는 감정은 " + first[0] + "입니다"));
+                        chatList.add(new ChatItem(0, "현재 감정에 도움이 되는 " + color[maxIndex] +" 조명을 틀어드릴게요"));
                         chatList.add(new ChatItem(2));
                         adapter.notifyDataSetChanged(); // 챗봇 메세지 리스트 갱신
 
