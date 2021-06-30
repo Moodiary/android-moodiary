@@ -145,13 +145,6 @@ public class ChatFragment extends Fragment {
                     observable.subscribeOn(Schedulers.io()).subscribe(observer); // io스레드에서 실행
                      */
 
-                } else if(sequence == 3) { // 컬러테라피가 끝난 후 의견을 입력받는 단계
-                    String message = et_input.getText().toString(); // 사용자가 입력한 메세지 가져옴
-                    chatList.add(new ChatItem(1, message)); // 사용자가 입력한 메시지를 챗봇 메세지 리스트에 추가
-                    chatList.add(new ChatItem(0, "의견을 남겨주셔서 감사합니다 :)"));
-                    rv_chat.scrollToPosition(chatList.size()-1); // 뷰 스크롤 가장 아래로 위치 변경
-                    et_input.setText(""); // 메세지 입력창 초기화
-                    adapter.notifyDataSetChanged();
                 }
             }
         });
@@ -211,7 +204,7 @@ public class ChatFragment extends Fragment {
                             et_input.setEnabled(false); // 메세지 입력창 사용 금지
                         }
 
-                        //saveDairy(message); // 일기와 감정 정보 저장 메소드 실행
+                        saveDairy(message); // 일기와 감정 정보 저장 메소드 실행
                     }
                 });
             }
@@ -232,7 +225,7 @@ public class ChatFragment extends Fragment {
         RequestQueue requestQueue = Volley.newRequestQueue(getActivity());
 
         // 서버에 데이터 전달
-        JsonObjectRequest jsonObject = new JsonObjectRequest(Request.Method.POST, "http://3f13e70e43df.ngrok.io", requestJsonObject, new Response.Listener<JSONObject>() {
+        JsonObjectRequest jsonObject = new JsonObjectRequest(Request.Method.POST, "http://11a326732bc5.ngrok.io", requestJsonObject, new Response.Listener<JSONObject>() {
 
 
             @Override
@@ -313,8 +306,6 @@ public class ChatFragment extends Fragment {
         RequestQueue requestQueue = Volley.newRequestQueue(getActivity());
 
         // 서버에 데이터 전달
-
-
         JsonObjectRequest jsonObject = new JsonObjectRequest(Request.Method.POST, "http://172.20.26.236:3000/diary/savediary", requestJsonObject, new Response.Listener<JSONObject>() {
 
 
@@ -348,14 +339,12 @@ public class ChatFragment extends Fragment {
 
     // 타이머 설정하는 메소드
     public void setTimer() {
-        if(sequence == 2) { // 타이머 설정 단계일 경우
-            Handler mHandler = new Handler();
-            mHandler.postDelayed(new Runnable() { public void run() {
-                chatList.add(new ChatItem(0, "타이머를 설정해주세요"));
-                chatList.add(new ChatItem(3));
-                adapter.notifyDataSetChanged(); // 챗봇 메세지 리스트 갱신
-            } }, 600); // 0.6초 딜레이 후 함수 실행
-        }
+        Handler mHandler = new Handler();
+        mHandler.postDelayed(new Runnable() { public void run() {
+            chatList.add(new ChatItem(0, "타이머를 설정해주세요"));
+            chatList.add(new ChatItem(3));
+            adapter.notifyDataSetChanged(); // 챗봇 메세지 리스트 갱신
+        } }, 600); // 0.6초 딜레이 후 함수 실행
     }
 
     // 타이머 팝업창 메소드
@@ -515,22 +504,8 @@ public class ChatFragment extends Fragment {
         connectedThread.write("0"); // 스레드를 통해 데이터 전송
     }
 
-    // 조명 서비스 후 의견을 입력받는 메소드
-    public void Comment () {
-        Handler mHandler = new Handler();
-        mHandler.postDelayed(new Runnable() {
-            public void run() {
-                chatList.add(new ChatItem(0, "타이머가 종료되었습니다"));
-                chatList.add(new ChatItem(0, color[maxIndex] + " 조명이 당신의 감정에 도움이 되셨나요?"));
-                chatList.add(new ChatItem(0, "의견을 남겨주세요"));
-                et_input.setEnabled(true); // 메세지 입력창 사용 허용
-                adapter.notifyDataSetChanged(); // 챗봇 메세지 리스트 갱신
-                adapter.countDownTimer.cancel();
-            }
-        }, 600); // 0.6초 딜레이 후 함수 실행
-    }
-
-    public void todayDiary() {
+    // 조명 켜기 선택시 실행되는 메소드
+    public void checktodayLight() {
         SharedPreferences auto = this.getActivity().getSharedPreferences("autoLogin", Activity.MODE_PRIVATE); // 자동로그인 데이터 저장되어있는 곳
         String user_id = auto.getString("ID",null); // 저장된 아이디 값, 없으면 null
 
@@ -545,7 +520,7 @@ public class ChatFragment extends Fragment {
         RequestQueue requestQueue = Volley.newRequestQueue(getActivity());
 
         // 서버에 데이터 전달
-        JsonObjectRequest jsonObject = new JsonObjectRequest(Request.Method.POST, "http://172.20.26.236:3000/diary/todaydiary", requestJsonObject, new Response.Listener<JSONObject>() {
+        JsonObjectRequest jsonObject = new JsonObjectRequest(Request.Method.POST, "http://172.30.1.58:3000/diary/todaydiary", requestJsonObject, new Response.Listener<JSONObject>() {
 
 
             @Override
@@ -560,9 +535,10 @@ public class ChatFragment extends Fragment {
                     // 오늘 작성한 일기가 없는 경우 - 흰색 조명을 틀어줌
                     if(result.equals("204")) {
                         chatList.add(new ChatItem(0, "오늘 작성한 일기가 없으므로 흰색 조명을 틀어드릴게요"));
+                        setTimer();
                         adapter.notifyDataSetChanged();
                         maxIndex = 4;
-                        connectBT();
+                        //connectBT();
                     }
                     // 오늘 작성한 일기가 있는 경우
                     if(result.equals("200")) {
@@ -575,9 +551,9 @@ public class ChatFragment extends Fragment {
                         else if(emotion.equals("행복")) { maxIndex = 5; }
                         else if(emotion.equals("혐오")) { maxIndex = 6; }
 
-                        chatList.add(new ChatItem(0,color[maxIndex] +" 조명을 틀어드릴게요"));
+                        chatList.add(new ChatItem(0,"오늘 감정에 도움이 되는 " + color[maxIndex] +" 조명을 틀어드릴게요"));
+                        setTimer();
                         adapter.notifyDataSetChanged();
-                        connectBT();
                     }
 
                 } catch(JSONException e) {
