@@ -161,8 +161,9 @@ public class ChatFragment extends Fragment {
 
     // 챗봇 초기 세팅
     private void init(){
-        chatList.add(new ChatItem(0,"어떤 것을 원하시나요?"));
-        chatList.add(new ChatItem(5)); // 일기/조명 선택 옵션 보여주기
+        //chatList.add(new ChatItem(0,"어떤 것을 원하시나요?"));
+        //chatList.add(new ChatItem(5)); // 일기/조명 선택 옵션 보여주기
+        checkTodayDiary();
         et_input.setEnabled(false); // 메세지 입력창 사용 금지
     }
 
@@ -319,7 +320,7 @@ public class ChatFragment extends Fragment {
         // 서버에 데이터 전달
 
 
-        JsonObjectRequest jsonObject = new JsonObjectRequest(Request.Method.POST, "http://172.20.26.236:3000/diary/savediary", requestJsonObject, new Response.Listener<JSONObject>() {
+        JsonObjectRequest jsonObject = new JsonObjectRequest(Request.Method.POST, "http://172.30.1.12:3000/diary/savediary", requestJsonObject, new Response.Listener<JSONObject>() {
 
 
 
@@ -520,6 +521,7 @@ public class ChatFragment extends Fragment {
         connectedThread.write("0"); // 스레드를 통해 데이터 전송
     }
 
+
     // 조명 서비스 후 의견을 입력받는 메소드
     public void Comment () {
         Handler mHandler = new Handler();
@@ -551,7 +553,7 @@ public class ChatFragment extends Fragment {
 
         // 서버에 데이터 전달
 
-        JsonObjectRequest jsonObject = new JsonObjectRequest(Request.Method.POST, "http://172.20.26.236:3000/diary/todaydiary", requestJsonObject, new Response.Listener<JSONObject>() {
+        JsonObjectRequest jsonObject = new JsonObjectRequest(Request.Method.POST, "http://172.30.1.12:3000/diary/todaydiary", requestJsonObject, new Response.Listener<JSONObject>() {
 
 
 
@@ -587,6 +589,66 @@ public class ChatFragment extends Fragment {
 
                         connectBT();
 
+                    }
+
+                } catch(JSONException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        }, new Response.ErrorListener() { // 데이터 전달 및 응답 실패시
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(getContext(), "네트워크 연결 오류", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        requestQueue.add(jsonObject);
+    }
+
+    //오늘의 일기를 썼는지 확인하는 메소드
+    public void checkTodayDiary() {
+        SharedPreferences auto = this.getActivity().getSharedPreferences("autoLogin", Activity.MODE_PRIVATE); // 자동로그인 데이터 저장되어있는 곳
+        String user_id = auto.getString("ID",null); // 저장된 아이디 값, 없으면 null
+
+        // 사용자 입력 정보 JSON 형태로 변환
+        JSONObject requestJsonObject = new JSONObject();
+        try {
+            requestJsonObject.put("user_id",user_id);
+        } catch(JSONException e) {
+            e.printStackTrace();
+        }
+
+        RequestQueue requestQueue = Volley.newRequestQueue(getActivity());
+
+        // 서버에 데이터 전달
+
+        JsonObjectRequest jsonObject = new JsonObjectRequest(Request.Method.POST, "http://172.30.1.12:3000/diary/todaydiary", requestJsonObject, new Response.Listener<JSONObject>() {
+
+
+
+            @Override
+            public void onResponse(JSONObject response) { // 데이터 전달 후 받은 응답
+
+                try {
+                    String result = response.getString("code"); // 응답 메시지 가져오기
+
+                    // 응답 메시지에 따른 처리
+                    if(result.equals("400"))
+                        Toast.makeText(getContext(),"에러가 발생했습니다", Toast.LENGTH_SHORT).show();
+
+                    // 오늘 작성한 일기가 없는 경우
+                    if(result.equals("204")) {
+                        chatList.add(new ChatItem(0,"어떤 것을 원하시나요?"));
+                        chatList.add(new ChatItem(5)); // 일기/조명 선택 옵션 보여주기
+                        adapter.notifyDataSetChanged();
+                    }
+
+                    // 오늘 작성한 일기가 있는 경우
+                    if(result.equals("200")) {
+                        chatList.add(new ChatItem(0,"오늘의 일기가 이미 작성되었어요!"));
+                        chatList.add(new ChatItem(0,"모아보기에서 오늘의 일기를 삭제하면 일기를 다시 작성할 수 있어요!"));
+                        adapter.notifyDataSetChanged();
                     }
 
                 } catch(JSONException e) {

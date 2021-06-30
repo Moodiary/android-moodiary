@@ -96,7 +96,7 @@ public class ChangePwActivity extends AppCompatActivity {
 
         // 서버에 데이터 전달
 
-        JsonObjectRequest jsonObject = new JsonObjectRequest(Request.Method.POST, "http://172.20.26.236:3000/user/changepw", requestJsonObject, new Response.Listener<JSONObject>() {
+        JsonObjectRequest jsonObject = new JsonObjectRequest(Request.Method.POST, "http://172.30.1.12:3000/user/changepw", requestJsonObject, new Response.Listener<JSONObject>() {
 
 
             @Override
