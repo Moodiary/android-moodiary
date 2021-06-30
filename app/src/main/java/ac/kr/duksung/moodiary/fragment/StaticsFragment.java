@@ -135,6 +135,7 @@ public class StaticsFragment extends Fragment {
         JsonObjectRequest jsonObject = new JsonObjectRequest(Request.Method.POST, "http://172.20.26.236:3000/diary/statics", requestJsonObject, new Response.Listener<JSONObject>() {
 
 
+
             @Override
             public void onResponse(JSONObject response) { // 데이터 전달 후 받은 응답
 
