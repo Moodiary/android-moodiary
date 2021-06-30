@@ -252,7 +252,7 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 case R.id.button1:
                     fragment.deleteButton();
                     fragment.userClick("일기 쓰기");
-                    fragment.chatList.add(new ChatItem(0, "오늘 하루에 대해 일기를 남겨볼까요?"));
+                    fragment.checkTodayDiary();
                     fragment.et_input.setEnabled(true); // 메세지 입력창 활성화
                     break;
                 case R.id.button2:
