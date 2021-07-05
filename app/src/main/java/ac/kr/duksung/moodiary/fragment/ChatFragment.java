@@ -9,6 +9,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 
+import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Bundle;
 
@@ -84,6 +85,10 @@ public class ChatFragment extends Fragment {
     int maxIndex = -1; // 최대 감정 인덱스
     String[] emotion = {"공포", "놀람", "분노", "슬픔", "중립", "행복", "혐오"}; // 감정 정보
     String[] color = {"파란색", "노란색", "빨강", "주황색", "흰색", "흰색", "초록색"}; // 컬러테라피 정보
+
+    public static String url = ""; //노래재생을 위한 웹서버 url
+    MediaPlayer player;
+    //int position = 0; // 다시 시작 기능을 위한 현재 재생 위치 확인 변수
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -414,6 +419,7 @@ public class ChatFragment extends Fragment {
     // 타이머 실행 메소드
     public void startTimer(long time) {
         connectBT();
+        playAudio();
 
         Handler mHandler = new Handler();
         mHandler.postDelayed(new Runnable() { public void run() {
@@ -421,6 +427,41 @@ public class ChatFragment extends Fragment {
             adapter.notifyDataSetChanged(); // 챗봇 메세지 리스트 갱신
         } }, 600); // 0.6초 딜레이 후 함수 실행
     }
+
+    // 음악을 재생하는 메소드
+    public void playAudio() {
+        try {
+            //closePlayer();
+
+            player = new MediaPlayer();
+            player.setDataSource(url);
+            player.prepare();
+            player.start();
+
+            Toast.makeText(getContext(), "재생 시작됨.", Toast.LENGTH_SHORT).show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    //음악 재생을 종료하는 메소드
+    public void stopAudio() {
+        if(player != null && player.isPlaying()){
+            player.stop();
+
+            Toast.makeText(getContext(), "중지됨.", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    /*
+    // 녹음 시 마이크 리소스 제한. 누군가가 lock 걸어놓으면 다른 앱에서 사용할 수 없음.
+    // 따라서 꼭 리소스를 해제해주어야함.
+    public void closePlayer() {
+        if (player != null) {
+            player.release();
+            player = null;
+        }
+    }*/
 
     // 블루투스 통신 및 조명 서비스를 제공하는 메소드
     public void connectBT() {
