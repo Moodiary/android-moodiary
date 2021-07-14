@@ -81,7 +81,8 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
                 @Override
                 public void onFinish() {
-                    fragment.finishBT(); // 조명 서비스 종료
+                    //fragment.finishBT(); // 조명 서비스 종료
+                    fragment.stopAudio(); //음악 재생 종료
                     fragment.deleteButton();
                     fragment.chatList.add(new ChatItem(0, "타이머가 종료되었습니다"));
                 }
@@ -222,7 +223,8 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             switch (v.getId()) {
                 case R.id.btn_finish:
                     countDownTimer.cancel(); // 타이머 종료
-                    fragment.finishBT(); // 조명 서비스 종료
+                    //fragment.finishBT(); // 조명 서비스 종료
+                    fragment.stopAudio(); //음악 재생 종료
                     fragment.deleteButton();
                     fragment.chatList.add(new ChatItem(0, "타이머가 종료되었습니다"));
             }
