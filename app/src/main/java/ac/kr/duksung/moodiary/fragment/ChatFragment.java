@@ -86,7 +86,7 @@ public class ChatFragment extends Fragment {
     String[] emotion = {"공포", "놀람", "분노", "슬픔", "중립", "행복", "혐오"}; // 감정 정보
     String[] color = {"파란색", "노란색", "빨강", "주황색", "흰색", "흰색", "초록색"}; // 컬러테라피 정보
 
-    public static String url = ""; //노래재생을 위한 웹서버 url
+    public static String url = "http://172.30.1.18:3000/music/happy"; //노래재생을 위한 웹서버 url
     MediaPlayer player;
     //int position = 0; // 다시 시작 기능을 위한 현재 재생 위치 확인 변수
 
@@ -313,7 +313,7 @@ public class ChatFragment extends Fragment {
         RequestQueue requestQueue = Volley.newRequestQueue(getActivity());
 
         // 서버에 데이터 전달
-        JsonObjectRequest jsonObject = new JsonObjectRequest(Request.Method.POST, "http://172.30.1.58:3000/diary/savediary", requestJsonObject, new Response.Listener<JSONObject>() {
+        JsonObjectRequest jsonObject = new JsonObjectRequest(Request.Method.POST, "http://172.30.1.18:3000/diary/savediary", requestJsonObject, new Response.Listener<JSONObject>() {
 
             @Override
             public void onResponse(JSONObject response) { // 데이터 전달 후 받은 응답
@@ -418,7 +418,7 @@ public class ChatFragment extends Fragment {
 
     // 타이머 실행 메소드
     public void startTimer(long time) {
-        connectBT();
+        //connectBT();
         playAudio();
 
         Handler mHandler = new Handler();
@@ -431,7 +431,6 @@ public class ChatFragment extends Fragment {
     // 음악을 재생하는 메소드
     public void playAudio() {
         try {
-            //closePlayer();
 
             player = new MediaPlayer();
             player.setDataSource(url);
@@ -453,15 +452,6 @@ public class ChatFragment extends Fragment {
         }
     }
 
-    /*
-    // 녹음 시 마이크 리소스 제한. 누군가가 lock 걸어놓으면 다른 앱에서 사용할 수 없음.
-    // 따라서 꼭 리소스를 해제해주어야함.
-    public void closePlayer() {
-        if (player != null) {
-            player.release();
-            player = null;
-        }
-    }*/
 
     // 블루투스 통신 및 조명 서비스를 제공하는 메소드
     public void connectBT() {
@@ -562,7 +552,7 @@ public class ChatFragment extends Fragment {
         RequestQueue requestQueue = Volley.newRequestQueue(getActivity());
 
         // 서버에 데이터 전달
-        JsonObjectRequest jsonObject = new JsonObjectRequest(Request.Method.POST, "http://172.30.1.58:3000/diary/todaydiary", requestJsonObject, new Response.Listener<JSONObject>() {
+        JsonObjectRequest jsonObject = new JsonObjectRequest(Request.Method.POST, "http://172.30.1.18:3000/diary/todaydiary", requestJsonObject, new Response.Listener<JSONObject>() {
 
 
             @Override
@@ -630,7 +620,7 @@ public class ChatFragment extends Fragment {
 
         // 서버에 데이터 전달
 
-        JsonObjectRequest jsonObject = new JsonObjectRequest(Request.Method.POST, "http://172.30.1.58:3000/diary/todaydiary", requestJsonObject, new Response.Listener<JSONObject>() {
+        JsonObjectRequest jsonObject = new JsonObjectRequest(Request.Method.POST, "http://172.30.1.18:3000/diary/todaydiary", requestJsonObject, new Response.Listener<JSONObject>() {
 
 
 
