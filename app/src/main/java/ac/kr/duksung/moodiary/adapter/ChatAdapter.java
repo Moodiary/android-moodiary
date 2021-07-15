@@ -81,10 +81,10 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
                 @Override
                 public void onFinish() {
-                    fragment.finishBT(); // 조명 서비스 종료
+                    //fragment.finishBT(); // 조명 서비스 종료
+                    fragment.stopAudio(); //음악 재생 종료
                     fragment.deleteButton();
-                    fragment.sequence++; // 다음 단계로 이동할 수 있도록 변수값 변경 (컬러테라피 완료된 단계라는 의미)
-                    fragment.Comment(); // 의견 입력 메소드 실행
+                    fragment.chatList.add(new ChatItem(0, "타이머가 종료되었습니다"));
                 }
             };
             countDownTimer.start(); // 타이머 시작
@@ -223,10 +223,10 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             switch (v.getId()) {
                 case R.id.btn_finish:
                     countDownTimer.cancel(); // 타이머 종료
-                    fragment.finishBT(); // 조명 서비스 종료
+                    //fragment.finishBT(); // 조명 서비스 종료
+                    fragment.stopAudio(); //음악 재생 종료
                     fragment.deleteButton();
-                    fragment.sequence++; // 다음 단계로 이동할 수 있도록 변수값 변경 (컬러테라가 완료된 단계라는 의미)
-                    fragment.Comment(); // 의견 입력 메소드 실행
+                    fragment.chatList.add(new ChatItem(0, "타이머가 종료되었습니다"));
             }
         }
 
@@ -254,13 +254,13 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 case R.id.button1:
                     fragment.deleteButton();
                     fragment.userClick("일기 쓰기");
-                    fragment.chatList.add(new ChatItem(0, "오늘 하루에 대해 일기를 남겨볼까요?"));
+                    fragment.checkTodayDiary();
                     fragment.et_input.setEnabled(true); // 메세지 입력창 활성화
                     break;
                 case R.id.button2:
                     fragment.deleteButton();
                     fragment.userClick("조명 켜기");
-                    fragment.todayDiary();
+                    fragment.checktodayLight();
                     break;
             }
         }

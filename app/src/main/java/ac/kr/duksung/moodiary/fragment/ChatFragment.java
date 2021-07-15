@@ -9,6 +9,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 
+import android.media.AudioManager;
+import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Bundle;
 
@@ -38,7 +40,9 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.ml.common.modeldownload.FirebaseModelDownloadConditions;
 import com.google.firebase.ml.common.modeldownload.FirebaseModelManager;
 import com.google.firebase.ml.custom.FirebaseCustomRemoteModel;
+import com.google.gson.JsonParser;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.tensorflow.lite.Interpreter;
@@ -47,7 +51,7 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Arrays;
 import java.util.Set;
 import java.util.UUID;
 
@@ -61,7 +65,7 @@ import io.reactivex.observers.DisposableObserver;
 import io.reactivex.schedulers.Schedulers;
 
 // 화면 설명 : 메인화면의 챗봇 화면
-// Author : Soohyun, Last Modified : 2021.05.06
+// Author : Soohyun, Last Modified : 2021.06.14
 public class ChatFragment extends Fragment {
     public int sequence = 1; // 챗봇의 단계 처리를 위한 변수
     public ArrayList<ChatItem> chatList = new ArrayList<>(); ; // 챗봇 메세지 리스트
@@ -82,6 +86,11 @@ public class ChatFragment extends Fragment {
     int maxIndex = -1; // 최대 감정 인덱스
     String[] emotion = {"공포", "놀람", "분노", "슬픔", "중립", "행복", "혐오"}; // 감정 정보
     String[] color = {"파란색", "노란색", "빨강", "주황색", "흰색", "흰색", "초록색"}; // 컬러테라피 정보
+
+    public static String url; //노래재생을 위한 웹서버 url
+
+    MediaPlayer player;
+    //int position = 0; // 음악 다시 시작 기능을 위한 현재 재생 위치 확인 변수
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -108,6 +117,9 @@ public class ChatFragment extends Fragment {
                     adapter.notifyDataSetChanged();
                     et_input.setText("");
 
+                    getEmotion(message);
+
+                    /*
                     DisposableObserver<String> observer = new DisposableObserver<String>() {
                         @Override
                         public void onNext(@NonNull String s) {
@@ -138,14 +150,8 @@ public class ChatFragment extends Fragment {
                     );
 
                     observable.subscribeOn(Schedulers.io()).subscribe(observer); // io스레드에서 실행
+                     */
 
-                } else if(sequence == 3) { // 컬러테라피가 끝난 후 의견을 입력받는 단계
-                    String message = et_input.getText().toString(); // 사용자가 입력한 메세지 가져옴
-                    chatList.add(new ChatItem(1, message)); // 사용자가 입력한 메시지를 챗봇 메세지 리스트에 추가
-                    chatList.add(new ChatItem(0, "의견을 남겨주셔서 감사합니다 :)"));
-                    rv_chat.scrollToPosition(chatList.size()-1); // 뷰 스크롤 가장 아래로 위치 변경
-                    et_input.setText(""); // 메세지 입력창 초기화
-                    adapter.notifyDataSetChanged();
                 }
             }
         });
@@ -205,11 +211,78 @@ public class ChatFragment extends Fragment {
                             et_input.setEnabled(false); // 메세지 입력창 사용 금지
                         }
 
-                        //saveDairy(message); // 일기와 감정 정보 저장 메소드 실행
+                        saveDairy(message); // 일기와 감정 정보 저장 메소드 실행
                     }
                 });
             }
         });
+    }
+
+    // 일기 감정 분석 결과 가져오는 메소드
+    public void getEmotion(String content) {
+
+        // 사용자 입력 정보 JSON 형태로 변환
+        JSONObject requestJsonObject = new JSONObject();
+        try {
+            requestJsonObject.put("content", content);
+        } catch(JSONException e) {
+            e.printStackTrace();
+        }
+
+        RequestQueue requestQueue = Volley.newRequestQueue(getActivity());
+
+        // 서버에 데이터 전달
+        JsonObjectRequest jsonObject = new JsonObjectRequest(Request.Method.POST, "http://127.0.0.1:5000/", requestJsonObject, new Response.Listener<JSONObject>() {
+
+
+            @Override
+            public void onResponse(JSONObject response) { // 데이터 전달 후 받은 응답
+
+                try {
+                    String result = response.getString("code"); // 응답 메시지 가져오기
+
+                    // 응답 메시지에 따른 처리
+                    if(result.equals("400"))
+                        Toast.makeText(getContext(),"에러가 발생했습니다", Toast.LENGTH_SHORT).show();
+                    if(result.equals("200")) {
+                        String emotions = response.getString("result"); // 일기 감정 분석 결과값 가져오기
+                        JSONObject jObj = new JSONObject(emotions);
+
+                        // 각 감정의 퍼센트 값 가져오기
+                        String[] first = jObj.getString("0").split(" ");
+                        String[] second = jObj.getString("1").split(" ");
+                        String[] third = jObj.getString("2").split(" ");
+
+                        maxIndex = Arrays.asList(emotion).indexOf(first[0]); // 최대 감정 뽑기
+
+                        //chatList.add(new ChatItem(0, "일기에서 보여지는 감정입니다.\n" + first[0] + " " + first[1] + "%\n" + second[0] + " " + second[1] + "%\n" + third[0] + " " + third[1] + "%"));
+                        chatList.add(new ChatItem(0, "일기에서 가장 많이 보여지는 감정은 " + first[0] + "입니다"));
+                        chatList.add(new ChatItem(0, "현재 감정에 도움이 되는 " + color[maxIndex] +" 조명을 틀어드릴게요"));
+                        chatList.add(new ChatItem(2));
+                        adapter.notifyDataSetChanged(); // 챗봇 메세지 리스트 갱신
+
+                        et_input.setText(""); // 메세지 입력창 초기화
+                        sequence++; // 다음 단계로 이동할 수 있도록 변수값 변경 (일기 입력이 완료된 단계라는 의미)
+                        et_input.setEnabled(false); // 메세지 입력창 사용 금지*/
+
+
+                        saveDairy(content);
+
+                    }
+
+                } catch(JSONException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        }, new Response.ErrorListener() { // 데이터 전달 및 응답 실패시
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(getContext(), "네트워크 연결 오류", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        requestQueue.add(jsonObject);
     }
 
     // 버튼 뷰 삭제
@@ -242,9 +315,7 @@ public class ChatFragment extends Fragment {
         RequestQueue requestQueue = Volley.newRequestQueue(getActivity());
 
         // 서버에 데이터 전달
-
-
-        JsonObjectRequest jsonObject = new JsonObjectRequest(Request.Method.POST, "http://172.30.1.36:3000/diary/savediary", requestJsonObject, new Response.Listener<JSONObject>() {
+        JsonObjectRequest jsonObject = new JsonObjectRequest(Request.Method.POST, "http://10.0.2.2:3000/diary/savediary", requestJsonObject, new Response.Listener<JSONObject>() {
 
 
             @Override
@@ -277,14 +348,12 @@ public class ChatFragment extends Fragment {
 
     // 타이머 설정하는 메소드
     public void setTimer() {
-        if(sequence == 2) { // 타이머 설정 단계일 경우
-            Handler mHandler = new Handler();
-            mHandler.postDelayed(new Runnable() { public void run() {
-                chatList.add(new ChatItem(0, "타이머를 설정해주세요"));
-                chatList.add(new ChatItem(3));
-                adapter.notifyDataSetChanged(); // 챗봇 메세지 리스트 갱신
-            } }, 600); // 0.6초 딜레이 후 함수 실행
-        }
+        Handler mHandler = new Handler();
+        mHandler.postDelayed(new Runnable() { public void run() {
+            chatList.add(new ChatItem(0, "타이머를 설정해주세요"));
+            chatList.add(new ChatItem(3));
+            adapter.notifyDataSetChanged(); // 챗봇 메세지 리스트 갱신
+        } }, 600); // 0.6초 딜레이 후 함수 실행
     }
 
     // 타이머 팝업창 메소드
@@ -352,7 +421,8 @@ public class ChatFragment extends Fragment {
 
     // 타이머 실행 메소드
     public void startTimer(long time) {
-        connectBT();
+        //connectBT();
+        playAudio();
 
         Handler mHandler = new Handler();
         mHandler.postDelayed(new Runnable() { public void run() {
@@ -360,6 +430,59 @@ public class ChatFragment extends Fragment {
             adapter.notifyDataSetChanged(); // 챗봇 메세지 리스트 갱신
         } }, 600); // 0.6초 딜레이 후 함수 실행
     }
+
+    public void AudioUrl() {
+        // 일기의 최대 감정에 따라 Audio Url 변경.
+        switch (maxIndex) {
+            case 0: // 공포
+                url = "http://10.0.2.2:3000/music/fear";
+                break;
+            case 1: // 놀람
+                url = "http://10.0.2.2:3000/music/surprise";
+                break;
+            case 2: // 분노
+                url = "http://10.0.2.2:3000/music/anger";
+                break;
+            case 3: // 슬픔
+                url = "http://10.0.2.2:3000/music/sad";
+                break;
+            case 4: // 중립
+                url = "http://10.0.2.2:3000/music/happy";
+                break;
+            case 5: // 행복
+                url = "http://10.0.2.2:3000/music/happy";
+                break;
+            case 6: // 혐오
+                url = "http://10.0.2.2:3000/music/aversion";
+                break;
+        }
+    }
+
+    // 음악을 재생하는 메소드
+    public void playAudio() {
+        try {
+            AudioUrl();
+
+            player = new MediaPlayer();
+            player.setDataSource(url);
+            player.prepare();
+            player.start();
+
+            Toast.makeText(getContext(), "재생 시작됨.", Toast.LENGTH_SHORT).show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    //음악 재생을 종료하는 메소드
+    public void stopAudio() {
+        if(player != null && player.isPlaying()){
+            player.stop();
+
+            Toast.makeText(getContext(), "중지됨.", Toast.LENGTH_SHORT).show();
+        }
+    }
+
 
     // 블루투스 통신 및 조명 서비스를 제공하는 메소드
     public void connectBT() {
@@ -444,22 +567,8 @@ public class ChatFragment extends Fragment {
         connectedThread.write("0"); // 스레드를 통해 데이터 전송
     }
 
-    // 조명 서비스 후 의견을 입력받는 메소드
-    public void Comment () {
-        Handler mHandler = new Handler();
-        mHandler.postDelayed(new Runnable() {
-            public void run() {
-                chatList.add(new ChatItem(0, "타이머가 종료되었습니다"));
-                chatList.add(new ChatItem(0, color[maxIndex] + " 조명이 당신의 감정에 도움이 되셨나요?"));
-                chatList.add(new ChatItem(0, "의견을 남겨주세요"));
-                et_input.setEnabled(true); // 메세지 입력창 사용 허용
-                adapter.notifyDataSetChanged(); // 챗봇 메세지 리스트 갱신
-                adapter.countDownTimer.cancel();
-            }
-        }, 600); // 0.6초 딜레이 후 함수 실행
-    }
-
-    public void todayDiary() {
+    // 조명 켜기 선택시 실행되는 메소드
+    public void checktodayLight() {
         SharedPreferences auto = this.getActivity().getSharedPreferences("autoLogin", Activity.MODE_PRIVATE); // 자동로그인 데이터 저장되어있는 곳
         String user_id = auto.getString("ID",null); // 저장된 아이디 값, 없으면 null
 
@@ -474,7 +583,9 @@ public class ChatFragment extends Fragment {
         RequestQueue requestQueue = Volley.newRequestQueue(getActivity());
 
         // 서버에 데이터 전달
-        JsonObjectRequest jsonObject = new JsonObjectRequest(Request.Method.POST, "http://192.168.0.5:3000/diary/todaydiary", requestJsonObject, new Response.Listener<JSONObject>() {
+
+        JsonObjectRequest jsonObject = new JsonObjectRequest(Request.Method.POST, "http://10.0.2.2:3000/diary/todaydiary", requestJsonObject, new Response.Listener<JSONObject>() {
+
 
 
             @Override
@@ -489,9 +600,10 @@ public class ChatFragment extends Fragment {
                     // 오늘 작성한 일기가 없는 경우 - 흰색 조명을 틀어줌
                     if(result.equals("204")) {
                         chatList.add(new ChatItem(0, "오늘 작성한 일기가 없으므로 흰색 조명을 틀어드릴게요"));
+                        setTimer();
                         adapter.notifyDataSetChanged();
                         maxIndex = 4;
-                        connectBT();
+                        //connectBT();
                     }
                     // 오늘 작성한 일기가 있는 경우
                     if(result.equals("200")) {
@@ -504,9 +616,68 @@ public class ChatFragment extends Fragment {
                         else if(emotion.equals("행복")) { maxIndex = 5; }
                         else if(emotion.equals("혐오")) { maxIndex = 6; }
 
-                        chatList.add(new ChatItem(0,color[maxIndex] +" 조명을 틀어드릴게요"));
+                        chatList.add(new ChatItem(0,"오늘 감정에 도움이 되는 " + color[maxIndex] +" 조명을 틀어드릴게요"));
+                        setTimer();
                         adapter.notifyDataSetChanged();
-                        connectBT();
+                    }
+
+                } catch(JSONException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        }, new Response.ErrorListener() { // 데이터 전달 및 응답 실패시
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(getContext(), "네트워크 연결 오류", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        requestQueue.add(jsonObject);
+    }
+
+    //오늘의 일기를 썼는지 확인하는 메소드
+    public void checkTodayDiary() {
+        SharedPreferences auto = this.getActivity().getSharedPreferences("autoLogin", Activity.MODE_PRIVATE); // 자동로그인 데이터 저장되어있는 곳
+        String user_id = auto.getString("ID",null); // 저장된 아이디 값, 없으면 null
+
+        // 사용자 입력 정보 JSON 형태로 변환
+        JSONObject requestJsonObject = new JSONObject();
+        try {
+            requestJsonObject.put("user_id",user_id);
+        } catch(JSONException e) {
+            e.printStackTrace();
+        }
+
+        RequestQueue requestQueue = Volley.newRequestQueue(getActivity());
+
+        // 서버에 데이터 전달
+        JsonObjectRequest jsonObject = new JsonObjectRequest(Request.Method.POST, "http://10.0.2.2:3000/diary/todaydiary", requestJsonObject, new Response.Listener<JSONObject>() {
+
+
+
+
+            @Override
+            public void onResponse(JSONObject response) { // 데이터 전달 후 받은 응답
+
+                try {
+                    String result = response.getString("code"); // 응답 메시지 가져오기
+
+                    // 응답 메시지에 따른 처리
+                    if(result.equals("400"))
+                        Toast.makeText(getContext(),"에러가 발생했습니다", Toast.LENGTH_SHORT).show();
+
+                    // 오늘 작성한 일기가 없는 경우
+                    if(result.equals("204")) {
+                        chatList.add(new ChatItem(0, "오늘 하루에 대해 일기를 남겨볼까요?"));
+                        adapter.notifyDataSetChanged();
+                    }
+
+                    // 오늘 작성한 일기가 있는 경우
+                    if(result.equals("200")) {
+                        chatList.add(new ChatItem(0,"오늘의 일기가 이미 작성되었어요!"));
+                        chatList.add(new ChatItem(0,"모아보기에서 오늘의 일기를 삭제하면 일기를 다시 작성할 수 있어요!"));
+                        adapter.notifyDataSetChanged();
                     }
 
                 } catch(JSONException e) {

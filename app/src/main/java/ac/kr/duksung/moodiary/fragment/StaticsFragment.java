@@ -131,8 +131,8 @@ public class StaticsFragment extends Fragment {
         RequestQueue requestQueue = Volley.newRequestQueue(getContext());
 
         // 서버에 데이터 전달
+        JsonObjectRequest jsonObject = new JsonObjectRequest(Request.Method.POST, "http://10.0.2.2:3000/diary/statics", requestJsonObject, new Response.Listener<JSONObject>() {
 
-        JsonObjectRequest jsonObject = new JsonObjectRequest(Request.Method.POST, "http://172.30.1.36:3000/diary/statics", requestJsonObject, new Response.Listener<JSONObject>() {
 
 
             @Override
@@ -188,23 +188,25 @@ public class StaticsFragment extends Fragment {
         emotion_chart.setHoleColor(Color.WHITE); // 그래프 가운데 Hole 컬러
         emotion_chart.setTransparentCircleRadius(10f); // Hole의 크기
 
+        emotion_chart.setEntryLabelColor(Color.BLACK); // 라벨 텍스트 컬러
+
         // 감정 데이터 리스트
         ArrayList<PieEntry> emotion = new ArrayList<PieEntry>();
-        emotion.add(new PieEntry(pleasure, "행복"));
-        emotion.add(new PieEntry(sadness, "슬픔"));
-        emotion.add(new PieEntry(surprised, "놀람"));
-        emotion.add(new PieEntry(anger, "분노"));
-        emotion.add(new PieEntry(fear, "공포"));
-        emotion.add(new PieEntry(aversion, "혐오"));
-        emotion.add(new PieEntry(neutrality, "중립"));
+        if(pleasure != 0) emotion.add(new PieEntry(pleasure, "행복"));
+        if(sadness != 0) emotion.add(new PieEntry(sadness, "슬픔"));
+        if(surprised != 0) emotion.add(new PieEntry(surprised, "놀람"));
+        if(anger != 0) emotion.add(new PieEntry(anger, "분노"));
+        if(fear != 0) emotion.add(new PieEntry(fear, "공포"));
+        if(aversion != 0) emotion.add(new PieEntry(aversion, "혐오"));
+        if(neutrality != 0) emotion.add(new PieEntry(neutrality, "중립"));
 
-        PieDataSet dataSet = new PieDataSet(emotion, "Emotions"); // 데이터의 카테고리
+        PieDataSet dataSet = new PieDataSet(emotion, ""); // 데이터의 카테고리
         dataSet.setSliceSpace(3); // 그래프의 데이터 사이 간격
         dataSet.setColors(ColorTemplate.JOYFUL_COLORS); // 그래프 색상 테마
 
         PieData data = new PieData(dataSet); // 데이터를 담는 그릇
         data.setValueTextSize(15); // 데이터 텍스트 크기
-        data.setValueTextColor(Color.YELLOW); // 데이터 텍스트 컬러
+        data.setValueTextColor(Color.BLACK); // 데이터 텍스트 컬러
         emotion_chart.setData(data); // 그래프에 데이터 할당
 
         emotion_chart.invalidate(); // 차트 갱신
