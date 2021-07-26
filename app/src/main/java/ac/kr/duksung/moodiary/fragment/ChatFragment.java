@@ -467,6 +467,7 @@ public class ChatFragment extends Fragment {
             player.setDataSource(url);
             player.prepare();
             player.start();
+            player.setLooping(true);
 
             Toast.makeText(getContext(), "재생 시작됨.", Toast.LENGTH_SHORT).show();
         } catch (IOException e) {
