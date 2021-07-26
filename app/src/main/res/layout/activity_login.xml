@@ -55,7 +55,7 @@
         android:layout_marginEnd="20dp"
         app:layout_constraintTop_toBottomOf="@+id/tv_id"
         android:hint="example"
-        android:background="null"/>
+        android:background="@null"/>
 
     <!-- 비밀번호 텍스트 -->
     <TextView
@@ -73,7 +73,6 @@
         app:layout_constraintHorizontal_bias="0"/>
 
     <ImageView
-        android:id="@+id/iv_password"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
@@ -90,7 +89,7 @@
         android:layout_marginTop="20dp"
         app:layout_constraintTop_toBottomOf="@+id/tv_password"
         android:hint="●●●●●●●"
-        android:background="null"/>
+        android:background="@null"/>
 
 
     <!-- 로그인 버튼 -->
