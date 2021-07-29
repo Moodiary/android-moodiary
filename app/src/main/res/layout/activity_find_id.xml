@@ -14,7 +14,7 @@
         android:theme="@style/Theme.Moodiary"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent" >
 
         <!-- 상단바 타이틀 -->
         <TextView
@@ -22,7 +22,9 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:text="아이디 찾기"
-            android:textSize="20sp" />
+            android:textSize="20sp"
+            android:textColor="@color/black"
+            android:textStyle="bold"/>
 
     </androidx.appcompat.widget.Toolbar>
 

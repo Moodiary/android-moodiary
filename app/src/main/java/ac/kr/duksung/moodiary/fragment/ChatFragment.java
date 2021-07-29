@@ -224,7 +224,7 @@ public class ChatFragment extends Fragment {
         // 사용자 입력 정보 JSON 형태로 변환
         JSONObject requestJsonObject = new JSONObject();
         try {
-            requestJsonObject.put("content", content);
+            requestJsonObject.put("emotions", content);
         } catch(JSONException e) {
             e.printStackTrace();
         }
@@ -232,7 +232,7 @@ public class ChatFragment extends Fragment {
         RequestQueue requestQueue = Volley.newRequestQueue(getActivity());
 
         // 서버에 데이터 전달
-        JsonObjectRequest jsonObject = new JsonObjectRequest(Request.Method.POST, "http://127.0.0.1:5000/", requestJsonObject, new Response.Listener<JSONObject>() {
+        JsonObjectRequest jsonObject = new JsonObjectRequest(Request.Method.POST, "http://10.0.2.2:5000/predict", requestJsonObject, new Response.Listener<JSONObject>() {
 
 
             @Override
@@ -246,17 +246,32 @@ public class ChatFragment extends Fragment {
                         Toast.makeText(getContext(),"에러가 발생했습니다", Toast.LENGTH_SHORT).show();
                     if(result.equals("200")) {
                         String emotions = response.getString("result"); // 일기 감정 분석 결과값 가져오기
-                        JSONObject jObj = new JSONObject(emotions);
+                        JSONArray jArray = new JSONArray(emotions);
 
-                        // 각 감정의 퍼센트 값 가져오기
-                        String[] first = jObj.getString("0").split(" ");
-                        String[] second = jObj.getString("1").split(" ");
-                        String[] third = jObj.getString("2").split(" ");
+                        // 긍정, 부정 퍼센트 값 가져오기
+                        JSONObject jObject = jArray.getJSONObject(0);
+                        String[] first = jObject.getString("0").split(" ");
+                        String[] second = jObject.getString("1").split(" ");
+                        chatList.add(new ChatItem(0, "일기에서 가장 많이 보여지는 감정은\n" + first[0] + " " + first[1] + "%  "+ second[0] + " " + second[1] + "% 입니다"));
 
-                        maxIndex = Arrays.asList(emotion).indexOf(first[0]); // 최대 감정 뽑기
+                        if(first[0].equals("긍정")) { // 긍정 감정인 경우
+                            maxIndex = 4; // 최대 감정 뽑기
+                        } else { // 부정 감정일 경우 부정 세부 감정의 퍼센트 값 가져오기
+                            String chat = "부정 감정 중 많이 보여지는 감정은 \n";
+                            JSONObject jObject_detail = jArray.getJSONObject(1);
+                            for(int i = 0; i < 6; i++) {
+                                String[] detail = jObject_detail.getString(String.valueOf(i)).split(" ");
 
-                        //chatList.add(new ChatItem(0, "일기에서 보여지는 감정입니다.\n" + first[0] + " " + first[1] + "%\n" + second[0] + " " + second[1] + "%\n" + third[0] + " " + third[1] + "%"));
-                        chatList.add(new ChatItem(0, "일기에서 가장 많이 보여지는 감정은 " + first[0] + "입니다"));
+                                if(i == 0)
+                                    maxIndex = Arrays.asList(emotion).indexOf(detail[0]);
+
+                                if(!detail[1].equals("0"))
+                                    chat += detail[0] + " " + detail[1] +"%  ";
+                            }
+                            chat += "입니다";
+                            chatList.add(new ChatItem(0, chat));
+                        }
+
                         chatList.add(new ChatItem(0, "현재 감정에 도움이 되는 " + color[maxIndex] +" 조명을 틀어드릴게요"));
                         chatList.add(new ChatItem(2));
                         adapter.notifyDataSetChanged(); // 챗봇 메세지 리스트 갱신
@@ -266,7 +281,7 @@ public class ChatFragment extends Fragment {
                         et_input.setEnabled(false); // 메세지 입력창 사용 금지*/
 
 
-                        saveDairy(content);
+                        //saveDairy(content);
 
                     }
 
