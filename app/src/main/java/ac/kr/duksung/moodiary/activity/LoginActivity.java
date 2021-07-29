@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,7 +32,7 @@ import ac.kr.duksung.moodiary.R;
 public class LoginActivity extends AppCompatActivity {
     EditText et_id; // 아이디 입력창
     EditText et_password; // 비밀번호 입력창
-    Button btn_login; // 로그인 버튼
+    ImageButton btn_login; // 로그인 버튼
     TextView tv_find_id; // 아이디 찾기
     TextView tv_find_password; // 비밀번호 찾기
     TextView tv_signup; // 회원가입
@@ -45,7 +46,7 @@ public class LoginActivity extends AppCompatActivity {
 
         et_id = findViewById(R.id.et_id);
         et_password = findViewById(R.id.et_password);
-        btn_login = findViewById(R.id.btn_findpw);
+        btn_login = findViewById(R.id.btn_login);
         tv_find_id = findViewById(R.id.tv_find_id);
         tv_find_password = findViewById(R.id.tv_find_password);
         tv_signup = findViewById(R.id.tv_signup);

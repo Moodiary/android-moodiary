@@ -14,8 +14,7 @@
         android:theme="@style/Theme.Moodiary"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:background="#a8dba8">
+        app:layout_constraintTop_toTopOf="parent" >
 
         <!-- 상단바 타이틀 -->
         <TextView
