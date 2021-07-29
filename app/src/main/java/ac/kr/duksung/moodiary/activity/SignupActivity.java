@@ -9,6 +9,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -34,7 +35,7 @@ public class SignupActivity extends AppCompatActivity {
     EditText et_email; // 이메일 입력창
     EditText et_password; // 패스워드 입력창
     EditText et_identify_password; // 패스워드 확인 입력창
-    Button btn_login; // 확인 버튼
+    ImageButton btn_finish; // 확인 버튼
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,12 +53,12 @@ public class SignupActivity extends AppCompatActivity {
         et_email = findViewById(R.id.et_email);
         et_password = findViewById(R.id.et_password);
         et_identify_password = findViewById(R.id.et_identify_password);
-        btn_login = findViewById(R.id.btn_findpw);
+        btn_finish = findViewById(R.id.btn_finish);
 
         Pattern emailPattern = Patterns.EMAIL_ADDRESS; // 이메일 검증 패턴
 
         // 확인 버튼 클릭시
-        btn_login.setOnClickListener(new View.OnClickListener() {
+        btn_finish.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // 사용자가 입력한 데이터를 가져오는 부분

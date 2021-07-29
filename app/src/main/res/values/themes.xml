@@ -12,6 +12,7 @@
         <!-- Status bar color. -->
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
+        <item name="colorControlNormal">@color/black</item> <!--홈/뒤로가기 버튼의 색상-->
 
         <!-- No Title Bar-->
         <item name="windowActionBar">false</item>
