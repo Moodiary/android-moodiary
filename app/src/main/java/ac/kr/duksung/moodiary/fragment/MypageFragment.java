@@ -8,6 +8,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -76,6 +77,10 @@ public class MypageFragment extends Fragment {
         adapter = new MypageAdapter(getContext(), mypageList);
         rv_mypage.setLayoutManager(manager); // 리사이클러뷰와 레이아웃 매니저 연결
         rv_mypage.setAdapter(adapter); // 리사이클러뷰와 어댑터 연결
+
+        // 리사이클러뷰 구분선
+        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(rv_mypage.getContext(), manager.getOrientation());
+        rv_mypage.addItemDecoration(dividerItemDecoration);
 
         // 리사이클러뷰 아이템 클릭시
         adapter.setOnItemClickListener(new MypageAdapter.OnItemClickListener() {

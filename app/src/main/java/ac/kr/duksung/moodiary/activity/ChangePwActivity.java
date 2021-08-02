@@ -7,6 +7,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -33,7 +34,8 @@ public class ChangePwActivity extends AppCompatActivity {
     EditText et_origin_password;
     EditText et_new_password;
     EditText et_new_password_check;
-    Button btn_change;
+    ImageButton btn_change;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
