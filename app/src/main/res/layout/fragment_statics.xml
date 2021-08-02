@@ -6,7 +6,29 @@
     android:layout_height="match_parent"
     tools:context=".fragment.StaticsFragment">
 
+    <!-- 상단바 -->
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/Theme.Moodiary"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
+        <!-- 상단바 타이틀 -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="STATICS"
+            android:fontFamily="@font/netmarble_b"
+            android:textSize="23sp"
+            android:textColor="@color/black"
+            android:textStyle="bold"/>
+
+    </androidx.appcompat.widget.Toolbar>
+  
     <!-- 캘린더 아이콘 -->
     <ImageView
         android:layout_width="wrap_content"
@@ -25,7 +47,7 @@
         android:fontFamily="@font/netmarble_m"
         android:text="Start date"
         android:textSize="18sp"
-        app:layout_constraintHorizontal_bias="0.283"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -40,9 +62,8 @@
         android:fontFamily="@font/netmarble_m"
         android:gravity="center"
         android:text="2021/1/1"
-        android:textAlignment="center"
-        android:textSize="16sp"
-        app:layout_constraintHorizontal_bias="0.2"
+        android:textSize="18sp"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -61,11 +82,9 @@
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="90dp"
-        android:fontFamily="@font/netmarble_m"
-        android:text="End date"
-        android:textSize="18dp"
-        app:layout_constraintHorizontal_bias="0.826"
+        android:text="끝"
+        android:textSize="18sp"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -80,9 +99,8 @@
         android:fontFamily="@font/netmarble_m"
         android:gravity="center"
         android:text="2021/1/1"
-        android:textAlignment="center"
-        android:textSize="16sp"
-        app:layout_constraintHorizontal_bias="0.8"
+        android:textSize="18sp"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -96,7 +114,10 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginTop="150dp"
+        android:layout_marginBottom="20dp"/>
+
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
