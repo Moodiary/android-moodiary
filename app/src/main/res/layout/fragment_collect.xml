@@ -25,7 +25,7 @@
             android:layout_height="20dp"
             android:layout_gravity="right"
             android:layout_marginRight="22dp"
-            android:background="@drawable/collect_deleteButton"
+            android:background="@drawable/collect_deletebutton"
             android:text="삭제"
             android:textAlignment="center"
             android:textColor="@color/white"
