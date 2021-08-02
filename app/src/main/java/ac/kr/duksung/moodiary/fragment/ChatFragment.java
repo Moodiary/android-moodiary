@@ -26,6 +26,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -72,7 +73,7 @@ public class ChatFragment extends Fragment {
     RecyclerView rv_chat; // 챗봇 리사이클러뷰
     ChatAdapter adapter; // 챗봇 어댑터
     public EditText et_input; // 메세지 입력창
-    Button btn_push; // 전송 버튼
+    ImageButton btn_push; // 전송 버튼
 
     Interpreter interpreter; // 모델 인터프리터
     BluetoothAdapter btAdapter; // 블루투스 통신을 위한 어댑터

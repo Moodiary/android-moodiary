@@ -3,6 +3,7 @@ package ac.kr.duksung.moodiary.fragment;
 import android.app.Activity;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.media.Image;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -16,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CalendarView;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -49,7 +51,7 @@ import ac.kr.duksung.moodiary.domain.ChatItem;
 public class CollectFragment extends Fragment {
     TextView diary_emotion; // 일기 감정
     TextView diary_content; // 일기내용
-    Button deleteButton; //삭제 버튼
+    ImageButton deleteButton; // 삭제 버튼
     ArrayList<String> contentList = new ArrayList<>(); // 일기내용 리스트
     ArrayList<String> emotionList = new ArrayList<>(); // 일기감정 리스트
     ArrayList<String> createdList = new ArrayList<>(); // 일기작성날짜 리스트
@@ -64,7 +66,7 @@ public class CollectFragment extends Fragment {
         diary_calendar = view.findViewById(R.id.diary_calendar);
         diary_emotion = view.findViewById(R.id.diary_emotion);
         diary_content = view.findViewById(R.id.diary_content);
-        deleteButton = view.findViewById(R.id.deleteButton);
+        deleteButton = view.findViewById(R.id.btn_delete);
 
         deleteButton.setVisibility(View.GONE);
 
