@@ -1,5 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="DesignSurface">
+    <option name="filePathToZoomLevelMap">
+      <map>
+        <entry key="app/src/main/res/drawable/border.xml" value="0.21614583333333334" />
+        <entry key="app/src/main/res/drawable/ic_baseline_event_note_24.xml" value="0.21614583333333334" />
+        <entry key="app/src/main/res/layout/activity_find_id.xml" value="0.335" />
+        <entry key="app/src/main/res/layout/activity_find_pw.xml" value="0.291213768115942" />
+        <entry key="app/src/main/res/layout/activity_login.xml" value="0.291213768115942" />
+        <entry key="app/src/main/res/layout/activity_main.xml" value="0.2916666666666667" />
+        <entry key="app/src/main/res/layout/activity_notification.xml" value="0.2916666666666667" />
+        <entry key="app/src/main/res/layout/activity_signup.xml" value="0.2916666666666667" />
+        <entry key="app/src/main/res/layout/activity_splash.xml" value="0.2916666666666667" />
+        <entry key="app/src/main/res/layout/chat_item_button_light.xml" value="0.2916666666666667" />
+        <entry key="app/src/main/res/layout/chat_item_button_time.xml" value="0.2916666666666667" />
+        <entry key="app/src/main/res/layout/chat_item_chatbot.xml" value="0.2916666666666667" />
+        <entry key="app/src/main/res/layout/chat_item_select.xml" value="0.2916666666666667" />
+        <entry key="app/src/main/res/layout/chat_item_timer.xml" value="0.2916666666666667" />
+        <entry key="app/src/main/res/layout/chat_item_user.xml" value="0.2916666666666667" />
+        <entry key="app/src/main/res/layout/fragment_chat.xml" value="0.2916666666666667" />
+        <entry key="app/src/main/res/layout/fragment_collect.xml" value="0.2916666666666667" />
+      </map>
+    </option>
+  </component>
   <component name="ProjectRootManager" version="2" languageLevel="JDK_1_8" default="true" project-jdk-name="1.8" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/build/classes" />
   </component>

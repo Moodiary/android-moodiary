@@ -22,22 +22,36 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:text="비밀번호 찾기"
-            android:textSize="20sp" />
+            android:textSize="20sp"
+            android:fontFamily="@font/netmarble_m"/>
 
     </androidx.appcompat.widget.Toolbar>
 
-    <!-- 아이디 -->
+    <!-- 아이디 텍스트-->
     <TextView
+        android:id="@+id/tv_id"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
+        android:layout_marginTop="50dp"
+        android:layout_marginLeft="54.5dp"
+        android:fontFamily="@font/netmarble_m"
         android:text="아이디"
-        android:textSize="14sp"
-        app:layout_constraintBaseline_toBaselineOf="@+id/et_id"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        android:textSize="16sp"
+        android:textColor="@color/black"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintHorizontal_bias="0"/>
+
+    <!-- 아이디 입력창 배경 -->
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="29.5dp"
+        android:layout_marginEnd="29.5dp"
+        app:layout_constraintTop_toBottomOf="@+id/tv_id"
+        android:background="@drawable/find_pw_id" />
 
     <!-- 아이디 입력창 -->
     <EditText
@@ -45,25 +59,39 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="14sp"
-        android:layout_marginTop="60dp"
-        android:layout_marginStart="80dp"
-        android:layout_marginEnd="20dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_marginTop="22dp"
+        android:layout_marginStart="49.5dp"
+        android:layout_marginEnd="49.5dp"
+        app:layout_constraintTop_toBottomOf="@+id/tv_id"
+        android:fontFamily="@font/netmarble_m"
+        android:hint="example"
+        android:background="@null"/>
 
-    <!-- 이메일 -->
+    <!-- 이메일 텍스트 -->
     <TextView
+        android:id="@+id/tv_email"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
+        android:layout_marginTop="35dp"
+        android:layout_marginLeft="54.5dp"
+        android:fontFamily="@font/netmarble_m"
         android:text="이메일"
-        android:textSize="14sp"
-        app:layout_constraintBaseline_toBaselineOf="@+id/et_email"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        android:textSize="16sp"
+        android:textColor="@color/black"
+        app:layout_constraintTop_toBottomOf="@+id/et_id"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintHorizontal_bias="0"/>
+
+    <!-- 이메일 입력창 배경 -->
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="29.5dp"
+        android:layout_marginEnd="29.5dp"
+        app:layout_constraintTop_toBottomOf="@+id/tv_email"
+        android:background="@drawable/find_pw_email"  />
 
     <!-- 이메일 입력창 -->
     <EditText
@@ -72,22 +100,25 @@
         android:layout_height="wrap_content"
         android:inputType="textEmailAddress"
         android:textSize="14sp"
-        android:layout_marginTop="110dp"
-        android:layout_marginStart="80dp"
-        android:layout_marginEnd="20dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_marginStart="49.5dp"
+        android:layout_marginEnd="49.5dp"
+        android:layout_marginTop="22dp"
+        app:layout_constraintTop_toBottomOf="@+id/tv_email"
+        android:fontFamily="@font/netmarble_m"
+        android:hint="johndoe@mail.com"
+        android:background="@null" />
+
 
     <!-- 확인 버튼 -->
-    <Button
+    <ImageButton
         android:id="@+id/btn_findpw"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
         android:layout_marginEnd="20dp"
-        android:layout_marginBottom="20dp"
+        android:layout_marginBottom="40dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        android:text="확인"/>
+        android:text="확인"
+        android:background="@drawable/find_pw_btn"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

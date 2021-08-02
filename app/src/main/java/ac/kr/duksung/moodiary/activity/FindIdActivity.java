@@ -8,6 +8,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -27,7 +28,7 @@ import ac.kr.duksung.moodiary.R;
 public class FindIdActivity extends AppCompatActivity {
     Toolbar toolbar; // 상단바
     EditText et_email; // 이메일 입력창
-    Button btn_login; // 확인 버튼
+    ImageButton btn_finish; // 확인 버튼
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,10 +42,10 @@ public class FindIdActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true); //back버튼
 
         et_email = findViewById(R.id.et_email);
-        btn_login = findViewById(R.id.btn_findid);
+        btn_finish = findViewById(R.id.btn_finish);
 
         // 확인 버튼 클릭시
-        btn_login.setOnClickListener(new View.OnClickListener() {
+        btn_finish.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String email = et_email.getText().toString();
