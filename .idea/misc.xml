@@ -5,27 +5,27 @@
       <map>
         <entry key="app/src/main/res/drawable/border.xml" value="0.21614583333333334" />
         <entry key="app/src/main/res/drawable/ic_baseline_event_note_24.xml" value="0.21614583333333334" />
-        <entry key="app/src/main/res/layout/activity_change_pw.xml" value="0.2916666666666667" />
+        <entry key="app/src/main/res/layout/activity_change_pw.xml" value="0.2140625" />
         <entry key="app/src/main/res/layout/activity_find_id.xml" value="0.335" />
         <entry key="app/src/main/res/layout/activity_find_pw.xml" value="0.291213768115942" />
         <entry key="app/src/main/res/layout/activity_login.xml" value="0.291213768115942" />
-        <entry key="app/src/main/res/layout/activity_main.xml" value="0.2916666666666667" />
-        <entry key="app/src/main/res/layout/activity_notification.xml" value="0.2916666666666667" />
+        <entry key="app/src/main/res/layout/activity_main.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/activity_notification.xml" value="0.335" />
         <entry key="app/src/main/res/layout/activity_signup.xml" value="0.2916666666666667" />
         <entry key="app/src/main/res/layout/activity_splash.xml" value="0.2916666666666667" />
         <entry key="app/src/main/res/layout/chat_item_button_light.xml" value="0.2916666666666667" />
-        <entry key="app/src/main/res/layout/chat_item_button_time.xml" value="0.2916666666666667" />
+        <entry key="app/src/main/res/layout/chat_item_button_time.xml" value="0.335" />
         <entry key="app/src/main/res/layout/chat_item_chatbot.xml" value="0.2916666666666667" />
         <entry key="app/src/main/res/layout/chat_item_select.xml" value="0.56282722513089" />
         <entry key="app/src/main/res/layout/chat_item_timer.xml" value="0.2916666666666667" />
         <entry key="app/src/main/res/layout/chat_item_user.xml" value="0.2916666666666667" />
         <entry key="app/src/main/res/layout/fragment_chat.xml" value="0.2916666666666667" />
         <entry key="app/src/main/res/layout/fragment_collect.xml" value="0.2916666666666667" />
-        <entry key="app/src/main/res/layout/fragment_mypage.xml" value="0.2916666666666667" />
-        <entry key="app/src/main/res/layout/fragment_statics.xml" value="0.2916666666666667" />
-        <entry key="app/src/main/res/layout/mypage_item_switch.xml" value="0.2916666666666667" />
-        <entry key="app/src/main/res/layout/mypage_item_text.xml" value="0.2916666666666667" />
-        <entry key="app/src/main/res/layout/time_dialog.xml" value="0.2916666666666667" />
+        <entry key="app/src/main/res/layout/fragment_mypage.xml" value="0.3098958333333333" />
+        <entry key="app/src/main/res/layout/fragment_statics.xml" value="0.335" />
+        <entry key="app/src/main/res/layout/mypage_item_switch.xml" value="0.3098958333333333" />
+        <entry key="app/src/main/res/layout/mypage_item_text.xml" value="0.3098958333333333" />
+        <entry key="app/src/main/res/layout/time_dialog.xml" value="0.3098958333333333" />
       </map>
     </option>
   </component>
