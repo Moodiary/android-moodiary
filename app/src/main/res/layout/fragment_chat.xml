@@ -35,7 +35,7 @@
         android:layout_marginRight="70dp"
         android:layout_marginBottom="15dp"
         android:fontFamily="@font/netmarble_m"
-        android:background="@null"/>/>
+        android:background="@null"/>
 
     <!-- 전송 버튼 -->
     <ImageButton
