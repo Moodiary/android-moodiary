@@ -104,7 +104,7 @@ public class MypageFragment extends Fragment {
                         getActivity().finish();
                         break;
                     case 3: // 회원탈퇴
-                        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                        AlertDialog.Builder builder = new AlertDialog.Builder(getContext(), R.style.AlertDialogCustom);
                         builder.setTitle("회원탈퇴");
                         builder.setMessage("정말 탈퇴하시겠습니까?");
                         builder.setPositiveButton("네", new DialogInterface.OnClickListener() {
