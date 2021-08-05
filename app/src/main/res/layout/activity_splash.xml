@@ -14,8 +14,10 @@
         android:textSize="45sp"
         android:textStyle="bold"
         android:textColor="#3B8686"
+        android:fontFamily="@font/netmarble_b"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

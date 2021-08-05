@@ -98,7 +98,6 @@ public class StaticsFragment extends Fragment {
                         requestStatics(startDate, endDate); // 통계 데이터 가져오는 메소드 실행
                     }
                 }, 2021, 1, 1);
-                dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
                 dialog.show();
 
                 Button positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
