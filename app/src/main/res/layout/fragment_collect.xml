@@ -60,7 +60,6 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
                 android:fontFamily="@font/netmarble_b"
-                android:hint="Emotion"
                 android:text=""
                 android:textSize="20sp"
                 android:textColor="@color/black"/>
@@ -81,7 +80,6 @@
                 android:layout_marginStart="10dp"
                 android:layout_marginRight="10dp"
                 android:fontFamily="@font/netmarble_l"
-                android:hint="Today is ,,,"
                 android:text=""
                 android:textColor="@color/black"/>
 

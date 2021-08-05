@@ -116,9 +116,9 @@
 
     <com.github.mikephil.charting.charts.PieChart
         android:id="@+id/emotion_chart"
-        android:layout_width="300dp"
-        android:layout_height="500dp"
-        android:layout_marginTop="200dp"
+        android:layout_width="350dp"
+        android:layout_height="550dp"
+        android:layout_marginTop="150dp"
         android:layout_marginBottom="20dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"

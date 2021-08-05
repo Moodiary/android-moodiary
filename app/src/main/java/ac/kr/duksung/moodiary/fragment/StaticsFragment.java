@@ -1,9 +1,11 @@
 package ac.kr.duksung.moodiary.fragment;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -12,6 +14,7 @@ import androidx.fragment.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -61,7 +64,7 @@ public class StaticsFragment extends Fragment {
         tv_start.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DatePickerDialog dialog = new DatePickerDialog(getContext(), android.R.style.Theme_Holo_Light_Dialog, new DatePickerDialog.OnDateSetListener() {
+                DatePickerDialog dialog = new DatePickerDialog(getContext(), android.R.style.Theme_Holo_Light_Dialog_MinWidth, new DatePickerDialog.OnDateSetListener() {
                     @Override
                     public void onDateSet(DatePicker view, int year, int month, int day) {
                         startDate = year + "-" + (month + 1) + "-" + day; // 시작날짜 재설정
@@ -69,7 +72,17 @@ public class StaticsFragment extends Fragment {
                         requestStatics(startDate, endDate); // 통계 데이터 가져오는 메소드 실행
                     }
                 }, 2021, 1, 1);
+                dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
                 dialog.show();
+
+                Button positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+                Button negativeButton = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
+
+                positiveButton.setTextColor(Color.parseColor("#000000"));
+                positiveButton.setBackgroundColor(Color.TRANSPARENT);
+
+                negativeButton.setTextColor(Color.parseColor("#000000"));
+                negativeButton.setBackgroundColor(Color.TRANSPARENT);
             }
         });
 
@@ -77,7 +90,7 @@ public class StaticsFragment extends Fragment {
         tv_end.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DatePickerDialog dialog = new DatePickerDialog(getContext(), android.R.style.Theme_Holo_Light_Dialog, new DatePickerDialog.OnDateSetListener() {
+                DatePickerDialog dialog = new DatePickerDialog(getContext(), android.R.style.Theme_Holo_Light_Dialog_MinWidth, new DatePickerDialog.OnDateSetListener() {
                     @Override
                     public void onDateSet(DatePicker view, int year, int month, int day) {
                         endDate = year + "-" + (month + 1) + "-" + day; // 끝날짜 재설정
@@ -85,7 +98,17 @@ public class StaticsFragment extends Fragment {
                         requestStatics(startDate, endDate); // 통계 데이터 가져오는 메소드 실행
                     }
                 }, 2021, 1, 1);
+                dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
                 dialog.show();
+
+                Button positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+                Button negativeButton = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
+
+                positiveButton.setTextColor(Color.parseColor("#000000"));
+                positiveButton.setBackgroundColor(Color.TRANSPARENT);
+
+                negativeButton.setTextColor(Color.parseColor("#000000"));
+                negativeButton.setBackgroundColor(Color.TRANSPARENT);
             }
         });
 
@@ -132,8 +155,6 @@ public class StaticsFragment extends Fragment {
 
         // 서버에 데이터 전달
         JsonObjectRequest jsonObject = new JsonObjectRequest(Request.Method.POST, "http://10.0.2.2:3000/diary/statics", requestJsonObject, new Response.Listener<JSONObject>() {
-
-
 
             @Override
             public void onResponse(JSONObject response) { // 데이터 전달 후 받은 응답
