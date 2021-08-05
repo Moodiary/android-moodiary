@@ -3,20 +3,14 @@ package ac.kr.duksung.moodiary.fragment;
 import android.app.Activity;
 import android.content.SharedPreferences;
 import android.graphics.Color;
-import android.media.Image;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 
-import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.CalendarView;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -41,10 +35,7 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import ac.kr.duksung.moodiary.CalendarEvent.EventDecorator;
-import ac.kr.duksung.moodiary.CalendarEvent.SaturdayDecorator;
-import ac.kr.duksung.moodiary.CalendarEvent.SundayDecorator;
 import ac.kr.duksung.moodiary.R;
-import ac.kr.duksung.moodiary.domain.ChatItem;
 
 // 화면 설명 : 메인화면의 모아보기 화면
 // Author : Soohyun, Last Modified : 2021.04.09
@@ -130,8 +121,6 @@ public class CollectFragment extends Fragment {
 
         //일기 커스텀뷰
         diary_calendar.setSelectedDate(CalendarDay.today());
-        diary_calendar.addDecorator(new SundayDecorator());
-        diary_calendar.addDecorator(new SaturdayDecorator());
 
         return view;
     }
