@@ -249,6 +249,8 @@ public class ChatFragment extends Fragment {
                         String emotions = response.getString("result"); // 일기 감정 분석 결과값 가져오기
                         JSONArray jArray = new JSONArray(emotions);
 
+                        System.out.println(emotions);
+
                         // 긍정, 부정 퍼센트 값 가져오기
                         JSONObject jObject = jArray.getJSONObject(0);
                         String[] first = jObject.getString("0").split(" ");
@@ -281,9 +283,7 @@ public class ChatFragment extends Fragment {
                         sequence++; // 다음 단계로 이동할 수 있도록 변수값 변경 (일기 입력이 완료된 단계라는 의미)
                         et_input.setEnabled(false); // 메세지 입력창 사용 금지*/
 
-
-                        //saveDairy(content);
-
+                        saveDairy(content); // 일기 저장
                     }
 
                 } catch(JSONException e) {
@@ -603,8 +603,6 @@ public class ChatFragment extends Fragment {
 
         JsonObjectRequest jsonObject = new JsonObjectRequest(Request.Method.POST, "http://10.0.2.2:3000/diary/todaydiary", requestJsonObject, new Response.Listener<JSONObject>() {
 
-
-
             @Override
             public void onResponse(JSONObject response) { // 데이터 전달 후 받은 응답
 
@@ -670,9 +668,6 @@ public class ChatFragment extends Fragment {
 
         // 서버에 데이터 전달
         JsonObjectRequest jsonObject = new JsonObjectRequest(Request.Method.POST, "http://10.0.2.2:3000/diary/todaydiary", requestJsonObject, new Response.Listener<JSONObject>() {
-
-
-
 
             @Override
             public void onResponse(JSONObject response) { // 데이터 전달 후 받은 응답

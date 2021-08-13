@@ -13,7 +13,7 @@
         android:layout_width="180dp"
         android:layout_height="30dp"
         android:layout_marginStart="75dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="20dp"
         android:background="@drawable/chat_item_button"
         android:gravity="center"
         android:insetTop="0dp"
