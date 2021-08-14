@@ -16,12 +16,15 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintHorizontal_bias="0.4"
         android:text="시간"
-        android:textSize="25sp"/>
+        android:textSize="25sp"
+        android:textColor="@color/black"
+        android:fontFamily="@font/netmarble_l"/>
 
     <EditText
         android:id="@+id/et_minute"
@@ -35,11 +38,14 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintHorizontal_bias="0.75"
         android:text="분"
-        android:textSize="25sp"/>
+        android:textSize="25sp"
+        android:textColor="@color/black"
+        android:fontFamily="@font/netmarble_l"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
