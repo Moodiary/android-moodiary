@@ -9,6 +9,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 
+import android.graphics.Color;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Build;
@@ -374,21 +375,19 @@ public class ChatFragment extends Fragment {
 
     // 타이머 팝업창 메소드
     public void showAlert() {
-        AlertDialog.Builder time_dialog = new AlertDialog.Builder(getActivity());
-
-        time_dialog.setTitle("시간 직접 입력");
-        time_dialog.setMessage("시간을 입력해주세요.");
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setTitle("시간을 입력해주세요.");
 
         // 뷰와 다이얼로그 연결
         LayoutInflater inflater = getLayoutInflater();
         View timeView = inflater.inflate(R.layout.time_dialog, null);
-        time_dialog.setView(timeView);
+        builder.setView(timeView);
 
         EditText time_hour = timeView.findViewById(R.id.et_hour);
         EditText time_min = timeView.findViewById(R.id.et_minute);
 
         // 확인 버튼 설정
-        time_dialog.setPositiveButton("확인", new DialogInterface.OnClickListener() {
+        builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 String value_hour = time_hour.getText().toString();
@@ -424,7 +423,7 @@ public class ChatFragment extends Fragment {
         });
 
         // 취소 버튼 설정
-        time_dialog.setNegativeButton("취소", new DialogInterface.OnClickListener() {
+        builder.setNegativeButton("취소", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();     //닫기
@@ -432,7 +431,17 @@ public class ChatFragment extends Fragment {
         });
 
         // 창 띄우기
+        AlertDialog time_dialog = builder.create();
         time_dialog.show();
+
+        Button positiveButton = time_dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+        Button negativeButton = time_dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
+
+        positiveButton.setTextColor(Color.parseColor("#000000"));
+        positiveButton.setBackgroundColor(Color.TRANSPARENT);
+
+        negativeButton.setTextColor(Color.parseColor("#000000"));
+        negativeButton.setBackgroundColor(Color.TRANSPARENT);
     }
 
     // 타이머 실행 메소드
