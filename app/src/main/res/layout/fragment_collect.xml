@@ -63,13 +63,17 @@
                 android:textSize="20sp"
                 android:textColor="@color/black"/>
 
-            <ImageButton
+            <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/btn_delete"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="70dp"
+                android:layout_height="30dp"
                 android:layout_alignParentRight="true"
                 android:layout_marginRight="10dp"
-                android:background="@drawable/collect_btn_delete" />
+                android:text="삭제"
+                android:textSize="14sp"
+                android:textColor="#A8DBA8"
+                android:fontFamily="@font/netmarble_b"
+                android:background="@drawable/bg_button_chat_item" />
 
             <TextView
                 android:id="@+id/diary_content"

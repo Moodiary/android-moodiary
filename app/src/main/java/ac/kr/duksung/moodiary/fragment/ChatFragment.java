@@ -284,7 +284,7 @@ public class ChatFragment extends Fragment {
                         sequence++; // 다음 단계로 이동할 수 있도록 변수값 변경 (일기 입력이 완료된 단계라는 의미)
                         et_input.setEnabled(false); // 메세지 입력창 사용 금지*/
 
-                        saveDairy(content); // 일기 저장
+                        //saveDairy(content); // 일기 저장
                     }
 
                 } catch(JSONException e) {
