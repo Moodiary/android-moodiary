@@ -49,6 +49,8 @@ public class StaticsFragment extends Fragment {
     String startDate = ""; // 시작 날짜 데이터
     String endDate = ""; // 끝 날짜 데이터
     PieChart emotion_chart; // 감정 통계 원형 그래프
+    int[] colors = {Color.parseColor("#F8F8D9"), Color.parseColor("#FFAA66"), Color.parseColor("#FFEA61"), Color.parseColor("#FF7B5A"),
+                    Color.parseColor("#B2DEF2"), Color.parseColor("#C3E0A3"), Color.parseColor("#F3E9BF")}; // 그래프 컬러(행복,슬픔,놀람,분노,공포,혐오,중립)
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -211,18 +213,41 @@ public class StaticsFragment extends Fragment {
         emotion_chart.setEntryLabelColor(Color.BLACK); // 라벨 텍스트 컬러
 
         // 감정 데이터 리스트
-        ArrayList<PieEntry> emotion = new ArrayList<PieEntry>();
-        if(pleasure != 0) emotion.add(new PieEntry(pleasure, "행복"));
-        if(sadness != 0) emotion.add(new PieEntry(sadness, "슬픔"));
-        if(surprised != 0) emotion.add(new PieEntry(surprised, "놀람"));
-        if(anger != 0) emotion.add(new PieEntry(anger, "분노"));
-        if(fear != 0) emotion.add(new PieEntry(fear, "공포"));
-        if(aversion != 0) emotion.add(new PieEntry(aversion, "혐오"));
-        if(neutrality != 0) emotion.add(new PieEntry(neutrality, "중립"));
+        ArrayList<PieEntry> emotion = new ArrayList<>();
+        ArrayList<Integer> colors = new ArrayList<>();
+        if(pleasure != 0) {
+            emotion.add(new PieEntry(pleasure, "행복"));
+            colors.add(Color.parseColor("#F8F8D9"));
+        }
+        if(sadness != 0) {
+            emotion.add(new PieEntry(sadness, "슬픔"));
+            colors.add(Color.parseColor("#FFAA66"));
+        }
+        if(surprised != 0) {
+            emotion.add(new PieEntry(surprised, "놀람"));
+            colors.add(Color.parseColor("#FFEA61"));
+        }
+        if(anger != 0) {
+            emotion.add(new PieEntry(anger, "분노"));
+            colors.add(Color.parseColor("#FF7B5A"));
+        }
+        if(fear != 0) {
+            emotion.add(new PieEntry(fear, "공포"));
+            colors.add(Color.parseColor("#B2DEF2"));
+        }
+        if(aversion != 0) {
+            emotion.add(new PieEntry(aversion, "혐오"));
+            colors.add(Color.parseColor("#C3E0A3"));
+
+        }
+        if(neutrality != 0) {
+            emotion.add(new PieEntry(neutrality, "중립"));
+            colors.add(Color.parseColor("#F3E9BF"));
+        }
 
         PieDataSet dataSet = new PieDataSet(emotion, ""); // 데이터의 카테고리
         dataSet.setSliceSpace(3); // 그래프의 데이터 사이 간격
-        dataSet.setColors(ColorTemplate.JOYFUL_COLORS); // 그래프 색상 테마
+        dataSet.setColors(colors); // 그래프 색상 테마
 
         PieData data = new PieData(dataSet); // 데이터를 담는 그릇
         data.setValueTextSize(15); // 데이터 텍스트 크기
