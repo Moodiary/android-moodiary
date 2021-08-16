@@ -14,14 +14,17 @@
         android:textColor="@color/black"
         android:gravity="center"/>
 
-    <ImageButton
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btn_finish"
         android:layout_width="180dp"
         android:layout_height="30dp"
         android:layout_marginLeft="75dp"
         android:layout_below="@+id/tv_timer"
-        android:background="@drawable/ic_btn_timer"
+        android:background="@drawable/bg_button_chat_item"
         android:layout_marginTop="15dp"
-        android:text="종료"/>
+        android:text="종료"
+        android:textSize="14sp"
+        android:textColor="#A8DBA8"
+        android:fontFamily="@font/netmarble_b"/>
 
 </RelativeLayout>

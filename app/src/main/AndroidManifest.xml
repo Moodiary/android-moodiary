@@ -20,7 +20,6 @@
         android:networkSecurityConfig="@xml/network_security_config">
         <activity android:name=".activity.FindPwActivity"></activity>
         <activity android:name=".activity.ChangePwActivity" />
-        <activity android:name=".activity.NotificationActivity" />
         <activity android:name=".activity.FindIdActivity" />
         <activity android:name=".activity.SignupActivity" />
         <activity android:name=".activity.LoginActivity" />

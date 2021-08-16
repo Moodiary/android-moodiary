@@ -13,11 +13,10 @@
         android:layout_marginTop="20dp"
         android:text="Hello"
         android:textColor="#000000"
-        android:gravity="right"
         android:paddingTop="5dp"
         android:paddingBottom="5dp"
-        android:paddingLeft="15dp"
-        android:paddingRight="15dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
         android:background="@drawable/chat_item_tv_user"/>
 
 </RelativeLayout>

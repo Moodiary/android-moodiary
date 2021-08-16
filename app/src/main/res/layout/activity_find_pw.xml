@@ -94,7 +94,7 @@
 
 
     <!-- 확인 버튼 -->
-    <ImageButton
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btn_findpw"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -103,6 +103,9 @@
         android:layout_marginBottom="40dp"
         app:layout_constraintBottom_toBottomOf="parent"
         android:text="확인"
-        android:background="@drawable/find_pw_btn"/>
+        android:textSize="16sp"
+        android:textColor="@color/white"
+        android:fontFamily="@font/netmarble_b"
+        android:background="@drawable/bg_button" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
