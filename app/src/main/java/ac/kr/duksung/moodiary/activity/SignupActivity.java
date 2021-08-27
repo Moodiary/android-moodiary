@@ -1,15 +1,14 @@
 package ac.kr.duksung.moodiary.activity;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatButton;
 import androidx.appcompat.widget.Toolbar;
 
 import android.os.Bundle;
 import android.util.Patterns;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -35,7 +34,7 @@ public class SignupActivity extends AppCompatActivity {
     EditText et_email; // 이메일 입력창
     EditText et_password; // 패스워드 입력창
     EditText et_identify_password; // 패스워드 확인 입력창
-    ImageButton btn_finish; // 확인 버튼
+    AppCompatButton btn_finish; // 확인 버튼
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

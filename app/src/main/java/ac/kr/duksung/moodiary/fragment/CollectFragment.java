@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.AppCompatButton;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
@@ -42,7 +43,7 @@ import ac.kr.duksung.moodiary.R;
 public class CollectFragment extends Fragment {
     TextView diary_emotion; // 일기 감정
     TextView diary_content; // 일기내용
-    ImageButton deleteButton; // 삭제 버튼
+    AppCompatButton deleteButton; // 삭제 버튼
     ArrayList<String> contentList = new ArrayList<>(); // 일기내용 리스트
     ArrayList<String> emotionList = new ArrayList<>(); // 일기감정 리스트
     ArrayList<String> createdList = new ArrayList<>(); // 일기작성날짜 리스트

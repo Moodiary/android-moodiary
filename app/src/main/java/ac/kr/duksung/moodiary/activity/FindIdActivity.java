@@ -1,6 +1,7 @@
 package ac.kr.duksung.moodiary.activity;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatButton;
 import androidx.appcompat.widget.Toolbar;
 
 import android.os.Bundle;
@@ -28,7 +29,7 @@ import ac.kr.duksung.moodiary.R;
 public class FindIdActivity extends AppCompatActivity {
     Toolbar toolbar; // 상단바
     EditText et_email; // 이메일 입력창
-    ImageButton btn_finish; // 확인 버튼
+    AppCompatButton btn_finish; // 확인 버튼
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -1,6 +1,7 @@
 package ac.kr.duksung.moodiary.activity;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatButton;
 
 import android.app.Activity;
 import android.content.Context;
@@ -9,9 +10,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -32,7 +31,7 @@ import ac.kr.duksung.moodiary.R;
 public class LoginActivity extends AppCompatActivity {
     EditText et_id; // 아이디 입력창
     EditText et_password; // 비밀번호 입력창
-    ImageButton btn_login; // 로그인 버튼
+    AppCompatButton btn_login; // 로그인 버튼
     TextView tv_find_id; // 아이디 찾기
     TextView tv_find_password; // 비밀번호 찾기
     TextView tv_signup; // 회원가입
