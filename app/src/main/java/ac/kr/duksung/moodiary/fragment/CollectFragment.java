@@ -2,7 +2,6 @@ package ac.kr.duksung.moodiary.fragment;
 
 import android.app.Activity;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -22,6 +21,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 import com.prolificinteractive.materialcalendarview.OnDateSelectedListener;
@@ -47,9 +47,21 @@ public class CollectFragment extends Fragment {
     ArrayList<String> contentList = new ArrayList<>(); // 일기내용 리스트
     ArrayList<String> emotionList = new ArrayList<>(); // 일기감정 리스트
     ArrayList<String> createdList = new ArrayList<>(); // 일기작성날짜 리스트
-    ArrayList<CalendarDay> dates = new ArrayList<>(); //일정표시 리스트
+    ArrayList<CalendarDay> dates_pleasure = new ArrayList<>(); //일정표시 리스트
+    ArrayList<CalendarDay> dates_sadness = new ArrayList<>(); //일정표시 리스트
+    ArrayList<CalendarDay> dates_surprised = new ArrayList<>(); //일정표시 리스트
+    ArrayList<CalendarDay> dates_anger = new ArrayList<>(); //일정표시 리스트
+    ArrayList<CalendarDay> dates_fear = new ArrayList<>(); //일정표시 리스트
+    ArrayList<CalendarDay> dates_aversion = new ArrayList<>(); //일정표시 리스트
+    ArrayList<CalendarDay> dates_neutrality = new ArrayList<>(); //일정표시 리스트
     MaterialCalendarView diary_calendar; // 캘린더 뷰
-    EventDecorator eventDecorator;
+    EventDecorator eventDecorator_pleasure;
+    EventDecorator eventDecorator_sadness;
+    EventDecorator eventDecorator_surprised;
+    EventDecorator eventDecorator_anger;
+    EventDecorator eventDecorator_fear;
+    EventDecorator eventDecorator_aversion;
+    EventDecorator eventDecorator_neutrality;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -227,8 +239,20 @@ public class CollectFragment extends Fragment {
                         contentList.clear();
                         emotionList.clear();
                         createdList.clear();
-                        dates.clear();
-                        diary_calendar.removeDecorator(eventDecorator);
+                        dates_anger.clear();
+                        dates_pleasure.clear();
+                        dates_sadness.clear();
+                        dates_surprised.clear();
+                        dates_fear.clear();
+                        dates_aversion.clear();
+                        dates_neutrality.clear();
+                        diary_calendar.removeDecorator(eventDecorator_anger);
+                        diary_calendar.removeDecorator(eventDecorator_pleasure);
+                        diary_calendar.removeDecorator(eventDecorator_sadness);
+                        diary_calendar.removeDecorator(eventDecorator_surprised);
+                        diary_calendar.removeDecorator(eventDecorator_fear);
+                        diary_calendar.removeDecorator(eventDecorator_aversion);
+                        diary_calendar.removeDecorator(eventDecorator_neutrality);
                         diary_content.setText("");
                         diary_emotion.setText("");
 
@@ -273,19 +297,51 @@ public class CollectFragment extends Fragment {
             e.printStackTrace();
         }
 
-        // 일기있는 날짜에 빨간 점 표시
+        // 일기있는 날짜에 아이콘 표시
         try {
             for(int i=0; i<createdList.size(); i++) {
                 Date createdDate = format.parse(createdList.get(i));
-                dates.add(CalendarDay.from(createdDate));   //dates리스트에 CalendarDay형식으로 날짜추가
+                //dates.add(CalendarDay.from(createdDate));   //dates리스트에 CalendarDay형식으로 날짜추가
+
+                if ("공포".equals(emotionList.get(i))) {
+                    dates_fear.add(CalendarDay.from(createdDate));
+                } else if ("놀람".equals(emotionList.get(i))){
+                    dates_surprised.add(CalendarDay.from(createdDate));
+                } else if ("분노".equals(emotionList.get(i))){
+                    dates_anger.add(CalendarDay.from(createdDate));
+                }else if ("슬픔".equals(emotionList.get(i))){
+                    dates_sadness.add(CalendarDay.from(createdDate));
+                }else if ("중립".equals(emotionList.get(i))){
+                    dates_neutrality.add(CalendarDay.from(createdDate));
+                }else if ("행복".equals(emotionList.get(i))){
+                    dates_pleasure.add(CalendarDay.from(createdDate));
+                }else if ("혐오".equals(emotionList.get(i))){
+                    dates_aversion.add(CalendarDay.from(createdDate));
+                }
             }
 
-            eventDecorator = new EventDecorator(Color.RED, dates);
-            diary_calendar.addDecorator(eventDecorator);  //일정에 점찍기
+            eventDecorator_fear = new EventDecorator(getResources().getDrawable(R.drawable.fear), dates_fear);
+            eventDecorator_surprised = new EventDecorator(getResources().getDrawable(R.drawable.surprised), dates_surprised);
+            eventDecorator_anger = new EventDecorator(getResources().getDrawable(R.drawable.anger), dates_anger);
+            eventDecorator_sadness = new EventDecorator(getResources().getDrawable(R.drawable.sadness), dates_sadness);
+            eventDecorator_neutrality = new EventDecorator(getResources().getDrawable(R.drawable.neutrality), dates_neutrality);
+            eventDecorator_pleasure = new EventDecorator(getResources().getDrawable(R.drawable.pleasure), dates_pleasure);
+            eventDecorator_aversion = new EventDecorator(getResources().getDrawable(R.drawable.aversion), dates_aversion);
+            diary_calendar.addDecorator(eventDecorator_fear);
+            diary_calendar.addDecorator(eventDecorator_surprised);
+            diary_calendar.addDecorator(eventDecorator_anger);
+            diary_calendar.addDecorator(eventDecorator_sadness);
+            diary_calendar.addDecorator(eventDecorator_neutrality);
+            diary_calendar.addDecorator(eventDecorator_pleasure);
+            diary_calendar.addDecorator(eventDecorator_aversion);
+
+            //eventDecorator = new EventDecorator(Color.RED, dates);
+            
+            //eventDecorator = new EventDecorator(eventIcon, dates);
+            //diary_calendar.addDecorator(eventDecorator);  //일정에 점찍기
 
         } catch (ParseException e) {
             e.printStackTrace();
         }
     }
-
 }
