@@ -90,9 +90,7 @@ public class ChatFragment extends Fragment {
     String[] color = {"파란색", "노란색", "빨강", "주황색", "흰색", "흰색", "초록색"}; // 컬러테라피 정보
 
     public static String url; //노래재생을 위한 웹서버 url
-
     MediaPlayer player;
-    //int position = 0; // 음악 다시 시작 기능을 위한 현재 재생 위치 확인 변수
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -284,7 +282,7 @@ public class ChatFragment extends Fragment {
                         sequence++; // 다음 단계로 이동할 수 있도록 변수값 변경 (일기 입력이 완료된 단계라는 의미)
                         et_input.setEnabled(false); // 메세지 입력창 사용 금지*/
 
-                        //saveDairy(content); // 일기 저장
+                        saveDairy(content); // 일기 저장
                     }
 
                 } catch(JSONException e) {
@@ -296,6 +294,7 @@ public class ChatFragment extends Fragment {
             @Override
             public void onErrorResponse(VolleyError error) {
                 Toast.makeText(getContext(), "네트워크 연결 오류", Toast.LENGTH_SHORT).show();
+                System.out.println(error);
             }
         });
 

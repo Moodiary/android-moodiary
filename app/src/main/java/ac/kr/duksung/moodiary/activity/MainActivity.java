@@ -74,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
 
                         // 모아보기 프래그먼트가 있는 경우 -> 모아보기 화면 보여주고 나머지 화면은 숨김
                         if(chatFragment != null) fragmentManager.beginTransaction().hide(chatFragment).commit();
-                        if(collectFragment != null) fragmentManager.beginTransaction().show(collectFragment).commit();
+                        if(collectFragment != null) fragmentManager.beginTransaction().detach(collectFragment).attach(collectFragment).show(collectFragment).commit();
                         if(staticsFragment != null) fragmentManager.beginTransaction().hide(staticsFragment).commit();
                         if(mypageFragment != null) fragmentManager.beginTransaction().hide(mypageFragment).commit();
 

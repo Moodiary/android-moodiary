@@ -30,7 +30,7 @@
         android:layout_marginTop="12dp"
         android:background="@drawable/bg_button_chat_item"
         android:gravity="center"
-        android:text="조명 켜기"
+        android:text="조명과 음악 켜기"
         android:textSize="14sp"
         android:fontFamily="@font/netmarble_m"
         android:textColor="#A8DBA8"
