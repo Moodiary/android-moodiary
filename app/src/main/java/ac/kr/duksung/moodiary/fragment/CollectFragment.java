@@ -344,4 +344,5 @@ public class CollectFragment extends Fragment {
             e.printStackTrace();
         }
     }
+
 }
