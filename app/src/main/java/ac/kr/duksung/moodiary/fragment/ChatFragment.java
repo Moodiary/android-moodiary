@@ -87,7 +87,7 @@ public class ChatFragment extends Fragment {
     float maxEmotion = 0; // 최대 감정 정보(퍼센트)
     int maxIndex = -1; // 최대 감정 인덱스
     String[] emotion = {"공포", "놀람", "분노", "슬픔", "중립", "행복", "혐오"}; // 감정 정보
-    String[] color = {"파란색", "노란색", "빨강", "주황색", "흰색", "흰색", "초록색"}; // 컬러테라피 정보
+    String[] color = {"파란색", "노란색", "빨강색", "주황색", "흰색", "흰색", "초록색"}; // 컬러테라피 정보
 
     public static String url; //노래재생을 위한 웹서버 url
     MediaPlayer player;
@@ -263,7 +263,7 @@ public class ChatFragment extends Fragment {
                             chatList.add(new ChatItem(0, "부정 감정 중 가장 많이 보여지는 감정은\n" + detail  + "입니다"));
                         }
 
-                        chatList.add(new ChatItem(0, "현재 감정에 도움이 되는 " + color[maxIndex] +" 조명을 틀어드릴게요"));
+                        chatList.add(new ChatItem(0, "현재 감정에 도움이 되는 " + color[maxIndex] +" 조명과 음악을 틀어드릴게요"));
                         chatList.add(new ChatItem(2));
                         adapter.notifyDataSetChanged(); // 챗봇 메세지 리스트 갱신
 
@@ -631,7 +631,7 @@ public class ChatFragment extends Fragment {
                         else if(emotion.equals("행복")) { maxIndex = 5; }
                         else if(emotion.equals("혐오")) { maxIndex = 6; }
 
-                        chatList.add(new ChatItem(0,"오늘 감정에 도움이 되는 " + color[maxIndex] +" 조명을 틀어드릴게요"));
+                        chatList.add(new ChatItem(0,"오늘 감정에 도움이 되는 " + color[maxIndex] +" 조명과 음악을 틀어드릴게요"));
                         setTimer();
                         adapter.notifyDataSetChanged();
                     }
