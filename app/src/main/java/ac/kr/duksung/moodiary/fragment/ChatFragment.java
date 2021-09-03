@@ -224,7 +224,7 @@ public class ChatFragment extends Fragment {
         // 사용자 입력 정보 JSON 형태로 변환
         JSONObject requestJsonObject = new JSONObject();
         try {
-            requestJsonObject.put("emotions", content);
+            requestJsonObject.put("diary", content);
         } catch(JSONException e) {
             e.printStackTrace();
         }
@@ -248,30 +248,19 @@ public class ChatFragment extends Fragment {
                         String emotions = response.getString("result"); // 일기 감정 분석 결과값 가져오기
                         JSONArray jArray = new JSONArray(emotions);
 
-                        System.out.println(emotions);
-
-                        // 긍정, 부정 퍼센트 값 가져오기
+                        // 긍정, 부정 값 가져오기
                         JSONObject jObject = jArray.getJSONObject(0);
-                        String[] first = jObject.getString("0").split(" ");
-                        String[] second = jObject.getString("1").split(" ");
-                        chatList.add(new ChatItem(0, "일기에서 가장 많이 보여지는 감정은\n" + first[0] + " " + first[1] + "%  "+ second[0] + " " + second[1] + "% 입니다"));
+                        String first = jObject.getString("0");
+                        String second = jObject.getString("1");
+                        chatList.add(new ChatItem(0, "일기에서 가장 많이 보여지는 감정은\n" + first  + "입니다"));
 
-                        if(first[0].equals("긍정")) { // 긍정 감정인 경우
+                        if(first.equals("긍정")) { // 긍정 감정인 경우
                             maxIndex = 4; // 최대 감정 뽑기
-                        } else { // 부정 감정일 경우 부정 세부 감정의 퍼센트 값 가져오기
-                            String chat = "부정 감정 중 많이 보여지는 감정은 \n";
+                        } else { // 부정 감정일 경우 부정 세부 감정 가져오기
                             JSONObject jObject_detail = jArray.getJSONObject(1);
-                            for(int i = 0; i < 6; i++) {
-                                String[] detail = jObject_detail.getString(String.valueOf(i)).split(" ");
-
-                                if(i == 0)
-                                    maxIndex = Arrays.asList(emotion).indexOf(detail[0]);
-
-                                if(!detail[1].equals("0"))
-                                    chat += detail[0] + " " + detail[1] +"%  ";
-                            }
-                            chat += "입니다";
-                            chatList.add(new ChatItem(0, chat));
+                            String detail = jObject_detail.getString("0");
+                            maxIndex = Arrays.asList(emotion).indexOf(detail);
+                            chatList.add(new ChatItem(0, "부정 감정 중 가장 많이 보여지는 감정은\n" + detail  + "입니다"));
                         }
 
                         chatList.add(new ChatItem(0, "현재 감정에 도움이 되는 " + color[maxIndex] +" 조명을 틀어드릴게요"));
