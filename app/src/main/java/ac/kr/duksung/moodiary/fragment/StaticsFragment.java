@@ -26,14 +26,18 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.github.mikephil.charting.charts.PieChart;
+import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
+import com.github.mikephil.charting.formatter.IValueFormatter;
 import com.github.mikephil.charting.utils.ColorTemplate;
+import com.github.mikephil.charting.utils.ViewPortHandler;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -248,6 +252,7 @@ public class StaticsFragment extends Fragment {
         PieDataSet dataSet = new PieDataSet(emotion, ""); // 데이터의 카테고리
         dataSet.setSliceSpace(3); // 그래프의 데이터 사이 간격
         dataSet.setColors(colors); // 그래프 색상 테마
+        dataSet.setValueFormatter(new MyValueFormatter());
 
         PieData data = new PieData(dataSet); // 데이터를 담는 그릇
         data.setValueTextSize(15); // 데이터 텍스트 크기
@@ -255,5 +260,20 @@ public class StaticsFragment extends Fragment {
         emotion_chart.setData(data); // 그래프에 데이터 할당
 
         emotion_chart.invalidate(); // 차트 갱신
+    }
+}
+
+class MyValueFormatter implements IValueFormatter {
+
+    private DecimalFormat mFormat;
+
+    public MyValueFormatter() {
+        mFormat = new DecimalFormat("###,###,##0.0"); // use one decimal
+    }
+
+    @Override
+    public String getFormattedValue(float value, Entry entry, int dataSetIndex, ViewPortHandler viewPortHandler) {
+        // write your logic here
+        return mFormat.format(value) + " %"; // e.g. append a dollar-sign
     }
 }
