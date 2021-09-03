@@ -232,7 +232,7 @@ public class ChatFragment extends Fragment {
         RequestQueue requestQueue = Volley.newRequestQueue(getActivity());
 
         // 서버에 데이터 전달
-        JsonObjectRequest jsonObject = new JsonObjectRequest(Request.Method.POST, "http://10.0.2.2:5000/predict", requestJsonObject, new Response.Listener<JSONObject>() {
+        JsonObjectRequest jsonObject = new JsonObjectRequest(Request.Method.POST, "http://2ae5-104-154-196-74.ngrok.io/predict", requestJsonObject, new Response.Listener<JSONObject>() {
 
 
             @Override
@@ -320,7 +320,7 @@ public class ChatFragment extends Fragment {
         RequestQueue requestQueue = Volley.newRequestQueue(getActivity());
 
         // 서버에 데이터 전달
-        JsonObjectRequest jsonObject = new JsonObjectRequest(Request.Method.POST, "http://10.0.2.2:3000/diary/savediary", requestJsonObject, new Response.Listener<JSONObject>() {
+        JsonObjectRequest jsonObject = new JsonObjectRequest(Request.Method.POST, "http://172.20.18.162:3000/diary/savediary", requestJsonObject, new Response.Listener<JSONObject>() {
 
 
             @Override
@@ -434,39 +434,42 @@ public class ChatFragment extends Fragment {
 
     // 타이머 실행 메소드
     public void startTimer(long time) {
-        //connectBT();
+        connectBT();
         playAudio();
 
+        chatList.add(new ChatItem(4, time));
+        adapter.notifyDataSetChanged(); // 챗봇 메세지 리스트 갱신
+        /*
         Handler mHandler = new Handler();
         mHandler.postDelayed(new Runnable() { public void run() {
             chatList.add(new ChatItem(4, time));
             adapter.notifyDataSetChanged(); // 챗봇 메세지 리스트 갱신
-        } }, 600); // 0.6초 딜레이 후 함수 실행
+        } }, 600); // 0.6초 딜레이 후 함수 실행*/
     }
 
     public void AudioUrl() {
         // 일기의 최대 감정에 따라 Audio Url 변경.
         switch (maxIndex) {
             case 0: // 공포
-                url = "http://10.0.2.2:3000/music/fear";
+                url = "http://172.20.18.162:3000/music/fear";
                 break;
             case 1: // 놀람
-                url = "http://10.0.2.2:3000/music/surprise";
+                url = "http://172.20.18.162:3000/music/surprise";
                 break;
             case 2: // 분노
-                url = "http://10.0.2.2:3000/music/anger";
+                url = "http://172.20.18.162:3000/music/anger";
                 break;
             case 3: // 슬픔
-                url = "http://10.0.2.2:3000/music/sad";
+                url = "http://172.20.18.162:3000/music/sad";
                 break;
             case 4: // 중립
-                url = "http://10.0.2.2:3000/music/happy";
+                url = "http://172.20.18.162:3000/music/happy";
                 break;
             case 5: // 행복
-                url = "http://10.0.2.2:3000/music/happy";
+                url = "http://172.20.18.162:3000/music/happy";
                 break;
             case 6: // 혐오
-                url = "http://10.0.2.2:3000/music/aversion";
+                url = "http://172.20.18.162:3000/music/aversion";
                 break;
         }
     }
@@ -598,7 +601,7 @@ public class ChatFragment extends Fragment {
 
         // 서버에 데이터 전달
 
-        JsonObjectRequest jsonObject = new JsonObjectRequest(Request.Method.POST, "http://10.0.2.2:3000/diary/todaydiary", requestJsonObject, new Response.Listener<JSONObject>() {
+        JsonObjectRequest jsonObject = new JsonObjectRequest(Request.Method.POST, "http://172.20.18.162:3000/diary/todaydiary", requestJsonObject, new Response.Listener<JSONObject>() {
 
             @Override
             public void onResponse(JSONObject response) { // 데이터 전달 후 받은 응답
@@ -664,7 +667,7 @@ public class ChatFragment extends Fragment {
         RequestQueue requestQueue = Volley.newRequestQueue(getActivity());
 
         // 서버에 데이터 전달
-        JsonObjectRequest jsonObject = new JsonObjectRequest(Request.Method.POST, "http://10.0.2.2:3000/diary/todaydiary", requestJsonObject, new Response.Listener<JSONObject>() {
+        JsonObjectRequest jsonObject = new JsonObjectRequest(Request.Method.POST, "http://172.20.18.162:3000/diary/todaydiary", requestJsonObject, new Response.Listener<JSONObject>() {
 
             @Override
             public void onResponse(JSONObject response) { // 데이터 전달 후 받은 응답
