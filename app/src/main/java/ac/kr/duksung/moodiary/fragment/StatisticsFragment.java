@@ -9,7 +9,6 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -31,7 +30,6 @@ import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
 import com.github.mikephil.charting.formatter.IValueFormatter;
-import com.github.mikephil.charting.utils.ColorTemplate;
 import com.github.mikephil.charting.utils.ViewPortHandler;
 
 import org.json.JSONException;
@@ -47,18 +45,18 @@ import ac.kr.duksung.moodiary.R;
 
 // 화면 설명 : 메인화면의 통계화면
 // Author : Soohyun, Last Modified : 2021.04.09
-public class StaticsFragment extends Fragment {
+public class StatisticsFragment extends Fragment {
     TextView tv_start; // 시작 날짜 텍스트뷰
     TextView tv_end; // 끝 날짜 텍스트뷰
     String startDate = ""; // 시작 날짜 데이터
     String endDate = ""; // 끝 날짜 데이터
     PieChart emotion_chart; // 감정 통계 원형 그래프
     int[] colors = {Color.parseColor("#F8F8D9"), Color.parseColor("#FFAA66"), Color.parseColor("#FFEA61"), Color.parseColor("#FF7B5A"),
-                    Color.parseColor("#B2DEF2"), Color.parseColor("#C3E0A3"), Color.parseColor("#F3E9BF")}; // 그래프 컬러(행복,슬픔,놀람,분노,공포,혐오,중립)
+            Color.parseColor("#B2DEF2"), Color.parseColor("#C3E0A3"), Color.parseColor("#F3E9BF")}; // 그래프 컬러(행복,슬픔,놀람,분노,공포,혐오,중립)
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_statics, container, false);
+        View view = inflater.inflate(R.layout.fragment_statistics, container, false);
 
         tv_start = view.findViewById(R.id.tv_start);
         tv_end = view.findViewById(R.id.tv_end);
