@@ -1,17 +1,19 @@
 package ac.kr.duksung.moodiary.fragment;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -23,14 +25,17 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.github.mikephil.charting.charts.PieChart;
+import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
-import com.github.mikephil.charting.utils.ColorTemplate;
+import com.github.mikephil.charting.formatter.IValueFormatter;
+import com.github.mikephil.charting.utils.ViewPortHandler;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -40,16 +45,18 @@ import ac.kr.duksung.moodiary.R;
 
 // 화면 설명 : 메인화면의 통계화면
 // Author : Soohyun, Last Modified : 2021.04.09
-public class StaticsFragment extends Fragment {
+public class StatisticsFragment extends Fragment {
     TextView tv_start; // 시작 날짜 텍스트뷰
     TextView tv_end; // 끝 날짜 텍스트뷰
     String startDate = ""; // 시작 날짜 데이터
     String endDate = ""; // 끝 날짜 데이터
     PieChart emotion_chart; // 감정 통계 원형 그래프
+    int[] colors = {Color.parseColor("#F8F8D9"), Color.parseColor("#FFAA66"), Color.parseColor("#FFEA61"), Color.parseColor("#FF7B5A"),
+            Color.parseColor("#B2DEF2"), Color.parseColor("#C3E0A3"), Color.parseColor("#F3E9BF")}; // 그래프 컬러(행복,슬픔,놀람,분노,공포,혐오,중립)
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_statics, container, false);
+        View view = inflater.inflate(R.layout.fragment_statistics, container, false);
 
         tv_start = view.findViewById(R.id.tv_start);
         tv_end = view.findViewById(R.id.tv_end);
@@ -61,7 +68,7 @@ public class StaticsFragment extends Fragment {
         tv_start.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DatePickerDialog dialog = new DatePickerDialog(getContext(), android.R.style.Theme_Holo_Light_Dialog, new DatePickerDialog.OnDateSetListener() {
+                DatePickerDialog dialog = new DatePickerDialog(getContext(), android.R.style.Theme_Holo_Light_Dialog_MinWidth, new DatePickerDialog.OnDateSetListener() {
                     @Override
                     public void onDateSet(DatePicker view, int year, int month, int day) {
                         startDate = year + "-" + (month + 1) + "-" + day; // 시작날짜 재설정
@@ -69,7 +76,17 @@ public class StaticsFragment extends Fragment {
                         requestStatics(startDate, endDate); // 통계 데이터 가져오는 메소드 실행
                     }
                 }, 2021, 1, 1);
+                dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
                 dialog.show();
+
+                Button positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+                Button negativeButton = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
+
+                positiveButton.setTextColor(Color.parseColor("#000000"));
+                positiveButton.setBackgroundColor(Color.TRANSPARENT);
+
+                negativeButton.setTextColor(Color.parseColor("#000000"));
+                negativeButton.setBackgroundColor(Color.TRANSPARENT);
             }
         });
 
@@ -77,7 +94,7 @@ public class StaticsFragment extends Fragment {
         tv_end.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DatePickerDialog dialog = new DatePickerDialog(getContext(), android.R.style.Theme_Holo_Light_Dialog, new DatePickerDialog.OnDateSetListener() {
+                DatePickerDialog dialog = new DatePickerDialog(getContext(), android.R.style.Theme_Holo_Light_Dialog_MinWidth, new DatePickerDialog.OnDateSetListener() {
                     @Override
                     public void onDateSet(DatePicker view, int year, int month, int day) {
                         endDate = year + "-" + (month + 1) + "-" + day; // 끝날짜 재설정
@@ -86,6 +103,15 @@ public class StaticsFragment extends Fragment {
                     }
                 }, 2021, 1, 1);
                 dialog.show();
+
+                Button positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+                Button negativeButton = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
+
+                positiveButton.setTextColor(Color.parseColor("#000000"));
+                positiveButton.setBackgroundColor(Color.TRANSPARENT);
+
+                negativeButton.setTextColor(Color.parseColor("#000000"));
+                negativeButton.setBackgroundColor(Color.TRANSPARENT);
             }
         });
 
@@ -132,8 +158,6 @@ public class StaticsFragment extends Fragment {
 
         // 서버에 데이터 전달
         JsonObjectRequest jsonObject = new JsonObjectRequest(Request.Method.POST, "http://10.0.2.2:3000/diary/statics", requestJsonObject, new Response.Listener<JSONObject>() {
-
-
 
             @Override
             public void onResponse(JSONObject response) { // 데이터 전달 후 받은 응답
@@ -191,18 +215,42 @@ public class StaticsFragment extends Fragment {
         emotion_chart.setEntryLabelColor(Color.BLACK); // 라벨 텍스트 컬러
 
         // 감정 데이터 리스트
-        ArrayList<PieEntry> emotion = new ArrayList<PieEntry>();
-        if(pleasure != 0) emotion.add(new PieEntry(pleasure, "행복"));
-        if(sadness != 0) emotion.add(new PieEntry(sadness, "슬픔"));
-        if(surprised != 0) emotion.add(new PieEntry(surprised, "놀람"));
-        if(anger != 0) emotion.add(new PieEntry(anger, "분노"));
-        if(fear != 0) emotion.add(new PieEntry(fear, "공포"));
-        if(aversion != 0) emotion.add(new PieEntry(aversion, "혐오"));
-        if(neutrality != 0) emotion.add(new PieEntry(neutrality, "중립"));
+        ArrayList<PieEntry> emotion = new ArrayList<>();
+        ArrayList<Integer> colors = new ArrayList<>();
+        if(pleasure != 0) {
+            emotion.add(new PieEntry(pleasure, "행복"));
+            colors.add(Color.parseColor("#F8F8D9"));
+        }
+        if(sadness != 0) {
+            emotion.add(new PieEntry(sadness, "슬픔"));
+            colors.add(Color.parseColor("#FFAA66"));
+        }
+        if(surprised != 0) {
+            emotion.add(new PieEntry(surprised, "놀람"));
+            colors.add(Color.parseColor("#FFEA61"));
+        }
+        if(anger != 0) {
+            emotion.add(new PieEntry(anger, "분노"));
+            colors.add(Color.parseColor("#FF7B5A"));
+        }
+        if(fear != 0) {
+            emotion.add(new PieEntry(fear, "공포"));
+            colors.add(Color.parseColor("#B2DEF2"));
+        }
+        if(aversion != 0) {
+            emotion.add(new PieEntry(aversion, "혐오"));
+            colors.add(Color.parseColor("#C3E0A3"));
+
+        }
+        if(neutrality != 0) {
+            emotion.add(new PieEntry(neutrality, "중립"));
+            colors.add(Color.parseColor("#F3E9BF"));
+        }
 
         PieDataSet dataSet = new PieDataSet(emotion, ""); // 데이터의 카테고리
         dataSet.setSliceSpace(3); // 그래프의 데이터 사이 간격
-        dataSet.setColors(ColorTemplate.JOYFUL_COLORS); // 그래프 색상 테마
+        dataSet.setColors(colors); // 그래프 색상 테마
+        dataSet.setValueFormatter(new MyValueFormatter());
 
         PieData data = new PieData(dataSet); // 데이터를 담는 그릇
         data.setValueTextSize(15); // 데이터 텍스트 크기
@@ -210,5 +258,20 @@ public class StaticsFragment extends Fragment {
         emotion_chart.setData(data); // 그래프에 데이터 할당
 
         emotion_chart.invalidate(); // 차트 갱신
+    }
+}
+
+class MyValueFormatter implements IValueFormatter {
+
+    private DecimalFormat mFormat;
+
+    public MyValueFormatter() {
+        mFormat = new DecimalFormat("###,###,##0.0"); // use one decimal
+    }
+
+    @Override
+    public String getFormattedValue(float value, Entry entry, int dataSetIndex, ViewPortHandler viewPortHandler) {
+        // write your logic here
+        return mFormat.format(value) + " %"; // e.g. append a dollar-sign
     }
 }

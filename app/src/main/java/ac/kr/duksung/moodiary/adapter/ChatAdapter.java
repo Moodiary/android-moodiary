@@ -7,9 +7,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.AppCompatButton;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
@@ -208,7 +210,7 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     // 실시간 타이머 뷰 홀더
     public class TimerViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         TextView tv_timer;
-        Button btn_finish;
+        AppCompatButton btn_finish;
 
         public TimerViewHolder(@NonNull View itemView) {
             super(itemView);

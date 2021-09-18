@@ -5,11 +5,11 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatButton;
 import androidx.appcompat.widget.Toolbar;
 
 import com.android.volley.Request;
@@ -24,7 +24,6 @@ import org.json.JSONObject;
 
 import ac.kr.duksung.moodiary.R;
 
-
 // 화면 설명 : 마이페이지 안에 비밀번호 변경 화면
 // Author : Seungyeon, Last Modified : 2021.01.25
 // Author : Soohyun, Last Modified : 2021.02.08
@@ -33,7 +32,8 @@ public class ChangePwActivity extends AppCompatActivity {
     EditText et_origin_password;
     EditText et_new_password;
     EditText et_new_password_check;
-    Button btn_change;
+    AppCompatButton btn_change;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState){

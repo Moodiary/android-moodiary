@@ -12,11 +12,14 @@
         android:layout_height="60dp"
         android:layout_marginStart="20dp"
         android:gravity="center_vertical"
+        android:fontFamily="@font/netmarble_b"
         android:text="test"
+        android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:textColor="@color/black"/>
 
     <Switch
         android:id="@+id/mypage_notification"
@@ -27,6 +30,6 @@
         android:gravity="center_vertical"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar" />
+        app:layout_constraintTop_toBottomOf="@+id/toolbar"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -4,10 +4,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_gravity="center_vertical"
     tools:context=".activity.ChangePwActivity">
 
     <!-- 상단바 -->
-
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="0dp"
@@ -23,65 +23,141 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:text="비밀번호 변경"
-            android:textSize="20sp" />
+            android:fontFamily="@font/netmarble_b"
+            android:textSize="20sp"
+            android:textColor="@color/black"/>
 
     </androidx.appcompat.widget.Toolbar>
 
     <!-- 비밀번호 -->
 
     <!-- 비밀번호 변경창 -->
+    <TextView
+        android:id="@+id/tv_origin_password"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
+        android:layout_marginLeft="54.5dp"
+        android:text="기존 비밀번호"
+        android:textSize="16sp"
+        android:textColor="@color/black"
+        android:fontFamily="@font/netmarble_m"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintHorizontal_bias="0"/>
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="29.5dp"
+        android:layout_marginEnd="29.5dp"
+        app:layout_constraintTop_toBottomOf="@+id/tv_origin_password"
+        android:background="@drawable/bg_edittext" />
 
     <EditText
         android:id="@+id/et_origin_password"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="65dp"
-        android:layout_marginEnd="20dp"
-        android:hint="기존 비밀번호"
+        android:layout_marginTop="22dp"
+        android:layout_marginStart="49.5dp"
+        android:layout_marginEnd="49.5dp"
+        android:background="@null"
+        android:hint="●●●●●●●"
         android:inputType="textPassword"
-        android:textSize="14sp"
+        android:textColor="@color/black"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/tv_origin_password" />
+
+    <TextView
+        android:id="@+id/tv_new_password"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="35dp"
+        android:layout_marginLeft="54.5dp"
+        android:text="새로운 비밀번호"
+        android:textSize="16sp"
+        android:textColor="@color/black"
+        android:fontFamily="@font/netmarble_m"
+        app:layout_constraintTop_toBottomOf="@+id/et_origin_password"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintHorizontal_bias="0"/>
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="29.5dp"
+        android:layout_marginEnd="29.5dp"
+        app:layout_constraintTop_toBottomOf="@+id/tv_new_password"
+        android:background="@drawable/bg_edittext" />
 
     <EditText
         android:id="@+id/et_new_password"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="105dp"
-        android:layout_marginEnd="20dp"
-        android:hint="새로운 비밀번호"
+        android:layout_marginStart="49.5dp"
+        android:layout_marginTop="22dp"
+        android:layout_marginEnd="49.5dp"
+        android:hint="●●●●●●●"
+        android:background="@null"
         android:inputType="textPassword"
-        android:textSize="14sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/tv_new_password" />
+
+    <TextView
+        android:id="@+id/tv_new_password_check"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="35dp"
+        android:layout_marginLeft="54.5dp"
+        android:text="새로운 비밀번호 확인"
+        android:textSize="16sp"
+        android:textColor="@color/black"
+        android:fontFamily="@font/netmarble_m"
+        app:layout_constraintTop_toBottomOf="@+id/et_new_password"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintHorizontal_bias="0"/>
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="29.5dp"
+        android:layout_marginEnd="29.5dp"
+        app:layout_constraintTop_toBottomOf="@+id/tv_new_password_check"
+        android:background="@drawable/bg_edittext" />
 
     <EditText
         android:id="@+id/et_new_password_check"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="145dp"
-        android:layout_marginEnd="20dp"
-        android:hint="새로운 비밀번호 확인"
+        android:layout_marginStart="49.5dp"
+        android:layout_marginTop="22dp"
+        android:layout_marginEnd="49.5dp"
         android:inputType="textPassword"
-        android:textSize="14sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:hint="●●●●●●●"
+        android:background="@null"
+        app:layout_constraintTop_toBottomOf="@+id/tv_new_password_check"/>
 
     <!-- 변경 버튼 -->
-    <Button
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btn_change"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:layout_marginEnd="20dp"
-        android:layout_marginBottom="20dp"
+        android:layout_height="49dp"
+        android:layout_marginStart="29.5dp"
+        android:layout_marginEnd="29.5dp"
+        android:layout_marginBottom="40dp"
+        android:adjustViewBounds="true"
         app:layout_constraintBottom_toBottomOf="parent"
-        android:text="변경하기"/>
+        tools:ignore="MissingConstraints"
+        android:text="확인"
+        android:textSize="16sp"
+        android:textColor="@color/white"
+        android:fontFamily="@font/netmarble_b"
+        android:background="@drawable/bg_button"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

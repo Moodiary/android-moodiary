@@ -1,6 +1,7 @@
 package ac.kr.duksung.moodiary.activity;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatButton;
 
 import android.app.Activity;
 import android.content.Context;
@@ -9,7 +10,6 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -31,7 +31,7 @@ import ac.kr.duksung.moodiary.R;
 public class LoginActivity extends AppCompatActivity {
     EditText et_id; // 아이디 입력창
     EditText et_password; // 비밀번호 입력창
-    Button btn_login; // 로그인 버튼
+    AppCompatButton btn_login; // 로그인 버튼
     TextView tv_find_id; // 아이디 찾기
     TextView tv_find_password; // 비밀번호 찾기
     TextView tv_signup; // 회원가입
@@ -45,7 +45,7 @@ public class LoginActivity extends AppCompatActivity {
 
         et_id = findViewById(R.id.et_id);
         et_password = findViewById(R.id.et_password);
-        btn_login = findViewById(R.id.btn_findpw);
+        btn_login = findViewById(R.id.btn_login);
         tv_find_id = findViewById(R.id.tv_find_id);
         tv_find_password = findViewById(R.id.tv_find_password);
         tv_signup = findViewById(R.id.tv_signup);
@@ -76,7 +76,7 @@ public class LoginActivity extends AppCompatActivity {
 
                     // 3. node 서버 IP와 받을 경로 수정 (http://192.168.99.83:3000/post)  하고
 
-                    JsonObjectRequest R_Object = new JsonObjectRequest(Request.Method.POST, "http://10.0.2.2:3000/user/login", requestJsonObject, new Response.Listener<JSONObject>() {
+                    JsonObjectRequest R_Object = new JsonObjectRequest(Request.Method.POST, "http://192.168.35.186:3000/user/login", requestJsonObject, new Response.Listener<JSONObject>() {
 
 
                         @Override

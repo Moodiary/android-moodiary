@@ -1,6 +1,7 @@
 package ac.kr.duksung.moodiary.activity;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatButton;
 import androidx.appcompat.widget.Toolbar;
 
 import android.content.Context;
@@ -10,6 +11,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -30,7 +32,7 @@ public class FindPwActivity extends AppCompatActivity {
     Toolbar toolbar; // 상단바
     EditText et_id; // 아이디 입력창
     EditText et_email; // 이메일 입력창
-    Button btn_findpw; // 비밀번호찾기 버튼
+    AppCompatButton btn_findpw; // 비밀번호찾기 버튼
     final Context context = this;
 
     @Override

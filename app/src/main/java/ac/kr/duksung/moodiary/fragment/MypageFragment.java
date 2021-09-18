@@ -5,15 +5,18 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -77,6 +80,10 @@ public class MypageFragment extends Fragment {
         rv_mypage.setLayoutManager(manager); // 리사이클러뷰와 레이아웃 매니저 연결
         rv_mypage.setAdapter(adapter); // 리사이클러뷰와 어댑터 연결
 
+        // 리사이클러뷰 구분선
+        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(rv_mypage.getContext(), manager.getOrientation());
+        rv_mypage.addItemDecoration(dividerItemDecoration);
+
         // 리사이클러뷰 아이템 클릭시
         adapter.setOnItemClickListener(new MypageAdapter.OnItemClickListener() {
             @Override
@@ -111,7 +118,17 @@ public class MypageFragment extends Fragment {
                             }
                         });
                         builder.setNegativeButton("아니오", null);
-                        builder.show();
+                        AlertDialog dialog = builder.create();
+                        dialog.show();
+
+                        Button positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+                        Button negativeButton = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
+
+                        positiveButton.setTextColor(Color.parseColor("#000000"));
+                        positiveButton.setBackgroundColor(Color.TRANSPARENT);
+
+                        negativeButton.setTextColor(Color.parseColor("#000000"));
+                        negativeButton.setBackgroundColor(Color.TRANSPARENT);
                         break;
                     default:
                         break;
