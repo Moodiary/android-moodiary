@@ -118,40 +118,6 @@ public class ChatFragment extends Fragment {
                     et_input.setText("");
 
                     getEmotion(message);
-
-                    /*
-                    DisposableObserver<String> observer = new DisposableObserver<String>() {
-                        @Override
-                        public void onNext(@NonNull String s) {
-                            // 데이터 전처리
-                            TextClassification client = new TextClassification(getContext()); // 데이터 전처리 클래스 호출
-                            List<String> tokenizeText = client.tokenize(message); // 토큰화된 텍스트
-                            String[][] paddingText = client.padSequence(tokenizeText); // 패딩된 텍스트
-                            float[][] dicText = client.jsonParsing(paddingText); // 정수화된 텍스트
-
-                            getEmotionModel(message, dicText); // 감정 분석 모델 실행
-                        }
-
-                        @Override
-                        public void onError(@NonNull Throwable e) {
-                            Log.d("TEST", "Observer Error...");
-                        }
-
-                        @Override
-                        public void onComplete() {
-                            Log.d("TEST", "Observer Complete!");
-                        }
-                    };
-
-                    Observable<String> observable = Observable.create(emitter -> {
-                                emitter.onNext(Thread.currentThread().getName() + "\n: RxJava Observer Test");
-                                emitter.onComplete();
-                            }
-                    );
-
-                    observable.subscribeOn(Schedulers.io()).subscribe(observer); // io스레드에서 실행
-                     */
-
                 }
             }
         });
@@ -224,7 +190,7 @@ public class ChatFragment extends Fragment {
         // 사용자 입력 정보 JSON 형태로 변환
         JSONObject requestJsonObject = new JSONObject();
         try {
-            requestJsonObject.put("diary", content);
+            requestJsonObject.put("emotions", content);
         } catch(JSONException e) {
             e.printStackTrace();
         }
@@ -233,7 +199,6 @@ public class ChatFragment extends Fragment {
 
         // 서버에 데이터 전달
         JsonObjectRequest jsonObject = new JsonObjectRequest(Request.Method.POST, "http://2ae5-104-154-196-74.ngrok.io/predict", requestJsonObject, new Response.Listener<JSONObject>() {
-
 
             @Override
             public void onResponse(JSONObject response) { // 데이터 전달 후 받은 응답
@@ -245,20 +210,17 @@ public class ChatFragment extends Fragment {
                     if(result.equals("400"))
                         Toast.makeText(getContext(),"에러가 발생했습니다", Toast.LENGTH_SHORT).show();
                     if(result.equals("200")) {
-                        String emotions = response.getString("result"); // 일기 감정 분석 결과값 가져오기
-                        JSONArray jArray = new JSONArray(emotions);
+                        JSONArray emotions = response.getJSONArray("result"); // 일기 감정 분석 결과값 가져오기
+                        System.out.println(emotions);
 
                         // 긍정, 부정 값 가져오기
-                        JSONObject jObject = jArray.getJSONObject(0);
-                        String first = jObject.getString("0");
-                        String second = jObject.getString("1");
-                        chatList.add(new ChatItem(0, "일기에서 가장 많이 보여지는 감정은\n" + first  + "입니다"));
+                        String model_emotion = emotions.getString(0);
+                        chatList.add(new ChatItem(0, "일기에서 가장 많이 보여지는 감정은\n" + model_emotion  + "입니다"));
 
-                        if(first.equals("긍정")) { // 긍정 감정인 경우
+                        if(model_emotion.equals("긍정")) { // 긍정 감정인 경우
                             maxIndex = 4; // 최대 감정 뽑기
                         } else { // 부정 감정일 경우 부정 세부 감정 가져오기
-                            JSONObject jObject_detail = jArray.getJSONObject(1);
-                            String detail = jObject_detail.getString("0");
+                            String detail = emotions.getString(1);
                             maxIndex = Arrays.asList(emotion).indexOf(detail);
                             chatList.add(new ChatItem(0, "부정 감정 중 가장 많이 보여지는 감정은\n" + detail  + "입니다"));
                         }
@@ -269,7 +231,7 @@ public class ChatFragment extends Fragment {
 
                         et_input.setText(""); // 메세지 입력창 초기화
                         sequence++; // 다음 단계로 이동할 수 있도록 변수값 변경 (일기 입력이 완료된 단계라는 의미)
-                        et_input.setEnabled(false); // 메세지 입력창 사용 금지*/
+                        et_input.setEnabled(false); // 메세지 입력창 사용 금지
 
                         saveDairy(content); // 일기 저장
                     }
@@ -485,7 +447,7 @@ public class ChatFragment extends Fragment {
             player.start();
             player.setLooping(true);
 
-            Toast.makeText(getContext(), "재생 시작됨.", Toast.LENGTH_SHORT).show();
+            System.out.println("재생 시작됨");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -496,7 +458,7 @@ public class ChatFragment extends Fragment {
         if(player != null && player.isPlaying()){
             player.stop();
 
-            Toast.makeText(getContext(), "중지됨.", Toast.LENGTH_SHORT).show();
+            System.out.println("재생 중지됨");
         }
     }
 
@@ -600,8 +562,12 @@ public class ChatFragment extends Fragment {
         RequestQueue requestQueue = Volley.newRequestQueue(getActivity());
 
         // 서버에 데이터 전달
+<<<<<<< HEAD
 
         JsonObjectRequest jsonObject = new JsonObjectRequest(Request.Method.POST, "http://172.20.18.162:3000/diary/todaydiary", requestJsonObject, new Response.Listener<JSONObject>() {
+=======
+        JsonObjectRequest jsonObject = new JsonObjectRequest(Request.Method.POST, "http://10.0.2.2:3000/diary/todaydiary", requestJsonObject, new Response.Listener<JSONObject>() {
+>>>>>>> 59e882775e51d52dfd1eedab2802dbfda451dde5
 
             @Override
             public void onResponse(JSONObject response) { // 데이터 전달 후 받은 응답

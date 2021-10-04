@@ -22,7 +22,7 @@
         android:text="Moodiary"
         android:textSize="45sp"
         android:textStyle="bold"
-        android:textColor="#3B8686"/>
+        android:textColor="#a8dba8"/>
 
     <!-- 아이디 텍스트 -->
     <TextView

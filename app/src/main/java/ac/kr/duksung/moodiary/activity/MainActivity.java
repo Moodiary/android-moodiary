@@ -19,7 +19,7 @@ import ac.kr.duksung.moodiary.fragment.MypageFragment;
 import ac.kr.duksung.moodiary.R;
 import ac.kr.duksung.moodiary.fragment.ChatFragment;
 import ac.kr.duksung.moodiary.fragment.CollectFragment;
-import ac.kr.duksung.moodiary.fragment.StaticsFragment;
+import ac.kr.duksung.moodiary.fragment.StatisticsFragment;
 
 // 화면 설명 : 메인(홈) 화면
 // Author : Soohyun, Last Modified : 2021.01.20
@@ -29,7 +29,7 @@ public class MainActivity extends AppCompatActivity {
     FragmentTransaction transaction;
     ChatFragment chatFragment; // 챗봇 화면
     CollectFragment collectFragment; // 모아보기 화면
-    StaticsFragment staticsFragment; // 통계 화면
+    StatisticsFragment statisticsFragment; // 통계 화면
     MypageFragment mypageFragment; // 마이페이지 화면
 
     @Override
@@ -61,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
                         // 챗봇 프래그먼트가 있는 경우 -> 챗봇 화면 보여주고 나머지 화면은 숨김
                         if(chatFragment != null) fragmentManager.beginTransaction().show(chatFragment).commit();
                         if(collectFragment != null) fragmentManager.beginTransaction().hide(collectFragment).commit();
-                        if(staticsFragment != null) fragmentManager.beginTransaction().hide(staticsFragment).commit();
+                        if(statisticsFragment != null) fragmentManager.beginTransaction().hide(statisticsFragment).commit();
                         if(mypageFragment != null) fragmentManager.beginTransaction().hide(mypageFragment).commit();
 
                         break;
@@ -75,21 +75,21 @@ public class MainActivity extends AppCompatActivity {
                         // 모아보기 프래그먼트가 있는 경우 -> 모아보기 화면 보여주고 나머지 화면은 숨김
                         if(chatFragment != null) fragmentManager.beginTransaction().hide(chatFragment).commit();
                         if(collectFragment != null) fragmentManager.beginTransaction().detach(collectFragment).attach(collectFragment).show(collectFragment).commit();
-                        if(staticsFragment != null) fragmentManager.beginTransaction().hide(staticsFragment).commit();
+                        if(statisticsFragment != null) fragmentManager.beginTransaction().hide(statisticsFragment).commit();
                         if(mypageFragment != null) fragmentManager.beginTransaction().hide(mypageFragment).commit();
 
                         break;
                     case R.id.menu_statics:
 
-                        if(staticsFragment == null) { // 통계 프래그먼트가 없는 경우
-                            staticsFragment = new StaticsFragment(); // 통계 프래그먼트 생성
-                            fragmentManager.beginTransaction().add(R.id.main_frame, staticsFragment).commit(); // 통계 화면 보여줌
+                        if(statisticsFragment == null) { // 통계 프래그먼트가 없는 경우
+                            statisticsFragment= new StatisticsFragment(); // 통계 프래그먼트 생성
+                            fragmentManager.beginTransaction().add(R.id.main_frame, statisticsFragment).commit(); // 통계 화면 보여줌
                         }
 
                         // 통계 프래그먼트가 있는 경우 -> 통계 화면 보여주고 나머지 화면은 숨김
                         if(chatFragment != null) fragmentManager.beginTransaction().hide(chatFragment).commit();
                         if(collectFragment != null) fragmentManager.beginTransaction().hide(collectFragment).commit();
-                        if(staticsFragment != null) fragmentManager.beginTransaction().show(staticsFragment).commit();
+                        if(statisticsFragment != null) fragmentManager.beginTransaction().show(statisticsFragment).commit();
                         if(mypageFragment != null) fragmentManager.beginTransaction().hide(mypageFragment).commit();
 
                         break;
@@ -103,7 +103,7 @@ public class MainActivity extends AppCompatActivity {
                         // 마이페이지 프래그먼트가 있는 경우 -> 마이페이지지 화면 보여주고 나머지 화면은 숨김
                         if(chatFragment != null) fragmentManager.beginTransaction().hide(chatFragment).commit();
                         if(collectFragment != null) fragmentManager.beginTransaction().hide(collectFragment).commit();
-                        if(staticsFragment != null) fragmentManager.beginTransaction().hide(staticsFragment).commit();
+                        if(statisticsFragment != null) fragmentManager.beginTransaction().hide(statisticsFragment).commit();
                         if(mypageFragment != null) fragmentManager.beginTransaction().show(mypageFragment).commit();
 
                         break;
