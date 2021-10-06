@@ -51,8 +51,6 @@ public class StatisticsFragment extends Fragment {
     String startDate = ""; // 시작 날짜 데이터
     String endDate = ""; // 끝 날짜 데이터
     PieChart emotion_chart; // 감정 통계 원형 그래프
-    int[] colors = {Color.parseColor("#F8F8D9"), Color.parseColor("#FFAA66"), Color.parseColor("#FFEA61"), Color.parseColor("#FF7B5A"),
-            Color.parseColor("#B2DEF2"), Color.parseColor("#C3E0A3"), Color.parseColor("#F3E9BF")}; // 그래프 컬러(행복,슬픔,놀람,분노,공포,혐오,중립)
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {

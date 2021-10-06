@@ -69,7 +69,6 @@ import io.reactivex.schedulers.Schedulers;
 // 화면 설명 : 메인화면의 챗봇 화면
 // Author : Soohyun, Last Modified : 2021.06.14
 public class ChatFragment extends Fragment {
-    public int sequence = 1; // 챗봇의 단계 처리를 위한 변수
     public ArrayList<ChatItem> chatList = new ArrayList<>(); ; // 챗봇 메세지 리스트
     RecyclerView rv_chat; // 챗봇 리사이클러뷰
     ChatAdapter adapter; // 챗봇 어댑터
@@ -110,8 +109,14 @@ public class ChatFragment extends Fragment {
         btn_push.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(sequence == 1) { // 감정일기 쓰는 단계일 경우
-                    String message = et_input.getText().toString().trim(); // 사용자가 입력한 메세지 가져옴
+                // 감정일기 쓰는 단계일 경우
+                String message = et_input.getText().toString().trim(); // 사용자가 입력한 메세지 가져옴
+
+                if(message.length() < 10) {
+                    chatList.add(new ChatItem(1, message)); // 사용자가 입력한 메시지를 챗봇 메세지 리스트에 추가
+                    chatList.add(new ChatItem(0, "일기를 최소 10글자 이상 작성해주세요."));
+                    adapter.notifyDataSetChanged();
+                } else {
                     chatList.add(new ChatItem(1, message)); // 사용자가 입력한 메시지를 챗봇 메세지 리스트에 추가
                     chatList.add(new ChatItem(0, "감정을 분석 중입니다."));
                     adapter.notifyDataSetChanged();
@@ -173,7 +178,6 @@ public class ChatFragment extends Fragment {
                             adapter.notifyDataSetChanged(); // 챗봇 메세지 리스트 갱신
 
                             et_input.setText(""); // 메세지 입력창 초기화
-                            sequence++; // 다음 단계로 이동할 수 있도록 변수값 변경 (일기 입력이 완료된 단계라는 의미)
                             et_input.setEnabled(false); // 메세지 입력창 사용 금지
                         }
 
@@ -230,7 +234,6 @@ public class ChatFragment extends Fragment {
                         adapter.notifyDataSetChanged(); // 챗봇 메세지 리스트 갱신
 
                         et_input.setText(""); // 메세지 입력창 초기화
-                        sequence++; // 다음 단계로 이동할 수 있도록 변수값 변경 (일기 입력이 완료된 단계라는 의미)
                         et_input.setEnabled(false); // 메세지 입력창 사용 금지
 
                         saveDairy(content); // 일기 저장
